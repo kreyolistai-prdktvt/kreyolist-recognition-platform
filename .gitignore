@@ -1,0 +1,11 @@
+# Local environment variables
+.env.local
+.env
+
+# Dev server local runtime logs & PIDs
+.dev_server.pid
+.dev_server.log
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+{
+  "name": "kreyolist",
+  "version": "1.0.0",
+  "description": "KreyoList luxury product discovery and lifestyle platform",
+  "main": "js/app.js",
+  "scripts": {
+    "dev": "./dev.sh"
+  },
+  "keywords": [
+    "luxury",
+    "lifestyle",
+    "discovery"
+  ],
+  "author": "KreyoList Global",
+  "license": "ISC"
+}
