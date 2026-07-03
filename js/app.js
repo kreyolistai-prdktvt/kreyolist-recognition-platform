@@ -1,8 +1,8 @@
-import { venues } from "./data.js?v=1.0.2";
-import { createFilterBar } from "./components/FilterBar.js?v=1.0.2";
-import { createVenueCard } from "./components/VenueCard.js?v=1.0.2";
-import { createDetailModal } from "./components/DetailModal.js?v=1.0.2";
-import { loadEnv } from "./env.js?v=1.0.2";
+import { venues } from "./data.js?v=1.0.8";
+import { createFilterBar } from "./components/FilterBar.js?v=1.0.8";
+import { createVenueCard } from "./components/VenueCard.js?v=1.0.8";
+import { createDetailModal } from "./components/DetailModal.js?v=1.0.8";
+import { loadEnv } from "./env.js?v=1.0.8";
 
 // Global App State
 const state = {
@@ -27,28 +27,6 @@ let initializeFirebaseFn = null;
 /**
  * Resolves local file paths to Firebase Storage download URLs if Firebase is active.
  */
-async function resolveVenueAssets() {
-  if (!getAssetUrlFn) return;
-  const promises = venues.map(async (venue) => {
-    // 1. Resolve main category/background image
-    const mainStoragePath = `venues/${venue.id}/main_bg.jpg`;
-    venue.image = await getAssetUrlFn(mainStoragePath, venue.image);
-
-    // 2. Resolve visual mosaic collage images (2x2)
-    if (venue.mosaic && venue.mosaic.length > 0) {
-      const resolvedMosaic = await Promise.all(
-        venue.mosaic.map(async (localPath, idx) => {
-          const storagePath = `venues/${venue.id}/mosaic_${idx + 1}.jpg`;
-          return await getAssetUrlFn(storagePath, localPath);
-        })
-      );
-      venue.mosaic = resolvedMosaic;
-    }
-  });
-
-  await Promise.all(promises);
-}
-
 /**
  * Initializes the application.
  */
@@ -63,15 +41,11 @@ async function init() {
 
   // Try loading Firebase modules dynamically to prevent page blockage on network limits
   try {
-    const firebaseModule = await import("./firebase-config.js");
+    const firebaseModule = await import("./firebase-config.js?v=1.0.2");
     initializeFirebaseFn = firebaseModule.initializeFirebase;
     getAssetUrlFn = firebaseModule.getAssetUrl;
     
     state.firebaseConfigured = initializeFirebaseFn(env);
-    
-    if (state.firebaseConfigured) {
-      await resolveVenueAssets();
-    }
   } catch (error) {
     console.warn("[KreyoList] Firebase SDK failed to load. Running in local fallback mode.", error);
   }
@@ -123,41 +97,69 @@ function renderFilterBar() {
 function renderGrid() {
   if (!dom.gridContainer) return;
   
-  dom.gridContainer.innerHTML = "";
-
-  // 1. Filter the database array
-  let filtered = [...venues];
-  if (state.activeCategory !== "all") {
-    filtered = filtered.filter(v => v.category === state.activeCategory);
-  }
-
-  // 2. Sort the database array
-  if (state.activeSort === "name-asc") {
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (state.activeSort === "city") {
-    filtered.sort((a, b) => a.city.localeCompare(b.city));
-  }
-  // If 'featured', we preserve the curated order in data.js
-
-  // 3. Render cards or empty state
-  if (filtered.length === 0) {
-    const emptyState = document.createElement("div");
-    emptyState.className = "empty-state";
-    emptyState.innerHTML = `
-      <h3 class="empty-state-title">No Venues Found</h3>
-      <p class="empty-state-text">Select another category or check back later for newly curated spaces.</p>
-    `;
-    dom.gridContainer.appendChild(emptyState);
-    return;
-  }
-
-  // Append cards
-  filtered.forEach(venue => {
-    const card = createVenueCard(venue, (selectedVenue) => {
-      setState({ openVenue: selectedVenue });
+  // Grab currently rendered cards
+  const existingCards = dom.gridContainer.querySelectorAll(".venue-card");
+  
+  if (existingCards.length > 0) {
+    // Phase 1: Fade out old cards
+    existingCards.forEach(card => {
+      card.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+      card.style.opacity = "0";
+      card.style.transform = "translateY(15px)";
     });
-    dom.gridContainer.appendChild(card);
-  });
+    
+    // Phase 2: Wait for fade-out, then clear and render new cards
+    setTimeout(() => {
+      executeRender();
+    }, 200);
+  } else {
+    // First load: render immediately
+    executeRender();
+  }
+
+  function executeRender() {
+    dom.gridContainer.innerHTML = "";
+
+    // 1. Filter the database array
+    let filtered = [...venues];
+    if (state.activeCategory !== "all") {
+      filtered = filtered.filter(v => v.category === state.activeCategory);
+    }
+
+    // 2. Sort the database array
+    if (state.activeSort === "name-asc") {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (state.activeSort === "city") {
+      filtered.sort((a, b) => a.city.localeCompare(b.city));
+    }
+
+    // 3. Render cards or empty state
+    if (filtered.length === 0) {
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      emptyState.innerHTML = `
+        <h3 class="empty-state-title">No Venues Found</h3>
+        <p class="empty-state-text">Select another category or check back later for newly curated spaces.</p>
+      `;
+      emptyState.style.opacity = "0";
+      emptyState.style.transition = "opacity 0.3s ease";
+      dom.gridContainer.appendChild(emptyState);
+      setTimeout(() => emptyState.style.opacity = "1", 10);
+      return;
+    }
+
+    // Append cards with staggered animation delays
+    filtered.forEach((venue, idx) => {
+      const card = createVenueCard(venue, (selectedVenue) => {
+        setState({ openVenue: selectedVenue });
+      }, getAssetUrlFn);
+      
+      // Stagger delay
+      card.style.animationDelay = `${idx * 0.04}s`;
+      
+      dom.gridContainer.appendChild(card);
+    });
+  }
 }
 
 /**
@@ -182,7 +184,7 @@ function renderModal() {
     
     state.modalElement = createDetailModal(state.openVenue, () => {
       setState({ openVenue: null });
-    });
+    }, getAssetUrlFn);
     
     dom.modalContainer.appendChild(state.modalElement);
   }

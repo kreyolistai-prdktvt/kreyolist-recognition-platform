@@ -2,9 +2,10 @@
  * Creates a DOM node for a single venue tile card.
  * @param {Object} venue - The venue data object.
  * @param {Function} onClick - The callback function when the card is clicked.
+ * @param {Function} resolveAssetUrl - Async function to resolve Storage URLs.
  * @returns {HTMLElement} The venue card element.
  */
-export function createVenueCard(venue, onClick) {
+export function createVenueCard(venue, onClick, resolveAssetUrl) {
   const card = document.createElement("div");
   card.className = "venue-card";
   card.setAttribute("role", "button");
@@ -14,8 +15,8 @@ export function createVenueCard(venue, onClick) {
   card.dataset.category = venue.category;
 
   card.innerHTML = `
-    <div class="venue-card-visual">
-      <img src="${venue.image}" alt="${venue.name}" class="venue-card-image" loading="lazy" />
+    <div class="venue-card-visual venue-card-loading-placeholder">
+      <img alt="${venue.name}" class="venue-card-image fade-in-img" loading="lazy" />
       <div class="venue-card-overlay"></div>
       <div class="venue-card-badge-container">
         <span class="venue-card-badge">${venue.vibe}</span>
@@ -49,6 +50,32 @@ export function createVenueCard(venue, onClick) {
       </div>
     </div>
   `;
+
+  // Asynchronously resolve and load the main background image
+  const imgElement = card.querySelector(".venue-card-image");
+  const visualElement = card.querySelector(".venue-card-visual");
+
+  if (resolveAssetUrl && typeof resolveAssetUrl === "function") {
+    resolveAssetUrl(venue.image).then(url => {
+      imgElement.src = url;
+      imgElement.onload = () => {
+        imgElement.classList.add("loaded");
+        visualElement.classList.remove("venue-card-loading-placeholder");
+      };
+      imgElement.onerror = () => {
+        visualElement.classList.remove("venue-card-loading-placeholder");
+      };
+    }).catch(() => {
+      visualElement.classList.remove("venue-card-loading-placeholder");
+    });
+  } else {
+    // Immediate local fallback fallback if resolver is not provided
+    imgElement.src = `./assets/${venue.category}_bg.jpg`;
+    imgElement.onload = () => {
+      imgElement.classList.add("loaded");
+      visualElement.classList.remove("venue-card-loading-placeholder");
+    };
+  }
 
   // Click handlers
   card.addEventListener("click", () => onClick(venue));

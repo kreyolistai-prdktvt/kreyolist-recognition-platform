@@ -4,12 +4,50 @@
  * @param {Function} onClose - Callback function to handle modal closure.
  * @returns {HTMLElement} The modal overlay element.
  */
-export function createDetailModal(venue, onClose) {
+/**
+ * Creates and orchestrates the luxury Detail Modal overlay.
+ * @param {Object} venue - The selected venue object to display.
+ * @param {Function} onClose - Callback function to handle modal closure.
+ * @param {Function} resolveAssetUrl - Async function to resolve Storage URLs.
+ * @returns {HTMLElement} The modal overlay element.
+ */
+export function createDetailModal(venue, onClose, resolveAssetUrl) {
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay";
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "modal-title");
+
+  // Determine visual column HTML structure
+  let visualHTML = "";
+  if (venue.mosaic) {
+    visualHTML = `
+      <div class="modal-visual has-mosaic">
+        <div class="modal-mosaic-grid">
+          ${venue.mosaic.map((img, idx) => `
+            <div class="modal-mosaic-item modal-mosaic-loading-placeholder" data-path="${img}">
+              <img alt="${venue.name} view ${idx + 1}" class="modal-mosaic-image fade-in-img" loading="lazy" />
+            </div>
+          `).join("")}
+        </div>
+        <div class="modal-visual-gradient"></div>
+        <div class="modal-visual-meta">
+          <span class="modal-badge">${venue.vibe}</span>
+          <span class="modal-city">${venue.city}</span>
+        </div>
+      </div>
+    `;
+  } else {
+    visualHTML = `
+      <div class="modal-visual modal-visual-loading-placeholder">
+        <div class="modal-visual-gradient"></div>
+        <div class="modal-visual-meta">
+          <span class="modal-badge">${venue.vibe}</span>
+          <span class="modal-city">${venue.city}</span>
+        </div>
+      </div>
+    `;
+  }
 
   overlay.innerHTML = `
     <div class="modal-content">
@@ -17,22 +55,7 @@ export function createDetailModal(venue, onClose) {
       
       <div class="modal-grid">
         <!-- Visual Column -->
-        <div class="modal-visual ${venue.mosaic ? "has-mosaic" : ""}" ${venue.mosaic ? "" : `style="background-image: url('${venue.image}')"`}>
-          ${venue.mosaic ? `
-            <div class="modal-mosaic-grid">
-              ${venue.mosaic.map(img => `
-                <div class="modal-mosaic-item">
-                  <img src="${img}" alt="${venue.name} view" class="modal-mosaic-image" loading="lazy" />
-                </div>
-              `).join("")}
-            </div>
-          ` : ""}
-          <div class="modal-visual-gradient"></div>
-          <div class="modal-visual-meta">
-            <span class="modal-badge">${venue.vibe}</span>
-            <span class="modal-city">${venue.city}</span>
-          </div>
-        </div>
+        ${visualHTML}
 
         <!-- Details Column -->
         <div class="modal-info">
@@ -73,6 +96,82 @@ export function createDetailModal(venue, onClose) {
     </div>
   `;
 
+  // Asynchronously resolve and load image paths
+  if (resolveAssetUrl && typeof resolveAssetUrl === "function") {
+    if (venue.mosaic) {
+      const items = overlay.querySelectorAll(".modal-mosaic-item");
+      items.forEach(item => {
+        const path = item.dataset.path;
+        const img = item.querySelector(".modal-mosaic-image");
+        resolveAssetUrl(path).then(url => {
+          img.src = url;
+          img.onload = () => {
+            img.classList.add("loaded");
+            item.classList.remove("modal-mosaic-loading-placeholder");
+          };
+          img.onerror = () => {
+            item.classList.remove("modal-mosaic-loading-placeholder");
+          };
+        }).catch(() => {
+          item.classList.remove("modal-mosaic-loading-placeholder");
+        });
+      });
+    } else {
+      const visual = overlay.querySelector(".modal-visual");
+      resolveAssetUrl(venue.image).then(url => {
+        visual.style.backgroundImage = `url('${url}')`;
+        visual.classList.remove("modal-visual-loading-placeholder");
+      }).catch(() => {
+        visual.classList.remove("modal-visual-loading-placeholder");
+      });
+    }
+  } else {
+    // Immediate fallback resolver if not provided
+    if (venue.mosaic) {
+      const items = overlay.querySelectorAll(".modal-mosaic-item");
+      items.forEach(item => {
+        const path = item.dataset.path;
+        const img = item.querySelector(".modal-mosaic-image");
+        // Reconstruct local path by getting filename and mapping
+        const filename = path.split("/").pop();
+        let finalFilename = filename;
+        // Fix for name difference in fallback mapping filenames
+        if (filename === "main_bg.jpg") {
+          finalFilename = `${venue.category}_bg.jpg`;
+        } else if (filename === "mosaic_1.jpg") {
+          if (venue.id === "savvor-boston") finalFilename = "savvor_food.jpg";
+          if (venue.id === "obsidian-ny") finalFilename = "obsidian_jazz.jpg";
+          if (venue.id === "aether-sf") finalFilename = "aether_pool.jpg";
+        } else if (filename.startsWith("obsidian_")) {
+          if (filename === "obsidian_lounge.png") {
+            finalFilename = "obsidian_lounge2.png";
+          } else {
+            finalFilename = filename.replace(".png", ".jpg");
+          }
+        }
+        // General fallback check using a simpler mapper
+        const resolvedFallback = `./assets/${finalFilename}`;
+        img.src = resolvedFallback;
+        img.onload = () => {
+          img.classList.add("loaded");
+          item.classList.remove("modal-mosaic-loading-placeholder");
+        };
+        img.onerror = () => {
+          // Absolute fallback
+          img.src = `./assets/${venue.category}_bg.jpg`;
+          img.onload = () => {
+            img.classList.add("loaded");
+            item.classList.remove("modal-mosaic-loading-placeholder");
+          };
+        };
+      });
+    } else {
+      const visual = overlay.querySelector(".modal-visual");
+      visual.style.backgroundImage = `url('./assets/${venue.category}_bg.jpg')`;
+      visual.classList.remove("modal-visual-loading-placeholder");
+    }
+  }
+
   // Animate open
   setTimeout(() => {
     overlay.classList.add("open");
@@ -108,17 +207,31 @@ export function createDetailModal(venue, onClose) {
 
   // Handle Inquiry Form Submission
   const form = overlay.querySelector("#inquiry-form");
+  const submitBtn = form.querySelector(".submit-btn");
   const successSection = overlay.querySelector("#success-message");
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    form.style.opacity = "0";
+    
+    // Lock submit button and show spinner
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="btn-spinner"></span> Sending Curation Request...`;
+
+    // Lock input fields
+    const inputs = form.querySelectorAll("input");
+    inputs.forEach(input => input.disabled = true);
+
+    // Simulate network communication latency
     setTimeout(() => {
-      form.style.display = "none";
-      successSection.style.display = "block";
+      form.style.opacity = "0";
       setTimeout(() => {
-        successSection.classList.add("show");
-      }, 50);
-    }, 300);
+        form.style.display = "none";
+        successSection.style.display = "block";
+        setTimeout(() => {
+          successSection.classList.add("show");
+        }, 50);
+      }, 300);
+    }, 1500);
   });
 
   return overlay;

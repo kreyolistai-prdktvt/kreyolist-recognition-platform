@@ -10,12 +10,12 @@ export const venues = [
     map_link: "#",
     offer: "Custom Curated Private Dinners & Premium Mixology Experiences",
     tagline: "Where food meets sanctuary—relaxation redefined.",
-    image: "./assets/employee_appreciation_bg.jpg",
+    image: "venues/savvor/savvor_lounge.jpg",
     mosaic: [
-      "./assets/savvor_food.jpg",
-      "./assets/savvor_cocktails.jpg",
-      "./assets/savvor_lounge.jpg",
-      "./assets/savvor_boston_skyline.jpg"
+      "venues/savvor/savvor_food.jpg",
+      "venues/savvor/savvor_cocktails.jpg",
+      "venues/savvor/savvor_lounge.jpg",
+      "venues/savvor/savvor_boston_skyline.jpg"
     ],
     vibe: "Intimate",
     description: "An elegant escape combining modern Southern influence with vibrant Caribbean flavors, nestled in the heart of Boston. Perfect for rewarding key contributors with a culinary sanctuary.",
@@ -35,12 +35,12 @@ export const venues = [
     map_link: "#",
     offer: "Exclusive Immersive Jazz & Blind Tasting Dinners",
     tagline: "An auditory and culinary journey in absolute shadow.",
-    image: "./assets/team_entertainment_bg.jpg",
+    image: "venues/obsidian-room/obsidian_lounge.png",
     mosaic: [
-      "./assets/obsidian_jazz.jpg",
-      "./assets/obsidian_tasting.jpg",
-      "./assets/obsidian_skyline.jpg",
-      "./assets/obsidian_lounge.jpg"
+      "venues/obsidian-room/obsidian_jazz.png",
+      "venues/obsidian-room/obsidian_tasting.png",
+      "venues/obsidian-room/obsidian_skyline.png",
+      "venues/obsidian-room/obsidian_lounge.png"
     ],
     vibe: "Mysterious",
     description: "A dark, highly polished acoustic chamber in Manhattan where taste buds and hearing are heightened to an extraordinary degree through sensory isolation.",
@@ -60,12 +60,12 @@ export const venues = [
     map_link: "#",
     offer: "Private Sensory Deprivation Pools & Redwood Forest Yoga",
     tagline: "Reconnect with the self, suspended in nature's quietude.",
-    image: "./assets/personal_rejuvenation_bg.jpg",
+    image: "venues/aether-sf/main_bg.jpg",
     mosaic: [
-      "./assets/aether_pool.jpg",
-      "./assets/aether_yoga.jpg",
-      "./assets/aether_tea.jpg",
-      "./assets/aether_forest.jpg"
+      "venues/aether-sf/mosaic_1.jpg",
+      "venues/aether-sf/mosaic_2.jpg",
+      "venues/aether-sf/mosaic_3.jpg",
+      "venues/aether-sf/mosaic_4.jpg"
     ],
     vibe: "Zen",
     description: "Suspended amongst the majestic redwoods of the Bay Area, Aether offers private glass-bottom wellness domes and floating sensory pools designed for absolute peace of mind.",
@@ -85,12 +85,12 @@ export const venues = [
     map_link: "#",
     offer: "Sunset Yacht Charters & Bespoke Seafood Soirées",
     tagline: "Oceanic elegance meets executive appreciation.",
-    image: "./assets/employee_appreciation_bg.jpg",
+    image: "venues/horizon-miami/main_bg.jpg",
     mosaic: [
-      "./assets/horizon_yacht.jpg",
-      "./assets/horizon_seafood.jpg",
-      "./assets/horizon_sunset.jpg",
-      "./assets/horizon_champagne.jpg"
+      "venues/horizon-miami/mosaic_1.jpg",
+      "venues/horizon-miami/mosaic_2.jpg",
+      "venues/horizon-miami/mosaic_3.jpg",
+      "venues/horizon-miami/mosaic_4.jpg"
     ],
     vibe: "Scenic",
     description: "A breathtaking rooftop pavilion overlooking Biscayne Bay, transitioning seamlessly into a private luxury yacht charter for high-performing executives.",
@@ -110,12 +110,12 @@ export const venues = [
     map_link: "#",
     offer: "Artisanal Glassblowing & Molecular Gastronomy Workshops",
     tagline: "Forging bonds through fire, art, and taste.",
-    image: "./assets/team_entertainment_bg.jpg",
+    image: "venues/hearthstone-chicago/main_bg.jpg",
     mosaic: [
-      "./assets/hearthstone_glass.jpg",
-      "./assets/hearthstone_gastronomy.jpg",
-      "./assets/hearthstone_skyline.jpg",
-      "./assets/hearthstone_interior.jpg"
+      "venues/hearthstone-chicago/mosaic_1.jpg",
+      "venues/hearthstone-chicago/mosaic_2.jpg",
+      "venues/hearthstone-chicago/mosaic_3.jpg",
+      "venues/hearthstone-chicago/mosaic_4.jpg"
     ],
     vibe: "Energetic",
     description: "An industrial-chic studio in Chicago where teams create glass sculptures under the guidance of master artists, followed by a theatrical dining experience.",
@@ -135,12 +135,12 @@ export const venues = [
     map_link: "#",
     offer: "Outdoor Cedar Saunas & Mineral Cold Plunges",
     tagline: "Therapeutic contrast amidst the whispering pines.",
-    image: "./assets/personal_rejuvenation_bg.jpg",
+    image: "venues/soma-seattle/main_bg.jpg",
     mosaic: [
-      "./assets/soma_sauna.jpg",
-      "./assets/soma_plunge.jpg",
-      "./assets/soma_forest.jpg",
-      "./assets/soma_firepit.jpg"
+      "venues/soma-seattle/mosaic_1.jpg",
+      "venues/soma-seattle/mosaic_2.jpg",
+      "venues/soma-seattle/mosaic_3.jpg",
+      "venues/soma-seattle/mosaic_4.jpg"
     ],
     vibe: "Zen",
     description: "Nestled in the Pacific Northwest evergreen woods, Soma provides a luxury hydrotherapy circuit designed to reset the nervous system and clear executive burnout.",
@@ -160,12 +160,12 @@ export const venues = [
     map_link: "#",
     offer: "Private Vinyl Listening Sessions & Hi-Fi Audiophile Cocktails",
     tagline: "Hear the warmth, feel the community.",
-    image: "./assets/team_entertainment_bg.jpg",
+    image: "venues/elysium-la/main_bg.jpg",
     mosaic: [
-      "./assets/elysium_vinyl.jpg",
-      "./assets/elysium_speaker.jpg",
-      "./assets/elysium_cocktail.jpg",
-      "./assets/elysium_skyline.jpg"
+      "venues/elysium-la/mosaic_1.jpg",
+      "venues/elysium-la/mosaic_2.jpg",
+      "venues/elysium-la/mosaic_3.jpg",
+      "venues/elysium-la/mosaic_4.jpg"
     ],
     vibe: "Sophisticated",
     description: "An acoustic sanctuary in Silver Lake, featuring custom-built analog horn speakers and a vault of rare first-press vinyl records from around the globe.",
@@ -185,12 +185,12 @@ export const venues = [
     map_link: "#",
     offer: "Greenhouse Mixology Masterclasses & Botanical Dining",
     tagline: "Cultivating appreciation in a glass-enclosed sanctuary.",
-    image: "./assets/employee_appreciation_bg.jpg",
+    image: "venues/brass-denver/main_bg.jpg",
     mosaic: [
-      "./assets/brass_greenhouse.jpg",
-      "./assets/brass_mixology.jpg",
-      "./assets/brass_plate.jpg",
-      "./assets/brass_mountains.jpg"
+      "venues/brass-denver/mosaic_1.jpg",
+      "venues/brass-denver/mosaic_2.jpg",
+      "venues/brass-denver/mosaic_3.jpg",
+      "venues/brass-denver/mosaic_4.jpg"
     ],
     vibe: "Intimate",
     description: "An exclusive glass greenhouse dining experience surrounded by exotic high-altitude flora. Ideal for intimate corporate team honors and milestone rewards.",
@@ -210,12 +210,12 @@ export const venues = [
     map_link: "#",
     offer: "Silent Matcha Ceremonies & Japanese Stone Garden Retreats",
     tagline: "The art of slow living, captured in a single cup.",
-    image: "./assets/personal_rejuvenation_bg.jpg",
+    image: "venues/komorebi-portland/main_bg.jpg",
     mosaic: [
-      "./assets/komorebi_matcha.jpg",
-      "./assets/komorebi_garden.jpg",
-      "./assets/komorebi_tatami.jpg",
-      "./assets/komorebi_waterfall.jpg"
+      "venues/komorebi-portland/mosaic_1.jpg",
+      "venues/komorebi-portland/mosaic_2.jpg",
+      "venues/komorebi-portland/mosaic_3.jpg",
+      "venues/komorebi-portland/mosaic_4.jpg"
     ],
     vibe: "Zen",
     description: "A tranquil sanctuary modeled after traditional Kyoto tea houses, promoting mindfulness and active rest through the traditional Japanese art of tea.",
@@ -235,12 +235,12 @@ export const venues = [
     map_link: "#",
     offer: "Collaborative Leather Crafting & Heritage Whiskey Tastings",
     tagline: "Crafting memories with raw materials and refined spirits.",
-    image: "./assets/team_entertainment_bg.jpg",
+    image: "venues/gilded-austin/main_bg.jpg",
     mosaic: [
-      "./assets/gilded_leather.jpg",
-      "./assets/gilded_whiskey.jpg",
-      "./assets/gilded_foundry.jpg",
-      "./assets/gilded_austin.jpg"
+      "venues/gilded-austin/mosaic_1.jpg",
+      "venues/gilded-austin/mosaic_2.jpg",
+      "venues/gilded-austin/mosaic_3.jpg",
+      "venues/gilded-austin/mosaic_4.jpg"
     ],
     vibe: "Energetic",
     description: "A high-end workshop spaces where craft meets legacy, matching luxury leather assembly with rare, single-barrel Texas bourbons.",
@@ -260,12 +260,12 @@ export const venues = [
     map_link: "#",
     offer: "Private Stargazing Dinners & Desert Glamping Retreats",
     tagline: "Dining under infinity—where stars align for success.",
-    image: "./assets/employee_appreciation_bg.jpg",
+    image: "venues/nox-phoenix/main_bg.jpg",
     mosaic: [
-      "./assets/nox_telescope.jpg",
-      "./assets/nox_campfire.jpg",
-      "./assets/nox_dome.jpg",
-      "./assets/nox_skyline.jpg"
+      "venues/nox-phoenix/mosaic_1.jpg",
+      "venues/nox-phoenix/mosaic_2.jpg",
+      "venues/nox-phoenix/mosaic_3.jpg",
+      "venues/nox-phoenix/mosaic_4.jpg"
     ],
     vibe: "Scenic",
     description: "A remote, high-luxury desert dining platform equipped with professional-grade deep-space telescopes and custom luxury glamping tents.",
@@ -285,12 +285,12 @@ export const venues = [
     map_link: "#",
     offer: "Sound Bath Therapy & Hyperbaric Oxygen Lodges",
     tagline: "Vibrational alignment for the modern visionary.",
-    image: "./assets/personal_rejuvenation_bg.jpg",
+    image: "venues/verdant-atlanta/main_bg.jpg",
     mosaic: [
-      "./assets/verdant_singing_bowls.jpg",
-      "./assets/verdant_oxygen.jpg",
-      "./assets/verdant_juice.jpg",
-      "./assets/verdant_canopy.jpg"
+      "venues/verdant-atlanta/mosaic_1.jpg",
+      "venues/verdant-atlanta/mosaic_2.jpg",
+      "venues/verdant-atlanta/mosaic_3.jpg",
+      "venues/verdant-atlanta/mosaic_4.jpg"
     ],
     vibe: "Zen",
     description: "A futuristic wellness lab hidden in a lush botanical park, combining cutting-edge scientific recovery with ancient vibrational sound therapy.",
@@ -310,12 +310,12 @@ export const venues = [
     map_link: "#",
     offer: "Private Vineyard Blending Sessions & Cellar Dinners",
     tagline: "The ultimate harvest of appreciation and craftsmanship.",
-    image: "./assets/employee_appreciation_bg.jpg",
+    image: "venues/velvet-napa/main_bg.jpg",
     mosaic: [
-      "./assets/velvet_wine_blend.jpg",
-      "./assets/velvet_barrels.jpg",
-      "./assets/velvet_vineyard.jpg",
-      "./assets/velvet_cellar_dining.jpg"
+      "venues/velvet-napa/mosaic_1.jpg",
+      "venues/velvet-napa/mosaic_2.jpg",
+      "venues/velvet-napa/mosaic_3.jpg",
+      "venues/velvet-napa/mosaic_4.jpg"
     ],
     vibe: "Sophisticated",
     description: "A secluded wine estate offering direct hands-on access to the winemaking process, culminating in a candlelit multi-course dinner in the historical barrel cellars.",
@@ -335,12 +335,12 @@ export const venues = [
     map_link: "#",
     offer: "Private F1 Simulator Endurance Racing & Champagne Lounge",
     tagline: "High-octane collaboration, high-end celebration.",
-    image: "./assets/team_entertainment_bg.jpg",
+    image: "venues/kinetic-vegas/main_bg.jpg",
     mosaic: [
-      "./assets/kinetic_simulator.jpg",
-      "./assets/kinetic_telemetry.jpg",
-      "./assets/kinetic_champagne.jpg",
-      "./assets/kinetic_skyline.jpg"
+      "venues/kinetic-vegas/mosaic_1.jpg",
+      "venues/kinetic-vegas/mosaic_2.jpg",
+      "venues/kinetic-vegas/mosaic_3.jpg",
+      "venues/kinetic-vegas/mosaic_4.jpg"
     ],
     vibe: "Energetic",
     description: "A professional-grade virtual racing club in Las Vegas, offering full-motion hydraulic simulators identical to those used by Formula 1 teams.",
@@ -360,12 +360,12 @@ export const venues = [
     map_link: "#",
     offer: "Adobe Clay Mud Baths & Native Sage Cleansing Rituals",
     tagline: "Ancient earth therapies for modern mind restoration.",
-    image: "./assets/personal_rejuvenation_bg.jpg",
+    image: "venues/wind-santafe/main_bg.jpg",
     mosaic: [
-      "./assets/sanctuary_sage.jpg",
-      "./assets/sanctuary_mud.jpg",
-      "./assets/sanctuary_pergola.jpg",
-      "./assets/sanctuary_cliffs.jpg"
+      "venues/wind-santafe/mosaic_1.jpg",
+      "venues/wind-santafe/mosaic_2.jpg",
+      "venues/wind-santafe/mosaic_3.jpg",
+      "venues/wind-santafe/mosaic_4.jpg"
     ],
     vibe: "Zen",
     description: "An authentic adobe estate surrounded by red cliffs, emphasizing organic, indigenous skincare and relaxing steam purification therapies.",
