@@ -1,8 +1,8 @@
-import { venues } from "./data.js?v=1.0.8";
-import { createFilterBar } from "./components/FilterBar.js?v=1.0.8";
-import { createVenueCard } from "./components/VenueCard.js?v=1.0.8";
-import { createDetailModal } from "./components/DetailModal.js?v=1.0.8";
-import { loadEnv } from "./env.js?v=1.0.8";
+import { venues } from "./data.js?v=1.0.12";
+import { createFilterBar } from "./components/FilterBar.js?v=1.0.12";
+import { createVenueCard } from "./components/VenueCard.js?v=1.0.12";
+import { createDetailModal } from "./components/DetailModal.js?v=1.0.12";
+import { loadEnv } from "./env.js?v=1.0.12";
 
 // Global App State
 const state = {

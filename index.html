@@ -23,46 +23,150 @@
   <meta property="twitter:image" content="./assets/employee_appreciation_bg.jpg">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./css/styles.css?v=1.0.8">
+  <link rel="stylesheet" href="./css/styles.css?v=1.0.12">
   
   <!-- Favicon placeholder -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
 </head>
 <body>
   
-  <div class="app-container">
-    <!-- Compact Editorial Header -->
-    <header class="app-header-compact">
-      <h1 class="brand-title-compact">Kreyō <span>List</span></h1>
-      <div class="user-profile-button" aria-label="User Profile" role="button" tabindex="0">
-        <svg class="profile-avatar-icon" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
+  <div id="app-layout-wrapper">
+    <!-- Workspace Sidebar Navigation -->
+    <aside id="workspace-sidebar">
+      <!-- Brand Header -->
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-dot"></span>
+        <span class="sidebar-brand-name">Kreyō List</span>
       </div>
-    </header>
 
-    <!-- Micro-Personalization Greeting Layer -->
-    <div class="recognition-portal-greeting">
-      SELECT YOUR CURATED EXPERIENCE.
+      <!-- Workspace Navigation Section -->
+      <nav class="sidebar-section">
+        <div class="sidebar-section-header">WORKSPACE</div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">✦</span>
+              <span class="sidebar-text">Home</span>
+              <span class="sidebar-badge">10</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item active">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">⚲</span>
+              <span class="sidebar-text">Recognition</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">✴</span>
+              <span class="sidebar-text">Rewards</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">🏆</span>
+              <span class="sidebar-text">Awards</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">⚙</span>
+              <span class="sidebar-text">Admin Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Connect Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">CONNECT</div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item disabled">
+            <div class="sidebar-nav-link">
+              <span class="sidebar-icon">✉</span>
+              <span class="sidebar-text">Gmail</span>
+              <span class="sidebar-badge-soon">soon</span>
+            </div>
+          </li>
+          <li class="sidebar-nav-item disabled">
+            <div class="sidebar-nav-link">
+              <span class="sidebar-icon">📅</span>
+              <span class="sidebar-text">Outlook</span>
+              <span class="sidebar-badge-soon">soon</span>
+            </div>
+          </li>
+          <li class="sidebar-nav-item disabled">
+            <div class="sidebar-nav-link">
+              <span class="sidebar-icon">⚙</span>
+              <span class="sidebar-text">Jira</span>
+              <span class="sidebar-badge-soon">soon</span>
+            </div>
+          </li>
+          <li class="sidebar-nav-item disabled">
+            <div class="sidebar-nav-link">
+              <span class="sidebar-icon">💬</span>
+              <span class="sidebar-text">Slack</span>
+              <span class="sidebar-badge-soon">soon</span>
+            </div>
+          </li>
+          <li class="sidebar-nav-item disabled">
+            <div class="sidebar-nav-link">
+              <span class="sidebar-icon">📋</span>
+              <span class="sidebar-text">Asana</span>
+              <span class="sidebar-badge-soon">soon</span>
+            </div>
+          </li>
+        </ul>
+        <a href="#" class="sidebar-manage-link">Manage all integrations &rarr;</a>
+      </div>
+
+      <!-- Footer Section -->
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-footer-link">
+          <span class="sidebar-icon">👤</span>
+          <span class="sidebar-text">Account & Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Container -->
+    <div class="app-container">
+      <!-- Compact Editorial Header -->
+      <header class="app-header-compact">
+        <h1 class="brand-title-compact">Kreyō <span>List</span></h1>
+        <div class="user-profile-button" aria-label="User Profile" role="button" tabindex="0">
+          <svg class="profile-avatar-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Pane -->
+      <div class="app-main-scrollable">
+        <!-- Micro-Personalization Greeting Layer -->
+        <div class="recognition-portal-greeting">
+          SELECT YOUR CURATED EXPERIENCE.
+        </div>
+        
+        <!-- Interactive Filter & Sort Mount -->
+        <section aria-label="Directory Filters" id="filter-bar-mount"></section>
+        
+        <!-- Venue Directory Cards Grid Mount -->
+        <main class="venue-grid" id="venue-grid-mount" aria-live="polite"></main>
+        
+        <!-- Detail Modal Mounting Node -->
+        <div id="modal-mount"></div>
+        
+        <!-- Editorial Footer -->
+        <footer class="app-footer">
+          <div class="footer-copy">&copy; 2026 Kreyō List. All rights reserved.</div>
+          <div class="footer-credit">Where alignment meets sanctuary.</div>
+        </footer>
+      </div>
     </div>
-
-    <!-- Interactive Filter & Sort Mount -->
-    <section aria-label="Directory Filters" id="filter-bar-mount"></section>
-
-    <!-- Venue Directory Cards Grid Mount -->
-    <main class="venue-grid" id="venue-grid-mount" aria-live="polite"></main>
-    
-    <!-- Detail Modal Mounting Node -->
-    <div id="modal-mount"></div>
-
-    <!-- Editorial Footer -->
-    <footer class="app-footer">
-      <div class="footer-copy">&copy; 2026 Kreyō List. All rights reserved.</div>
-      <div class="footer-credit">Where alignment meets sanctuary.</div>
-    </footer>
   </div>
 
   <!-- Main Orchestration Script (ES Module) -->
-  <script type="module" src="./js/app.js?v=1.0.8"></script>
+  <script type="module" src="./js/app.js?v=1.0.12"></script>
 </body>
 </html>
