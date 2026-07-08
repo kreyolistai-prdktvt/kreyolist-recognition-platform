@@ -2690,6 +2690,344 @@ body.light-mode .dossier-prompt-wrapper {
   border-color: rgba(0, 0, 0, 0.08);
 }
 
+/* Delegation Modal Overlay (Inside Action Dossier Panel) */
+.dossier-delegation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(9, 9, 9, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  box-sizing: border-box;
+}
+
+.dossier-delegation-overlay.active {
+  transform: translateX(0);
+}
+
+.delegation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.75rem 1rem 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.delegation-title-tag {
+  font-size: 0.68rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--color-accent-ochre);
+}
+
+.delegation-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  padding: 4px;
+}
+
+.delegation-close-btn:hover {
+  color: var(--color-text-primary);
+  transform: scale(1.1);
+}
+
+.delegation-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.delegation-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.delegation-step-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+.delegation-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delegation-field-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.delegation-search-input {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.delegation-search-input:focus {
+  border-color: var(--color-accent-vibrant);
+}
+
+.delegation-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.team-member-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.team-member-card:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.team-member-card.selected {
+  background: rgba(255, 95, 31, 0.06);
+  border-color: rgba(255, 95, 31, 0.3);
+}
+
+.team-member-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent-ochre);
+}
+
+.team-member-card.selected .team-member-avatar {
+  background: var(--color-accent-vibrant);
+  color: #fff;
+  border-color: var(--color-accent-vibrant);
+}
+
+.team-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-member-name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.team-member-role {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+}
+
+/* Platform sync toggles grid */
+.delegation-platform-sync {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sync-platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 6px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.sync-platform-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sync-platform-card.active {
+  background: rgba(255, 95, 31, 0.05);
+  border-color: var(--color-accent-vibrant);
+  color: var(--color-accent-ochre);
+}
+
+.sync-platform-icon {
+  font-size: 1.1rem;
+}
+
+.sync-platform-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.delegation-actions {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.delegation-btn-primary {
+  width: 100%;
+  background: var(--color-accent-vibrant);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.delegation-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-burnt);
+}
+
+.delegation-btn-primary:disabled {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.delegation-actions-split {
+  display: flex;
+  gap: 12px;
+  margin-top: 0.5rem;
+}
+
+.delegation-btn-secondary {
+  flex: 1;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-mid);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.delegation-btn-secondary:hover {
+  color: var(--color-text-primary);
+  border-color: rgba(255, 95, 31, 0.4);
+}
+
+.delegation-textarea {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  padding: 12px;
+  font-size: 0.78rem;
+  outline: none;
+  line-height: 1.5;
+  resize: none;
+  font-family: monospace;
+}
+
+.delegation-textarea:focus {
+  border-color: var(--color-accent-vibrant);
+}
+
+/* Light mode overrides for delegation overlay */
+body.light-mode .dossier-delegation-overlay {
+  background: rgba(247, 247, 250, 0.98);
+}
+
+body.light-mode .delegation-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .delegation-search-input {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .delegation-team-list {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .team-member-card:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-mode .team-member-card.selected {
+  background: rgba(255, 95, 31, 0.08);
+}
+
+body.light-mode .sync-platform-card {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .sync-platform-card:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-mode .sync-platform-card.active {
+  background: rgba(255, 95, 31, 0.08);
+}
+
+body.light-mode .delegation-btn-secondary {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+body.light-mode .delegation-textarea {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
 /* Responsive Overrides */
 @media (max-width: 850px) {
   .homepage-dashboard-wrapper {

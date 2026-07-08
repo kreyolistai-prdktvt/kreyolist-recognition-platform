@@ -749,17 +749,128 @@ function setupDossierHandlers() {
     });
   }
 
-  // 3. Delegate button click listener
-  if (delegateBtn) {
+  // 3. Delegate button click listener (Opens delegation overlay)
+  const delegationOverlay = document.getElementById("dossier-delegation-overlay");
+  const delegationClose = document.getElementById("delegation-close-btn");
+  const searchInput = document.getElementById("delegation-search-input");
+  const nextBtn = document.getElementById("delegation-next-btn");
+  const backBtn = document.getElementById("delegation-back-btn");
+  const confirmBtn = document.getElementById("delegation-confirm-btn");
+  
+  const step1 = document.getElementById("delegation-step-1");
+  const step2 = document.getElementById("delegation-step-2");
+
+  const syncJira = document.getElementById("sync-jira");
+  const syncSlack = document.getElementById("sync-slack");
+  const syncAsana = document.getElementById("sync-asana");
+
+  if (delegateBtn && delegationOverlay) {
     delegateBtn.addEventListener("click", () => {
-      if (activeDossierTaskId) {
-        const task = state.tasks.find(t => t.id === activeDossierTaskId);
-        const name = prompt(`Delegate task "${task?.title}" to:`, "Your Manager");
-        if (name) {
-          alert(`Task delegated to ${name}.`);
-          closeActionDossier();
+      // Open Step 1, reset selections
+      selectedAssignee = null;
+      activeSyncPlatforms = ["jira", "slack"];
+      
+      // Update platform card classes
+      if (syncJira) syncJira.classList.add("active");
+      if (syncSlack) syncSlack.classList.add("active");
+      if (syncAsana) syncAsana.classList.remove("active");
+
+      if (searchInput) searchInput.value = "";
+      if (step1) step1.style.display = "flex";
+      if (step2) step2.style.display = "none";
+      
+      renderTeamDirectory("");
+      delegationOverlay.classList.add("active");
+    });
+  }
+
+  if (delegationClose && delegationOverlay) {
+    delegationClose.addEventListener("click", () => {
+      delegationOverlay.classList.remove("active");
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      renderTeamDirectory(e.target.value);
+    });
+  }
+
+  // Toggles for external platforms helper
+  const setupPlatformToggle = (element, platform) => {
+    if (element) {
+      element.addEventListener("click", () => {
+        const idx = activeSyncPlatforms.indexOf(platform);
+        if (idx > -1) {
+          activeSyncPlatforms.splice(idx, 1);
+          element.classList.remove("active");
+        } else {
+          activeSyncPlatforms.push(platform);
+          element.classList.add("active");
         }
+      });
+    }
+  };
+
+  setupPlatformToggle(syncJira, "jira");
+  setupPlatformToggle(syncSlack, "slack");
+  setupPlatformToggle(syncAsana, "asana");
+
+  // Step 2 compile AI Summary Hand-off Draft
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (!selectedAssignee || !activeDossierTaskId) return;
+
+      const task = state.tasks.find(t => t.id === activeDossierTaskId);
+      const context = dossierMockData[activeDossierTaskId] || {
+        jiraId: "KREY-N/A",
+        dueDate: "No date",
+        emails: [{ sender: "System", time: "Now", subject: "Alert", body: "No further emails found." }]
+      };
+
+      const draft = `[AI Hand-off Draft] Handing over task "${task.title}". 
+The context reveals active dependency requirements related to ticket ${context.jiraId}. 
+The requester (${context.emails[0].sender}) indicated details in recent threads: "${context.emails[0].body.substring(0, 110)}...". 
+Expected due date is ${context.dueDate}. Please coordinate status updates via the designated integration channels.`;
+
+      const summaryText = document.getElementById("delegation-summary-text");
+      if (summaryText) summaryText.value = draft;
+
+      if (step1) step1.style.display = "none";
+      if (step2) step2.style.display = "flex";
+    });
+  }
+
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      if (step1) step1.style.display = "flex";
+      if (step2) step2.style.display = "none";
+    });
+  }
+
+  // Confirm delegation: Syncs simulated MCP platforms and updates task complete status locally
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", () => {
+      if (!selectedAssignee || !activeDossierTaskId) return;
+
+      const task = state.tasks.find(t => t.id === activeDossierTaskId);
+      const summaryText = document.getElementById("delegation-summary-text")?.value || "";
+
+      // Alert describing simulated MCP synchronization
+      alert(`MCP Connection Sync Successful!\n\n` +
+            `- Delegated to: ${selectedAssignee.name} (${selectedAssignee.role})\n` +
+            `- Pushed Endpoints: ${activeSyncPlatforms.map(p => p.toUpperCase()).join(", ") || 'NONE'}\n` +
+            `- Hand-off Summary: "${summaryText.substring(0, 80)}..."`);
+
+      // Complete task
+      if (task) {
+        task.completed = true;
+        renderHomeView();
       }
+
+      // Close drawers
+      if (delegationOverlay) delegationOverlay.classList.remove("active");
+      closeActionDossier();
     });
   }
 
@@ -804,6 +915,60 @@ function setupDossierHandlers() {
         sendDossierQuery();
       }
     });
+  }
+}
+
+// Mock team directory for task delegation
+const teamDirectory = [
+  { id: '1', name: 'Elena Rostova', role: 'Lead Architect', avatar: 'ER' },
+  { id: '2', name: 'Julian Vance', role: 'Senior Analyst', avatar: 'JV' },
+  { id: '3', name: 'Clara Oswald', role: 'Operations Chief', avatar: 'CO' }
+];
+
+let selectedAssignee = null;
+let activeSyncPlatforms = ["jira", "slack"];
+
+/**
+ * Renders the internal team cards dynamically based on search keywords.
+ * @param {string} filterText - Search input filter text.
+ */
+function renderTeamDirectory(filterText = "") {
+  const mount = document.getElementById("delegation-team-mount");
+  const nextBtn = document.getElementById("delegation-next-btn");
+  if (!mount) return;
+
+  mount.innerHTML = "";
+  const filtered = teamDirectory.filter(member => 
+    member.name.toLowerCase().includes(filterText.toLowerCase()) ||
+    member.role.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  filtered.forEach(member => {
+    const isSelected = selectedAssignee && selectedAssignee.id === member.id;
+    const card = document.createElement("div");
+    card.className = `team-member-card ${isSelected ? 'selected' : ''}`;
+    card.innerHTML = `
+      <div class="team-member-avatar">${member.avatar}</div>
+      <div class="team-member-info">
+        <span class="team-member-name">${member.name}</span>
+        <span class="team-member-role">${member.role}</span>
+      </div>
+    `;
+
+    card.addEventListener("click", () => {
+      if (selectedAssignee && selectedAssignee.id === member.id) {
+        selectedAssignee = null;
+      } else {
+        selectedAssignee = member;
+      }
+      renderTeamDirectory(filterText);
+    });
+
+    mount.appendChild(card);
+  });
+
+  if (nextBtn) {
+    nextBtn.disabled = !selectedAssignee;
   }
 }
 
