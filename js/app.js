@@ -238,18 +238,21 @@ function switchTab(tabName) {
   const navRec = document.getElementById("nav-item-recognition");
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
+  const appMain = document.querySelector(".app-main-scrollable");
 
   if (tabName === "home") {
     navHome.classList.add("active");
     navRec.classList.remove("active");
     recView.style.display = "none";
     homeView.style.display = "block";
+    if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else {
     navRec.classList.add("active");
     navHome.classList.remove("active");
     homeView.style.display = "none";
     recView.style.display = "block";
+    if (appMain) appMain.classList.remove("home-active");
     renderGrid();
   }
 }

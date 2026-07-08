@@ -3028,6 +3028,87 @@ body.light-mode .delegation-textarea {
   border-color: rgba(0, 0, 0, 0.08);
 }
 
+/* Independent Scroll Columns Layout - Desktop only */
+@media (min-width: 851px) {
+  .app-main-scrollable.home-active {
+    overflow: hidden;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .homepage-dashboard-wrapper {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .dashboard-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .inbox-panel {
+    flex: 1.1;
+  }
+
+  .execution-panel {
+    flex: 1;
+  }
+
+  .tasks-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .scroll-fade-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Fade gradient to indicate items below fold */
+  .scroll-fade-container::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 35px;
+    background: linear-gradient(to top, var(--color-bg-surface) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 5;
+    transition: background-color 0.3s;
+  }
+
+  .inbox-list, .tasks-list {
+    flex: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    padding-right: 4px;
+  }
+
+  /* Fixed task footer button */
+  .add-task-row {
+    flex-shrink: 0;
+    margin-top: 1rem;
+    border-top: 1px solid var(--color-border-low);
+    padding-top: 1rem;
+  }
+}
+
 /* Responsive Overrides */
 @media (max-width: 850px) {
   .homepage-dashboard-wrapper {
