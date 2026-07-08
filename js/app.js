@@ -258,17 +258,58 @@ function switchTab(tabName) {
  * Renders the Workspace Homepage (Home View).
  */
 function renderHomeView() {
-  const tasksProgressText = document.getElementById("tasks-progress-text");
-  const tasksProgressBarFill = document.getElementById("tasks-progress-bar-fill");
+  const progressPercent = document.getElementById("horizon-progress-percent");
+  const activeFill = document.getElementById("horizon-active-fill");
+  const expectedFill = document.getElementById("horizon-expected-fill");
+  const tooltipExpected = document.getElementById("tooltip-expected-tasks");
+  const tooltipVelocity = document.getElementById("tooltip-velocity-val");
   const tasksListMount = document.getElementById("tasks-list-mount");
+  
+  const milestoneDaily = document.getElementById("milestone-daily");
+  const milestoneWeekly = document.getElementById("milestone-weekly");
+  const milestoneMonthly = document.getElementById("milestone-monthly");
 
-  if (!tasksProgressText || !tasksProgressBarFill || !tasksListMount) return;
+  if (!tasksListMount) return;
 
   const total = state.tasks.length;
   const completedCount = state.tasks.filter(t => t.completed).length;
 
-  tasksProgressText.textContent = `${completedCount} of ${total} complete`;
-  tasksProgressBarFill.style.width = total > 0 ? `${(completedCount / total) * 100}%` : "0%";
+  // 1. Calculate progression percentage
+  const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  if (progressPercent) progressPercent.textContent = `${percent}%`;
+  if (activeFill) activeFill.style.width = `${percent}%`;
+
+  // 2. Expected target baseline details
+  const expectedRate = 60; // 3 of 5 baseline target
+  const expectedCompletions = Math.round(total * (expectedRate / 100));
+  if (expectedFill) expectedFill.style.width = `${expectedRate}%`;
+  if (tooltipExpected) tooltipExpected.textContent = `${expectedCompletions} of ${total} (${expectedRate}%)`;
+
+  // 3. Compute current velocity difference
+  const velocityDiff = percent - expectedRate;
+  if (tooltipVelocity) {
+    if (velocityDiff >= 0) {
+      tooltipVelocity.textContent = `+${velocityDiff}% expected`;
+      tooltipVelocity.className = "metric-val text-gold";
+    } else {
+      tooltipVelocity.textContent = `${velocityDiff}% expected`;
+      tooltipVelocity.className = "metric-val";
+    }
+  }
+
+  // 4. Milestone dots achieved class highlights
+  if (milestoneDaily) {
+    if (percent >= 20) milestoneDaily.classList.add("achieved");
+    else milestoneDaily.classList.remove("achieved");
+  }
+  if (milestoneWeekly) {
+    if (percent >= 60) milestoneWeekly.classList.add("achieved");
+    else milestoneWeekly.classList.remove("achieved");
+  }
+  if (milestoneMonthly) {
+    if (percent >= 90) milestoneMonthly.classList.add("achieved");
+    else milestoneMonthly.classList.remove("achieved");
+  }
 
   tasksListMount.innerHTML = "";
   state.tasks.forEach(task => {

@@ -1835,34 +1835,192 @@ body.light-mode .dropdown-select {
   padding-bottom: 1rem;
 }
 
-.tasks-progress-wrapper {
+/* Horizon View Goal Progression Tracker */
+.horizon-tracker-wrapper {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+  width: 180px;
+  cursor: pointer;
 }
 
-.tasks-progress-text {
+.horizon-tracker-meta {
+  display: flex;
+  justify-between: space-between;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.horizon-tracker-label {
+  font-size: 0.65rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-muted);
+}
+
+.horizon-tracker-percent {
   font-size: 0.72rem;
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 600;
+  color: var(--color-accent-ochre);
+  letter-spacing: 0.5px;
+}
+
+.horizon-track-container {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 2px;
+  overflow: visible;
+}
+
+.horizon-expected-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(204, 119, 34, 0.18);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.horizon-active-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-ochre) 0%, var(--color-accent-vibrant) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255, 95, 31, 0.4);
+  transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.horizon-milestones {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  margin-top: -2px;
+}
+
+.milestone-marker {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+.milestone-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--color-text-muted);
+  border-radius: 50%;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.milestone-marker.achieved .milestone-dot {
+  background-color: var(--color-accent-vibrant);
+  box-shadow: 0 0 6px var(--color-accent-vibrant);
+}
+
+.milestone-tick {
+  width: 1px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-top: 2px;
+}
+
+.horizon-tooltip {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  right: 0;
+  width: 220px;
+  background: rgba(14, 14, 14, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.85rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 95, 31, 0.02);
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.horizon-tracker-wrapper:hover .horizon-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tooltip-header {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-accent-ochre);
   text-transform: uppercase;
   letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.tooltip-metric {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
   color: var(--color-text-secondary);
 }
 
-.tasks-progress-bar-track {
-  width: 80px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 2px;
-  overflow: hidden;
+.metric-val {
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
-.tasks-progress-bar-fill {
-  height: 100%;
-  background: var(--color-accent-vibrant);
-  box-shadow: 0 0 8px var(--color-accent-vibrant);
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.metric-val.text-gold {
+  color: var(--color-accent-vibrant);
+}
+
+.tooltip-footer {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 4px;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* Light mode overrides for Horizon View */
+body.light-mode .horizon-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 0 15px rgba(255, 95, 31, 0.01);
+}
+
+body.light-mode .horizon-track-container {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .horizon-expected-track {
+  background: rgba(204, 119, 34, 0.15);
+}
+
+body.light-mode .tooltip-header {
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .tooltip-footer {
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 .tasks-list {
