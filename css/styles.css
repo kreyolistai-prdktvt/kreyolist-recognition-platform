@@ -3263,3 +3263,20 @@ body.light-mode .delegation-textarea {
     gap: 2rem;
   }
 }
+
+/* Scroll isolation utility classes */
+.h-\[calc\(100vh-200px\)\] {
+  height: calc(100vh - 200px) !important;
+}
+.flex-1 {
+  flex: 1 1 0% !important;
+}
+.overflow-y-auto {
+  overflow-y: auto !important;
+}
+.min-h-0 {
+  min-height: 0 !important;
+}
+.scrollbar-thin {
+  scrollbar-width: thin !important;
+}
