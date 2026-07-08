@@ -1,8 +1,8 @@
-import { venues } from "./data.js?v=1.0.12";
-import { createFilterBar } from "./components/FilterBar.js?v=1.0.12";
-import { createVenueCard } from "./components/VenueCard.js?v=1.0.12";
-import { createDetailModal } from "./components/DetailModal.js?v=1.0.12";
-import { loadEnv } from "./env.js?v=1.0.12";
+import { venues } from "./data.js?v=1.0.13";
+import { createFilterBar } from "./components/FilterBar.js?v=1.0.13";
+import { createVenueCard } from "./components/VenueCard.js?v=1.0.13";
+import { createDetailModal } from "./components/DetailModal.js?v=1.0.13";
+import { loadEnv } from "./env.js?v=1.0.13";
 
 // Global App State
 const state = {
@@ -10,7 +10,15 @@ const state = {
   activeSort: "featured",
   openVenue: null,
   modalElement: null,
-  firebaseConfigured: false
+  firebaseConfigured: false,
+  activeTab: "recognition", // default active tab
+  tasks: [
+    { id: 1, title: "Review Q2 planning notes", priority: "normal", completed: false },
+    { id: 2, title: "Submit field trip form", priority: "high", completed: false },
+    { id: 3, title: "Pay pending billing invoices", priority: "low", completed: false },
+    { id: 4, title: "Finalize API architecture decision", priority: "high", completed: false },
+    { id: 5, title: "Confirm networking event RSVP", priority: "normal", completed: false }
+  ]
 };
 
 // DOM Cache
@@ -49,6 +57,13 @@ async function init() {
   } catch (error) {
     console.warn("[KreyoList] Firebase SDK failed to load. Running in local fallback mode.", error);
   }
+
+  // Set up SPA tabs and dashboard modules
+  setupTabNavigation();
+  setupTasksHandlers();
+  setupAssistantHandlers();
+  setupSidebarToggle();
+  setupProfileDropdown();
 
   // Render initial interface
   renderFilterBar();
@@ -187,6 +202,251 @@ function renderModal() {
     }, getAssetUrlFn);
     
     dom.modalContainer.appendChild(state.modalElement);
+  }
+}
+
+/**
+ * Sets up the SPA tab navigation listeners.
+ */
+function setupTabNavigation() {
+  const navHome = document.getElementById("nav-item-home");
+  const navRec = document.getElementById("nav-item-recognition");
+
+  if (navHome && navRec) {
+    navHome.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchTab("home");
+    });
+
+    navRec.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchTab("recognition");
+    });
+  }
+}
+
+/**
+ * Switches the active tab view.
+ * @param {string} tabName - The name of the tab to switch to.
+ */
+function switchTab(tabName) {
+  if (state.activeTab === tabName) return;
+  state.activeTab = tabName;
+
+  const navHome = document.getElementById("nav-item-home");
+  const navRec = document.getElementById("nav-item-recognition");
+  const homeView = document.getElementById("home-view");
+  const recView = document.getElementById("recognition-view");
+
+  if (tabName === "home") {
+    navHome.classList.add("active");
+    navRec.classList.remove("active");
+    recView.style.display = "none";
+    homeView.style.display = "block";
+    renderHomeView();
+  } else {
+    navRec.classList.add("active");
+    navHome.classList.remove("active");
+    homeView.style.display = "none";
+    recView.style.display = "block";
+    renderGrid();
+  }
+}
+
+/**
+ * Renders the Workspace Homepage (Home View).
+ */
+function renderHomeView() {
+  const tasksProgressText = document.getElementById("tasks-progress-text");
+  const tasksProgressBarFill = document.getElementById("tasks-progress-bar-fill");
+  const tasksListMount = document.getElementById("tasks-list-mount");
+
+  if (!tasksProgressText || !tasksProgressBarFill || !tasksListMount) return;
+
+  const total = state.tasks.length;
+  const completedCount = state.tasks.filter(t => t.completed).length;
+
+  tasksProgressText.textContent = `${completedCount} of ${total} complete`;
+  tasksProgressBarFill.style.width = total > 0 ? `${(completedCount / total) * 100}%` : "0%";
+
+  tasksListMount.innerHTML = "";
+  state.tasks.forEach(task => {
+    const li = document.createElement("li");
+    li.className = `task-row priority-${task.priority} ${task.completed ? "completed" : ""}`;
+    li.innerHTML = `
+      <div class="task-radio-target" role="checkbox" aria-checked="${task.completed}" tabindex="0">
+        <span class="radio-circle"></span>
+      </div>
+      <div class="task-info">
+        <span class="task-title">${task.title}</span>
+        <span class="priority-tag">${task.priority}</span>
+      </div>
+    `;
+
+    li.querySelector(".task-radio-target").addEventListener("click", () => {
+      task.completed = !task.completed;
+      renderHomeView();
+    });
+
+    tasksListMount.appendChild(li);
+  });
+}
+
+/**
+ * Sets up event handlers for Tasks management.
+ */
+function setupTasksHandlers() {
+  const trigger = document.getElementById("add-task-trigger");
+  const wrapper = document.getElementById("add-task-input-wrapper");
+  const cancel = document.getElementById("new-task-cancel");
+  const submit = document.getElementById("new-task-submit");
+  const newTitle = document.getElementById("new-task-title");
+  const newPriority = document.getElementById("new-task-priority");
+
+  if (!trigger || !wrapper || !cancel || !submit || !newTitle || !newPriority) return;
+
+  trigger.addEventListener("click", () => {
+    trigger.style.display = "none";
+    wrapper.style.display = "flex";
+    newTitle.focus();
+  });
+
+  const closeForm = () => {
+    newTitle.value = "";
+    newPriority.value = "normal";
+    wrapper.style.display = "none";
+    trigger.style.display = "flex";
+  };
+
+  cancel.addEventListener("click", closeForm);
+
+  submit.addEventListener("click", () => {
+    const titleVal = newTitle.value.trim();
+    if (!titleVal) return;
+
+    const newTask = {
+      id: Date.now(),
+      title: titleVal,
+      priority: newPriority.value,
+      completed: false
+    };
+
+    state.tasks.push(newTask);
+    closeForm();
+    renderHomeView();
+  });
+}
+
+/**
+ * Sets up event handlers for the Assistant panel drawer.
+ */
+function setupAssistantHandlers() {
+  const toggleBtn = document.getElementById("assistant-toggle-btn");
+  const assistantBody = document.getElementById("assistant-body");
+
+  if (!toggleBtn || !assistantBody) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = assistantBody.style.display === "block";
+    if (isOpen) {
+      assistantBody.style.display = "none";
+      toggleBtn.textContent = "Open ^";
+    } else {
+      assistantBody.style.display = "block";
+      toggleBtn.textContent = "Close v";
+    }
+  });
+}
+
+/**
+ * Sets up event handlers and persistence for the Collapsible Sidebar.
+ */
+function setupSidebarToggle() {
+  const sidebar = document.getElementById("workspace-sidebar");
+  const toggleBtn = document.getElementById("sidebar-toggle");
+  
+  if (!sidebar || !toggleBtn) return;
+  
+  // Restore user preference
+  const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+  if (isCollapsed) {
+    sidebar.classList.add("collapsed");
+  }
+  
+  toggleBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const collapsed = sidebar.classList.toggle("collapsed");
+    localStorage.setItem("sidebar-collapsed", collapsed);
+  });
+}
+
+/**
+ * Sets up event handlers and preferences for the Profile Dropdown Menu.
+ */
+function setupProfileDropdown() {
+  const profileBtn = document.getElementById("user-profile-btn");
+  const dropdownMenu = document.getElementById("profile-dropdown-menu");
+  const themeToggle = document.getElementById("theme-mode-toggle");
+  const regionSelect = document.getElementById("dropdown-region-select");
+  const logoutTrigger = document.getElementById("logout-trigger");
+
+  if (!profileBtn || !dropdownMenu) return;
+
+  // 1. Toggle visibility on profile click
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle("active");
+  });
+
+  // 2. Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!dropdownMenu.contains(e.target) && e.target !== profileBtn && !profileBtn.contains(e.target)) {
+      dropdownMenu.classList.remove("active");
+    }
+  });
+
+  // 3. Theme mode persistence & toggle
+  const savedTheme = localStorage.getItem("theme-mode") || "dark";
+  if (savedTheme === "light") {
+    document.body.classList.add("light-mode");
+    if (themeToggle) themeToggle.checked = false; // toggle checkbox is checked for dark mode
+  } else {
+    document.body.classList.remove("light-mode");
+    if (themeToggle) themeToggle.checked = true;
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener("change", () => {
+      if (themeToggle.checked) {
+        document.body.classList.remove("light-mode");
+        localStorage.setItem("theme-mode", "dark");
+      } else {
+        document.body.classList.add("light-mode");
+        localStorage.setItem("theme-mode", "light");
+      }
+    });
+  }
+
+  // 4. Region Selector persistence & handler
+  const savedRegion = localStorage.getItem("user-region") || "boston";
+  if (regionSelect) {
+    regionSelect.value = savedRegion;
+    regionSelect.addEventListener("change", () => {
+      localStorage.setItem("user-region", regionSelect.value);
+      console.log(`[KreyoList] User region set to: ${regionSelect.value}`);
+    });
+  }
+
+  // 5. Logout handler
+  if (logoutTrigger) {
+    logoutTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      const confirmLogout = confirm("Are you sure you want to log out of Kreyō List?");
+      if (confirmLogout) {
+        alert("Logging out... Redirecting to guest view.");
+        window.location.reload();
+      }
+    });
   }
 }
 
