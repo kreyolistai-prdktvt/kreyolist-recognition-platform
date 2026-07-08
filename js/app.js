@@ -11,7 +11,7 @@ const state = {
   openVenue: null,
   modalElement: null,
   firebaseConfigured: false,
-  activeTab: "recognition", // default active tab
+  activeTab: "home", // default active tab
   tasks: [
     { id: 1, title: "Review Q2 planning notes", priority: "normal", completed: false },
     { id: 2, title: "Submit field trip form", priority: "high", completed: false },
@@ -70,6 +70,11 @@ async function init() {
   // Render initial interface
   renderFilterBar();
   renderGrid();
+  
+  // Initialize default Home View layout and scroll states
+  const appMain = document.querySelector(".app-main-scrollable");
+  if (appMain) appMain.classList.add("home-active");
+  renderHomeView();
 }
 
 /**
