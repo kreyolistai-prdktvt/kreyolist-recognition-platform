@@ -388,6 +388,17 @@ function setupTasksHandlers() {
     state.tasks.push(newTask);
     closeForm();
     renderHomeView();
+
+    // Scroll task list to bottom smoothly
+    const tasksList = document.querySelector(".tasks-list");
+    if (tasksList) {
+      setTimeout(() => {
+        tasksList.scrollTo({
+          top: tasksList.scrollHeight,
+          behavior: "smooth"
+        });
+      }, 50);
+    }
   });
 }
 
