@@ -12,12 +12,26 @@ const state = {
   modalElement: null,
   firebaseConfigured: false,
   activeTab: "home", // default active tab
+  inbox: [
+    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true },
+    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true },
+    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true },
+    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true },
+    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false },
+    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false },
+    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false }
+  ],
   tasks: [
-    { id: 1, title: "Review Q2 planning notes", priority: "normal", completed: false },
-    { id: 2, title: "Submit field trip form", priority: "high", completed: false },
-    { id: 3, title: "Pay pending billing invoices", priority: "low", completed: false },
-    { id: 4, title: "Finalize API architecture decision", priority: "high", completed: false },
-    { id: 5, title: "Confirm networking event RSVP", priority: "normal", completed: false }
+    { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false },
+    { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false },
+    { id: 3, title: "Replace motherboard and re-image developer laptop", priority: "normal", completed: false },
+    { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false },
+    { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false },
+    { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false },
+    { id: 7, title: "Update laptop hardware asset inventory log for Unit-B", priority: "low", completed: false },
+    { id: 8, title: "Verify daily backups across enterprise storage clusters", priority: "high", completed: false },
+    { id: 9, title: "Run patch updates on staging environment firewall rules", priority: "normal", completed: false },
+    { id: 10, title: "Audit root user access logs for Q2 infrastructure compliance", priority: "normal", completed: false }
   ]
 };
 
@@ -350,6 +364,43 @@ function renderHomeView() {
 
     tasksListMount.appendChild(li);
   });
+
+  // 5. Render Inbox list dynamically
+  const inboxListMount = document.querySelector(".inbox-list");
+  const unreadIndicator = document.querySelector(".unread-indicator");
+  if (inboxListMount) {
+    inboxListMount.innerHTML = "";
+    
+    // Count unread items
+    const unreadCount = state.inbox.filter(item => item.unread).length;
+    if (unreadIndicator) {
+      unreadIndicator.textContent = `${unreadCount} unread`;
+    }
+    
+    state.inbox.forEach(item => {
+      const li = document.createElement("li");
+      li.className = `inbox-item ${item.unread ? 'unread' : ''}`;
+      li.innerHTML = `
+        <div class="sender-avatar">${item.avatar}</div>
+        <div class="inbox-item-content">
+          <div class="inbox-item-sender">${item.sender}</div>
+          <div class="inbox-item-subject">${item.subject}</div>
+        </div>
+        <div class="inbox-item-meta">
+          <span class="inbox-item-time">${item.time}</span>
+          <span class="chevron-arrow">&rsaquo;</span>
+        </div>
+      `;
+      
+      // Toggle unread state on click
+      li.addEventListener("click", () => {
+        item.unread = false;
+        renderHomeView();
+      });
+      
+      inboxListMount.appendChild(li);
+    });
+  }
   
   if (window.checkAssistantFabState) {
     window.checkAssistantFabState();
@@ -561,99 +612,177 @@ const dossierMockData = {
     dueDate: "Due July 10",
     emails: [
       {
-        sender: "Your Manager",
-        time: "10:42 AM",
-        subject: "Re: Q2 Planning & Objectives",
-        body: "Alex, I attached the initial spreadsheet for the budget draft. Please check if the API costs match the integration specs before we commit on Friday."
+        sender: "Jena Charles",
+        time: "8:14 AM",
+        subject: "LOCKED OUT: Please unlock account ASAP",
+        body: "Hi HelpDesk, I've been locked out of my Active Directory domain account after typing my password wrong three times. Please unlock it ASAP, I need to access the client database for Q2 audit. Thanks!"
       }
     ],
     attachments: [
-      { name: "q2_budget_draft.xlsx", size: "2.4 MB • Excel Document", linkText: "View" },
-      { name: "KreyoList Curation API Spec", size: "Swagger v2.0 • API Reference", linkText: "Open Spec" }
+      { name: "ad_unlock_request_log.txt", size: "1.2 KB • Text Log", linkText: "View Logs" }
     ],
-    jiraId: "KREY-4820",
-    jiraStatus: "In Progress",
-    jiraStatusClass: "badge-in-progress",
-    jiraDeps: "Blocked by KREY-4819 (Database Migrations)"
-  },
-  2: {
-    platform: "Outlook",
-    platformIcon: "📅",
-    dueDate: "Due July 12",
-    emails: [
-      {
-        sender: "School Office",
-        time: "9:15 AM",
-        subject: "Action Required: Field Trip Forms",
-        body: "Dear parents, please return the signed permission slip for the upcoming educational retreat to Verdant Canopy by the end of this week."
-      }
-    ],
-    attachments: [
-      { name: "field_trip_permission_slip.pdf", size: "840 KB • PDF Document", linkText: "Download" }
-    ],
-    jiraId: "KREY-1082",
+    jiraId: "SYS-9012",
     jiraStatus: "To Do",
     jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  2: {
+    platform: "Gmail",
+    platformIcon: "✉",
+    dueDate: "Due July 10",
+    emails: [
+      {
+        sender: "Security Operations Center",
+        time: "7:45 AM",
+        subject: "CRITICAL: Unrecognized ssh attempts on production server",
+        body: "Alert: Multiple failed SSH attempts detected from IP 192.168.1.104 attempting to access root on prod-server-01. Please investigate auth logs and secure compliance status."
+      }
+    ],
+    attachments: [
+      { name: "auth_failure_report.log", size: "242 KB • Log File", linkText: "Open Report" }
+    ],
+    jiraId: "SEC-3401",
+    jiraStatus: "In Progress",
+    jiraStatusClass: "badge-in-progress",
     jiraDeps: "None"
   },
   3: {
     platform: "Gmail",
     platformIcon: "✉",
+    dueDate: "Due July 12",
+    emails: [
+      {
+        sender: "Marcus Vance",
+        time: "Yesterday",
+        subject: "Motherboard replacement parts have arrived for dev laptop",
+        body: "The replacement parts for the Lenovo developer workstation have been delivered. Let me know when you can perform the motherboard swap and rebuild the standard OS image."
+      }
+    ],
+    attachments: [
+      { name: "parts_delivery_receipt.pdf", size: "1.1 MB • PDF Document", linkText: "Open PDF" }
+    ],
+    jiraId: "HW-1205",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  4: {
+    platform: "Gmail",
+    platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
       {
-        sender: "Billing Team",
+        sender: "HR Onboarding",
         time: "Yesterday",
-        subject: "Invoice #INV-29381 Available",
-        body: "The monthly invoice for corporate integrations has been generated. Please verify the line items and process payment through the finance portal."
+        subject: "Password reset required for new remote engineer",
+        body: "Hi, please create a new user profile, configure corporate SSH keys, and email temporary credentials to our new remote engineering hire who starts on Monday."
       }
     ],
     attachments: [
-      { name: "kreyolist_billing_invoice_oct.pdf", size: "1.2 MB • PDF Document", linkText: "Open PDF" }
+      { name: "onboarding_checklist.pdf", size: "520 KB • PDF Document", linkText: "View PDF" }
     ],
-    jiraId: "KREY-9382",
-    jiraStatus: "In Review",
-    jiraStatusClass: "badge-in-progress",
-    jiraDeps: "Requires Finance approval"
+    jiraId: "SYS-9110",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
   },
-  4: {
-    platform: "Slack",
-    platformIcon: "💬",
+  5: {
+    platform: "Gmail",
+    platformIcon: "✉",
+    dueDate: "Due July 15",
+    emails: [
+      {
+        sender: "Datadog Alerts",
+        time: "Oct 12",
+        subject: "WARNING: CPU spike on staging database server",
+        body: "Trigger: CPU usage exceeded 85% on db-staging-02. Please review current query execution plans, check locking queries, and optimize active logs."
+      }
+    ],
+    attachments: [
+      { name: "datadog_cpu_metrics.png", size: "880 KB • PNG Image", linkText: "View Image" }
+    ],
+    jiraId: "DB-7729",
+    jiraStatus: "In Progress",
+    jiraStatusClass: "badge-in-progress",
+    jiraDeps: "None"
+  },
+  6: {
+    platform: "Gmail",
+    platformIcon: "✉",
     dueDate: "Due July 18",
     emails: [
       {
-        sender: "Alex",
+        sender: "HelpDesk Escalation",
         time: "Oct 12",
-        subject: "#api-decisions discussions",
-        body: "I summarized our tech stack discussions about GraphQL vs REST. We need to lock in this decision to proceed with the core dashboard hooks."
+        subject: "Account unlock request: VIP Sales Director",
+        body: "Hi, our VIP Sales Director is locked out of Salesforce and needs immediate AD override. Secondary authorization is attached. Please process ASAP."
       }
     ],
     attachments: [
-      { name: "api_architecture_proposal.md", size: "12 KB • Markdown Document", linkText: "Read Proposal" }
+      { name: "secondary_auth_signature.pdf", size: "340 KB • PDF Document", linkText: "Open PDF" }
     ],
-    jiraId: "KREY-2940",
+    jiraId: "SYS-9022",
     jiraStatus: "In Progress",
     jiraStatusClass: "badge-in-progress",
-    jiraDeps: "Blocked by Tech Lead review"
+    jiraDeps: "None"
   },
-  5: {
-    platform: "Outlook",
-    platformIcon: "📅",
+  7: {
+    platform: "Gmail",
+    platformIcon: "✉",
     dueDate: "Due July 20",
     emails: [
       {
-        sender: "Events Team",
+        sender: "Laptop Provisioning",
         time: "Oct 10",
-        subject: "Executive Networking Agenda",
-        body: "Thank you for expressing interest in the fall networking session. Please confirm your RSVP status and select your dietary preferences."
+        subject: "Hardware diagnostics check complete for Unit-B",
+        body: "Diagnostics run on Unit-B complete. Memory test passed, drive check passed. Please log this completion in the asset inventory system."
       }
     ],
     attachments: [
-      { name: "networking_event_agenda.pdf", size: "450 KB • PDF Document", linkText: "View Agenda" }
+      { name: "unit_b_diagnostic_report.txt", size: "14 KB • Text Report", linkText: "Read Report" }
     ],
-    jiraId: "KREY-4491",
+    jiraId: "HW-1218",
     jiraStatus: "Done",
     jiraStatusClass: "badge-done",
+    jiraDeps: "None"
+  },
+  8: {
+    platform: "Internal System",
+    platformIcon: "⚙",
+    dueDate: "Due Today",
+    emails: [],
+    attachments: [
+      { name: "backup_verification_checklist.pdf", size: "45 KB • PDF Document", linkText: "Open PDF" }
+    ],
+    jiraId: "SYS-4811",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  9: {
+    platform: "Internal System",
+    platformIcon: "⚙",
+    dueDate: "Due Oct 15",
+    emails: [],
+    attachments: [
+      { name: "firewall_rules_diff.txt", size: "12 KB • Diff File", linkText: "View Diff" }
+    ],
+    jiraId: "SEC-4802",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  10: {
+    platform: "Compliance System",
+    platformIcon: "⚙",
+    dueDate: "Due Oct 20",
+    emails: [],
+    attachments: [
+      { name: "compliance_requirements_q2.xlsx", size: "1.4 MB • Excel Document", linkText: "Open Sheet" }
+    ],
+    jiraId: "COMP-8812",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
     jiraDeps: "None"
   }
 };
