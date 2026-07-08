@@ -3280,3 +3280,18 @@ body.light-mode .delegation-textarea {
 .scrollbar-thin {
   scrollbar-width: thin !important;
 }
+
+/* Sidebar bottom section layout */
+.sidebar-bottom-section {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border-low);
+  padding-top: 1.5rem;
+}
+.sidebar-bottom-section .sidebar-footer {
+  margin-top: 0.5rem;
+  border-top: none;
+  padding-top: 0;
+}
+#workspace-sidebar.collapsed .sidebar-bottom-section .sidebar-footer {
+  padding-top: 0.5rem;
+}
