@@ -23,7 +23,7 @@
   <meta property="twitter:image" content="./assets/employee_appreciation_bg.jpg">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./css/styles.css?v=1.0.23">
+  <link rel="stylesheet" href="./css/styles.css?v=1.0.24">
   
   <!-- Favicon placeholder -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
@@ -48,14 +48,14 @@
       <nav class="sidebar-section">
         <div class="sidebar-section-header">WORKSPACE</div>
         <ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item" id="nav-item-home">
+          <li class="sidebar-nav-item active" id="nav-item-home">
             <a href="#" class="sidebar-nav-link">
               <span class="sidebar-icon">✦</span>
               <span class="sidebar-text">Home</span>
               <span class="sidebar-badge">10</span>
             </a>
           </li>
-          <li class="sidebar-nav-item active" id="nav-item-recognition">
+          <li class="sidebar-nav-item" id="nav-item-recognition">
             <a href="#" class="sidebar-nav-link">
               <span class="sidebar-icon">⚲</span>
               <span class="sidebar-text">Recognition</span>
@@ -221,7 +221,7 @@
       <!-- Scrollable Content Pane -->
       <div class="app-main-scrollable">
         <!-- Recognition View -->
-        <div id="recognition-view">
+        <div id="recognition-view" style="display: none;">
           <!-- Micro-Personalization Greeting Layer -->
           <div class="recognition-portal-greeting">
             SELECT YOUR CURATED EXPERIENCE.
@@ -235,7 +235,7 @@
         </div>
 
         <!-- Home View -->
-        <div id="home-view" style="display: none;">
+        <div id="home-view">
           <div class="homepage-dashboard-wrapper">
             <!-- Left Column: Inbox Panel -->
             <section class="dashboard-panel inbox-panel">
@@ -536,6 +536,6 @@
   </div>
 
   <!-- Main Orchestration Script (ES Module) -->
-  <script type="module" src="./js/app.js?v=1.0.23"></script>
+  <script type="module" src="./js/app.js?v=1.0.24"></script>
 </body>
 </html>
