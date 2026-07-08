@@ -64,6 +64,7 @@ async function init() {
   setupAssistantHandlers();
   setupSidebarToggle();
   setupProfileDropdown();
+  setupDossierHandlers();
 
   // Render initial interface
   renderFilterBar();
@@ -283,9 +284,18 @@ function renderHomeView() {
       </div>
     `;
 
-    li.querySelector(".task-radio-target").addEventListener("click", () => {
+    li.querySelector(".task-radio-target").addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent opening dossier panel
       task.completed = !task.completed;
       renderHomeView();
+      // If active task is checked completed, close dossier
+      if (activeDossierTaskId === task.id) {
+        closeActionDossier();
+      }
+    });
+
+    li.querySelector(".task-info").addEventListener("click", () => {
+      openActionDossier(task);
     });
 
     tasksListMount.appendChild(li);
@@ -445,6 +455,312 @@ function setupProfileDropdown() {
       if (confirmLogout) {
         alert("Logging out... Redirecting to guest view.");
         window.location.reload();
+      }
+    });
+  }
+}
+
+// Active task ID in dossier side panel
+let activeDossierTaskId = null;
+
+// Mock context dossier data for KreyoList tasks (Gmail/Outlook MCP, Attachments, Jira tickets)
+const dossierMockData = {
+  1: {
+    platform: "Gmail",
+    platformIcon: "✉",
+    dueDate: "Due July 10",
+    emails: [
+      {
+        sender: "Your Manager",
+        time: "10:42 AM",
+        subject: "Re: Q2 Planning & Objectives",
+        body: "Alex, I attached the initial spreadsheet for the budget draft. Please check if the API costs match the integration specs before we commit on Friday."
+      }
+    ],
+    attachments: [
+      { name: "q2_budget_draft.xlsx", size: "2.4 MB • Excel Document", linkText: "View" },
+      { name: "KreyoList Curation API Spec", size: "Swagger v2.0 • API Reference", linkText: "Open Spec" }
+    ],
+    jiraId: "KREY-4820",
+    jiraStatus: "In Progress",
+    jiraStatusClass: "badge-in-progress",
+    jiraDeps: "Blocked by KREY-4819 (Database Migrations)"
+  },
+  2: {
+    platform: "Outlook",
+    platformIcon: "📅",
+    dueDate: "Due July 12",
+    emails: [
+      {
+        sender: "School Office",
+        time: "9:15 AM",
+        subject: "Action Required: Field Trip Forms",
+        body: "Dear parents, please return the signed permission slip for the upcoming educational retreat to Verdant Canopy by the end of this week."
+      }
+    ],
+    attachments: [
+      { name: "field_trip_permission_slip.pdf", size: "840 KB • PDF Document", linkText: "Download" }
+    ],
+    jiraId: "KREY-1082",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  3: {
+    platform: "Gmail",
+    platformIcon: "✉",
+    dueDate: "Due July 15",
+    emails: [
+      {
+        sender: "Billing Team",
+        time: "Yesterday",
+        subject: "Invoice #INV-29381 Available",
+        body: "The monthly invoice for corporate integrations has been generated. Please verify the line items and process payment through the finance portal."
+      }
+    ],
+    attachments: [
+      { name: "kreyolist_billing_invoice_oct.pdf", size: "1.2 MB • PDF Document", linkText: "Open PDF" }
+    ],
+    jiraId: "KREY-9382",
+    jiraStatus: "In Review",
+    jiraStatusClass: "badge-in-progress",
+    jiraDeps: "Requires Finance approval"
+  },
+  4: {
+    platform: "Slack",
+    platformIcon: "💬",
+    dueDate: "Due July 18",
+    emails: [
+      {
+        sender: "Alex",
+        time: "Oct 12",
+        subject: "#api-decisions discussions",
+        body: "I summarized our tech stack discussions about GraphQL vs REST. We need to lock in this decision to proceed with the core dashboard hooks."
+      }
+    ],
+    attachments: [
+      { name: "api_architecture_proposal.md", size: "12 KB • Markdown Document", linkText: "Read Proposal" }
+    ],
+    jiraId: "KREY-2940",
+    jiraStatus: "In Progress",
+    jiraStatusClass: "badge-in-progress",
+    jiraDeps: "Blocked by Tech Lead review"
+  },
+  5: {
+    platform: "Outlook",
+    platformIcon: "📅",
+    dueDate: "Due July 20",
+    emails: [
+      {
+        sender: "Events Team",
+        time: "Oct 10",
+        subject: "Executive Networking Agenda",
+        body: "Thank you for expressing interest in the fall networking session. Please confirm your RSVP status and select your dietary preferences."
+      }
+    ],
+    attachments: [
+      { name: "networking_event_agenda.pdf", size: "450 KB • PDF Document", linkText: "View Agenda" }
+    ],
+    jiraId: "KREY-4491",
+    jiraStatus: "Done",
+    jiraStatusClass: "badge-done",
+    jiraDeps: "None"
+  }
+};
+
+/**
+ * Opens the Action Dossier panel and populates it with task context data.
+ * @param {Object} task - The selected task object.
+ */
+function openActionDossier(task) {
+  const panel = document.getElementById("action-dossier-panel");
+  const title = document.getElementById("dossier-task-title");
+  const priority = document.getElementById("dossier-priority");
+  const platform = document.getElementById("dossier-platform");
+  const dueDate = document.getElementById("dossier-due-date");
+  const emailsBox = document.getElementById("dossier-block-emails");
+  const attachmentsBox = document.getElementById("dossier-block-attachments");
+  const statusBox = document.getElementById("dossier-block-status");
+
+  if (!panel || !title) return;
+
+  activeDossierTaskId = task.id;
+
+  // 1. Title & priority badge
+  title.textContent = task.title;
+  priority.className = `dossier-badge priority-${task.priority}`;
+  priority.textContent = `${task.priority} Priority`;
+
+  // 2. Fetch context information
+  const context = dossierMockData[task.id] || {
+    platform: "Workspace",
+    platformIcon: "✦",
+    dueDate: "No due date",
+    emails: [{ sender: "System", time: "Now", subject: "Dossier initialized", body: "No records found." }],
+    attachments: [],
+    jiraId: "KREY-N/A",
+    jiraStatus: "Open",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  };
+
+  platform.innerHTML = `<span class="platform-icon">${context.platformIcon}</span> ${context.platform}`;
+  dueDate.textContent = context.dueDate;
+
+  // 3. Render Blocks
+  emailsBox.innerHTML = "";
+  context.emails.forEach(email => {
+    const div = document.createElement("div");
+    div.className = "email-snippet";
+    div.innerHTML = `
+      <div class="email-meta">
+        <span class="email-sender">${email.sender}</span>
+        <span class="email-time">${email.time}</span>
+      </div>
+      <div class="email-subject">${email.subject}</div>
+      <p class="email-body">${email.body}</p>
+    `;
+    emailsBox.appendChild(div);
+  });
+
+  attachmentsBox.innerHTML = "";
+  if (context.attachments.length === 0) {
+    attachmentsBox.innerHTML = `<div style="font-size:0.75rem;color:var(--color-text-muted);">No linked attachments.</div>`;
+  } else {
+    context.attachments.forEach(doc => {
+      const div = document.createElement("div");
+      div.className = "attachment-preview-card";
+      div.innerHTML = `
+        <span class="doc-icon">${doc.name.endsWith('.pdf') ? '📄' : doc.name.endsWith('.xlsx') ? '📊' : '📝'}</span>
+        <div class="doc-info">
+          <span class="doc-title">${doc.name}</span>
+          <span class="doc-size">${doc.size}</span>
+        </div>
+        <a href="#" class="doc-action-btn" onclick="event.preventDefault(); alert('Opening document: ${doc.name}');">${doc.linkText}</a>
+      `;
+      attachmentsBox.appendChild(div);
+    });
+  }
+
+  statusBox.innerHTML = `
+    <div class="tracker-row">
+      <span class="tracker-label">Ticket ID:</span>
+      <span class="tracker-val">${context.jiraId}</span>
+    </div>
+    <div class="tracker-row">
+      <span class="tracker-label">Status:</span>
+      <span class="tracker-val ${context.jiraStatusClass}">${context.jiraStatus}</span>
+    </div>
+    <div class="tracker-row">
+      <span class="tracker-label">Assignee:</span>
+      <span class="tracker-val">Alex Mercer</span>
+    </div>
+    <div class="tracker-row">
+      <span class="tracker-label">Dependencies:</span>
+      <span class="tracker-val ${context.jiraDeps !== 'None' ? 'text-alert' : ''}">${context.jiraDeps}</span>
+    </div>
+  `;
+
+  // Toggle active class to slide in side drawer
+  panel.classList.add("active");
+}
+
+/**
+ * Closes the Action Dossier panel drawer.
+ */
+function closeActionDossier() {
+  const panel = document.getElementById("action-dossier-panel");
+  if (panel) {
+    panel.classList.remove("active");
+  }
+  activeDossierTaskId = null;
+}
+
+/**
+ * Sets up dossier handlers.
+ */
+function setupDossierHandlers() {
+  const closeBtn = document.getElementById("dossier-close-btn");
+  const completeBtn = document.getElementById("dossier-complete-btn");
+  const delegateBtn = document.getElementById("dossier-delegate-btn");
+  const assistantPrompt = document.getElementById("dossier-assistant-prompt");
+  const assistantSend = document.getElementById("dossier-assistant-send");
+
+  // 1. Close drawer click listener
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      closeActionDossier();
+    });
+  }
+
+  // 2. Mark task complete button click listener
+  if (completeBtn) {
+    completeBtn.addEventListener("click", () => {
+      if (activeDossierTaskId) {
+        const task = state.tasks.find(t => t.id === activeDossierTaskId);
+        if (task) {
+          task.completed = true;
+          renderHomeView();
+          closeActionDossier();
+          alert(`Task "${task.title}" has been completed!`);
+        }
+      }
+    });
+  }
+
+  // 3. Delegate button click listener
+  if (delegateBtn) {
+    delegateBtn.addEventListener("click", () => {
+      if (activeDossierTaskId) {
+        const task = state.tasks.find(t => t.id === activeDossierTaskId);
+        const name = prompt(`Delegate task "${task?.title}" to:`, "Your Manager");
+        if (name) {
+          alert(`Task delegated to ${name}.`);
+          closeActionDossier();
+        }
+      }
+    });
+  }
+
+  // 4. Dossier context-aware AI Assistant queries
+  const sendDossierQuery = () => {
+    const query = assistantPrompt?.value.trim();
+    if (!query || !activeDossierTaskId) return;
+
+    const task = state.tasks.find(t => t.id === activeDossierTaskId);
+    const context = dossierMockData[activeDossierTaskId];
+
+    // Open Assistant panel body if closed
+    const assistantBody = document.getElementById("assistant-body");
+    const assistantBtn = document.getElementById("assistant-toggle-btn");
+    if (assistantBody && assistantBody.style.display !== "block") {
+      assistantBody.style.display = "block";
+      if (assistantBtn) assistantBtn.textContent = "Close v";
+    }
+
+    // Render mock dialogue response inside assistant panel
+    const assistantDiv = document.createElement("div");
+    assistantDiv.style.borderTop = "1px solid rgba(255, 95, 31, 0.15)";
+    assistantDiv.style.marginTop = "0.75rem";
+    assistantDiv.style.paddingTop = "0.75rem";
+    assistantDiv.innerHTML = `
+      <div style="font-size:0.75rem;color:var(--color-accent-ochre);font-weight:600;margin-bottom:2px;">User (about ${task?.title}):</div>
+      <p style="font-size:0.8rem;color:var(--color-text-primary);margin-bottom:0.5rem;font-style:italic;">"${query}"</p>
+      <div style="font-size:0.75rem;color:var(--color-accent-vibrant);font-weight:600;margin-bottom:2px;">KreyoList Assistant:</div>
+      <p style="font-size:0.8rem;color:var(--color-text-secondary);">Scanning connected MCP resources and emails. The context indicates this ticket (${context?.jiraId}) has active dependencies (${context?.jiraDeps}). I recommend resolving that blocker or forwarding the Excel attachments to the requester first.</p>
+    `;
+    assistantBody?.appendChild(assistantDiv);
+
+    if (assistantPrompt) assistantPrompt.value = "";
+  };
+
+  if (assistantSend) {
+    assistantSend.addEventListener("click", sendDossierQuery);
+  }
+  if (assistantPrompt) {
+    assistantPrompt.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendDossierQuery();
       }
     });
   }

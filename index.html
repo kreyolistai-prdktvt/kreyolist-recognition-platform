@@ -23,7 +23,7 @@
   <meta property="twitter:image" content="./assets/employee_appreciation_bg.jpg">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./css/styles.css?v=1.0.16">
+  <link rel="stylesheet" href="./css/styles.css?v=1.0.17">
   
   <!-- Favicon placeholder -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
@@ -352,6 +352,72 @@
               </div>
             </div>
           </div>
+
+          <!-- Action Dossier Panel -->
+          <div id="action-dossier-panel" class="action-dossier-panel">
+            <!-- Header Bar -->
+            <div class="dossier-top-bar">
+              <span class="dossier-label-tag">✦ ACTION DOSSIER</span>
+              <button id="dossier-close-btn" class="dossier-close-btn" aria-label="Close Dossier">✕</button>
+            </div>
+
+            <!-- Scrollable Panel Content -->
+            <div class="dossier-content">
+              <!-- Header Area -->
+              <div class="dossier-header-section">
+                <h3 id="dossier-task-title" class="dossier-title">Review Q2 planning notes</h3>
+                <div class="dossier-metadata-row">
+                  <span id="dossier-priority" class="dossier-badge priority-high">High Priority</span>
+                  <span id="dossier-platform" class="dossier-platform-tag">
+                    <span class="platform-icon">✉</span> Gmail
+                  </span>
+                  <span id="dossier-due-date" class="dossier-due-tag">Due July 10</span>
+                </div>
+              </div>
+
+              <!-- Block 1: Communications Thread -->
+              <div class="dossier-block">
+                <div class="dossier-block-header">
+                  <span class="block-icon">💬</span> COMMUNICATIONS THREAD
+                </div>
+                <div class="dossier-block-body" id="dossier-block-emails">
+                  <!-- Chronological layout -->
+                </div>
+              </div>
+
+              <!-- Block 2: Technical Attachments & Resources -->
+              <div class="dossier-block">
+                <div class="dossier-block-header">
+                  <span class="block-icon">📎</span> TECHNICAL ATTACHMENTS
+                </div>
+                <div class="dossier-block-body" id="dossier-block-attachments">
+                  <!-- Custom attachments preview cards -->
+                </div>
+              </div>
+
+              <!-- Block 3: Cross-Tool Status Tracker -->
+              <div class="dossier-block">
+                <div class="dossier-block-header">
+                  <span class="block-icon">⚙</span> CROSS-TOOL STATUS TRACKER
+                </div>
+                <div class="dossier-block-body" id="dossier-block-status">
+                  <!-- Custom status rows -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Sticky Footer Actions -->
+            <div class="dossier-footer">
+              <div class="footer-buttons">
+                <button id="dossier-complete-btn" class="dossier-btn-primary">Mark as Complete</button>
+                <button id="dossier-delegate-btn" class="dossier-btn-secondary">Delegate</button>
+              </div>
+              <div class="dossier-prompt-wrapper">
+                <input type="text" class="dossier-prompt-input" placeholder="Ask Assistant about this dossier..." id="dossier-assistant-prompt">
+                <button class="dossier-prompt-send" id="dossier-assistant-send">➔</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Detail Modal Mounting Node -->
@@ -367,6 +433,6 @@
   </div>
 
   <!-- Main Orchestration Script (ES Module) -->
-  <script type="module" src="./js/app.js?v=1.0.16"></script>
+  <script type="module" src="./js/app.js?v=1.0.17"></script>
 </body>
 </html>
