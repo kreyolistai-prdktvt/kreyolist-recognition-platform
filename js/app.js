@@ -65,6 +65,7 @@ async function init() {
   setupSidebarToggle();
   setupProfileDropdown();
   setupDossierHandlers();
+  setupAssistantFabScrollDetector();
 
   // Render initial interface
   renderFilterBar();
@@ -344,6 +345,10 @@ function renderHomeView() {
 
     tasksListMount.appendChild(li);
   });
+  
+  if (window.checkAssistantFabState) {
+    window.checkAssistantFabState();
+  }
 }
 
 /**
@@ -408,17 +413,42 @@ function setupTasksHandlers() {
 function setupAssistantHandlers() {
   const toggleBtn = document.getElementById("assistant-toggle-btn");
   const assistantBody = document.getElementById("assistant-body");
+  const assistant = document.querySelector(".assistant-drawer");
 
-  if (!toggleBtn || !assistantBody) return;
+  if (!toggleBtn || !assistantBody || !assistant) return;
 
-  toggleBtn.addEventListener("click", () => {
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent bubbling in FAB view mode
     const isOpen = assistantBody.style.display === "block";
     if (isOpen) {
       assistantBody.style.display = "none";
-      toggleBtn.textContent = "Open ^";
+      if (assistant.classList.contains("fab-active")) {
+        assistant.classList.remove("open");
+      } else {
+        toggleBtn.textContent = "Open ^";
+      }
     } else {
       assistantBody.style.display = "block";
-      toggleBtn.textContent = "Close v";
+      if (assistant.classList.contains("fab-active")) {
+        assistant.classList.add("open");
+      } else {
+        toggleBtn.textContent = "Close v";
+      }
+    }
+  });
+
+  // Clicking the FAB circle button expands or collapses it
+  assistant.addEventListener("click", () => {
+    if (assistant.classList.contains("fab-active")) {
+      const isExpanded = assistant.classList.contains("open");
+      if (isExpanded) {
+        assistant.classList.remove("open");
+        assistantBody.style.display = "none";
+      } else {
+        assistant.classList.add("open");
+        assistantBody.style.display = "block";
+        toggleBtn.textContent = "Close ✕";
+      }
     }
   });
 }
@@ -984,6 +1014,49 @@ function renderTeamDirectory(filterText = "") {
   if (nextBtn) {
     nextBtn.disabled = !selectedAssignee;
   }
+}
+
+/**
+ * Automatically switches the Assistant drawer between inline row and circular FAB views
+ * based on scroll offset and tasks count.
+ */
+function setupAssistantFabScrollDetector() {
+  const tasksScroll = document.querySelector(".tasks-container .scroll-fade-container");
+  const assistant = document.querySelector(".assistant-drawer");
+  if (!tasksScroll || !assistant) return;
+
+  const checkAssistantFab = () => {
+    const isScrolled = tasksScroll.scrollTop > 20;
+    const isFull = state.tasks.length >= 6;
+
+    if (isScrolled || isFull) {
+      if (!assistant.classList.contains("fab-active")) {
+        assistant.classList.add("fab-active");
+      }
+    } else {
+      if (assistant.classList.contains("fab-active")) {
+        assistant.classList.remove("fab-active");
+        assistant.classList.remove("open");
+        
+        // Restore toggle button copy based on body display state
+        const assistantBody = document.getElementById("assistant-body");
+        const toggleBtn = document.getElementById("assistant-toggle-btn");
+        if (assistantBody && toggleBtn) {
+          if (assistantBody.style.display === "block") {
+            toggleBtn.textContent = "Close v";
+          } else {
+            toggleBtn.textContent = "Open ^";
+          }
+        }
+      }
+    }
+  };
+
+  // Check scroll positions
+  tasksScroll.addEventListener("scroll", checkAssistantFab);
+  
+  // Register scroll detector as a global property so other elements can force refresh it
+  window.checkAssistantFabState = checkAssistantFab;
 }
 
 // Bootstrap when DOM is ready
