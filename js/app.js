@@ -872,7 +872,7 @@ function openActionDossier(task) {
     </div>
     <div class="tracker-row">
       <span class="tracker-label">Assignee:</span>
-      <span class="tracker-val">Alex Mercer</span>
+      <span class="tracker-val">Jean Bird</span>
     </div>
     <div class="tracker-row">
       <span class="tracker-label">Dependencies:</span>
