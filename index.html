@@ -23,7 +23,7 @@
   <meta property="twitter:image" content="./assets/employee_appreciation_bg.jpg">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./css/styles.css?v=1.0.29">
+  <link rel="stylesheet" href="./css/styles.css?v=1.0.30">
   
   <!-- Favicon placeholder -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
@@ -270,10 +270,10 @@
         <!-- Home View -->
         <div id="home-view">
           <div class="homepage-dashboard-wrapper">
-            <!-- Left Column: Inbox Panel -->
+            <!-- Pane 1: Outlook Inbox Panel -->
             <section class="dashboard-panel inbox-panel flex flex-col">
               <div class="panel-header">
-                <h2 class="panel-title">Inbox</h2>
+                <h2 class="panel-title">Outlook Inbox</h2>
                 <span class="unread-indicator">3 unread</span>
               </div>
               <div class="inbox-command-bar">
@@ -300,94 +300,96 @@
               </div>
             </section>
 
-            <!-- Right Column: Execution Stack -->
-            <div class="execution-panel">
-              <!-- Tasks Container -->
-              <div class="tasks-container">
-                <div class="tasks-header">
-                  <h2 class="panel-title">Tasks</h2>
-                  <!-- Horizon View Goal Progression Tracker -->
-                  <div class="horizon-tracker-wrapper" id="horizon-tracker" aria-label="Goal Progression Tracker" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <div class="horizon-tracker-meta">
-                      <span class="horizon-tracker-label">Goal Progression</span>
-                      <span class="horizon-tracker-percent" id="horizon-progress-percent">0%</span>
-                    </div>
-                    
-                    <div class="horizon-track-container">
-                      <!-- Expected weekly target baseline -->
-                      <div class="horizon-expected-track" id="horizon-expected-fill" style="width: 60%;"></div>
-                      <!-- Actual progress filling glow track -->
-                      <div class="horizon-active-track" id="horizon-active-fill" style="width: 0%;"></div>
-                    </div>
+            <!-- Pane 2: Reading Pane Panel -->
+            <section class="dashboard-panel reading-panel flex flex-col" id="reading-pane-mount">
+              <!-- Dynamically populated -->
+            </section>
 
-                    <!-- Milestone Dot Grid ("The Horizon") -->
-                    <div class="horizon-milestones">
-                      <div class="milestone-marker" style="left: 20%;" id="milestone-daily" data-tooltip="Daily Target">
-                        <div class="milestone-dot"></div>
-                        <div class="milestone-tick"></div>
-                      </div>
-                      <div class="milestone-marker" style="left: 60%;" id="milestone-weekly" data-tooltip="Weekly Milestone">
-                        <div class="milestone-dot"></div>
-                        <div class="milestone-tick"></div>
-                      </div>
-                      <div class="milestone-marker" style="left: 90%;" id="milestone-monthly" data-tooltip="Monthly Strategic Horizon">
-                        <div class="milestone-dot"></div>
-                        <div class="milestone-tick"></div>
-                      </div>
-                    </div>
+            <!-- Pane 3: Tasks Panel -->
+            <section class="dashboard-panel tasks-container flex flex-col">
+              <div class="tasks-header">
+                <h2 class="panel-title">Tasks</h2>
+                <!-- Horizon View Goal Progression Tracker -->
+                <div class="horizon-tracker-wrapper" id="horizon-tracker" aria-label="Goal Progression Tracker" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div class="horizon-tracker-meta">
+                    <span class="horizon-tracker-label">Goal Progression</span>
+                    <span class="horizon-tracker-percent" id="horizon-progress-percent">0%</span>
+                  </div>
+                  
+                  <div class="horizon-track-container">
+                    <!-- Expected weekly target baseline -->
+                    <div class="horizon-expected-track" id="horizon-expected-fill" style="width: 60%;"></div>
+                    <!-- Actual progress filling glow track -->
+                    <div class="horizon-active-track" id="horizon-active-fill" style="width: 0%;"></div>
+                  </div>
 
-                    <!-- Contextual Hover Tooltip -->
-                    <div class="horizon-tooltip" id="horizon-tooltip-card">
-                      <div class="tooltip-header">Horizon Velocity Curation</div>
-                      <div class="tooltip-metric">
-                        <span>Expected daily rate:</span>
-                        <span id="tooltip-expected-tasks">3 of 5 (60%)</span>
-                      </div>
-                      <div class="tooltip-metric">
-                        <span>Current velocity:</span>
-                        <span class="metric-val text-gold" id="tooltip-velocity-val">+0% expected</span>
-                      </div>
-                      <div class="tooltip-footer">Projected Q2 milestone: July 18</div>
+                  <!-- Milestone Dot Grid ("The Horizon") -->
+                  <div class="horizon-milestones">
+                    <div class="milestone-marker" style="left: 20%;" id="milestone-daily" data-tooltip="Daily Target">
+                      <div class="milestone-dot"></div>
+                      <div class="milestone-tick"></div>
+                    </div>
+                    <div class="milestone-marker" style="left: 60%;" id="milestone-weekly" data-tooltip="Weekly Milestone">
+                      <div class="milestone-dot"></div>
+                      <div class="milestone-tick"></div>
+                    </div>
+                    <div class="milestone-marker" style="left: 90%;" id="milestone-monthly" data-tooltip="Monthly Strategic Horizon">
+                      <div class="milestone-dot"></div>
+                      <div class="milestone-tick"></div>
                     </div>
                   </div>
-                </div>
-                
-                <div class="scroll-fade-container">
-                  <ul class="tasks-list" id="tasks-list-mount">
-                    <!-- Dynamically populated -->
-                  </ul>
-                </div>
-                
-                <div class="add-task-row">
-                  <button class="add-task-btn" id="add-task-trigger">
-                    <span class="plus-icon">+</span> Add task
-                  </button>
-                  <div class="add-task-input-wrapper" id="add-task-input-wrapper" style="display: none;">
-                    <input type="text" id="new-task-title" placeholder="What needs to be done?" />
-                    <select id="new-task-priority">
-                      <option value="normal">Normal Priority</option>
-                      <option value="high">High Priority</option>
-                      <option value="low">Low Priority</option>
-                    </select>
-                    <button id="new-task-submit">Add</button>
-                    <button id="new-task-cancel">Cancel</button>
+
+                  <!-- Contextual Hover Tooltip -->
+                  <div class="horizon-tooltip" id="horizon-tooltip-card">
+                    <div class="tooltip-header">Horizon Velocity Curation</div>
+                    <div class="tooltip-metric">
+                      <span>Expected daily rate:</span>
+                      <span id="tooltip-expected-tasks">3 of 5 (60%)</span>
+                    </div>
+                    <div class="tooltip-metric">
+                      <span>Current velocity:</span>
+                      <span class="metric-val text-gold" id="tooltip-velocity-val">+0% expected</span>
+                    </div>
+                    <div class="tooltip-footer">Projected Q2 milestone: July 18</div>
                   </div>
                 </div>
               </div>
-
-              <!-- Assistant Panel Drawer -->
-              <div class="assistant-drawer">
-                <div class="assistant-header">
-                  <div class="assistant-header-left">
-                    <span class="assistant-icon">💬</span>
-                    <span class="assistant-title">Assistant</span>
-                  </div>
-                  <button class="assistant-toggle-btn" id="assistant-toggle-btn">Open ^</button>
-                </div>
-                <div class="assistant-body" id="assistant-body" style="display: none;">
-                  <p class="assistant-placeholder">KreyōList AI context is initialized. Ask me to curate events, track rewards, or organize task lists securely within your space.</p>
+              
+              <div class="scroll-fade-container">
+                <ul class="tasks-list" id="tasks-list-mount">
+                  <!-- Dynamically populated -->
+                </ul>
+              </div>
+              
+              <div class="add-task-row">
+                <button class="add-task-btn" id="add-task-trigger">
+                  <span class="plus-icon">+</span> Add task
+                </button>
+                <div class="add-task-input-wrapper" id="add-task-input-wrapper" style="display: none;">
+                  <input type="text" id="new-task-title" placeholder="What needs to be done?" />
+                  <select id="new-task-priority">
+                    <option value="normal">Normal Priority</option>
+                    <option value="high">High Priority</option>
+                    <option value="low">Low Priority</option>
+                  </select>
+                  <button id="new-task-submit">Add</button>
+                  <button id="new-task-cancel">Cancel</button>
                 </div>
               </div>
+            </section>
+          </div>
+
+          <!-- Assistant Panel Drawer -->
+          <div class="assistant-drawer">
+            <div class="assistant-header">
+              <div class="assistant-header-left">
+                <span class="assistant-icon">💬</span>
+                <span class="assistant-title">Assistant</span>
+              </div>
+              <button class="assistant-toggle-btn" id="assistant-toggle-btn">Open ^</button>
+            </div>
+            <div class="assistant-body" id="assistant-body" style="display: none;">
+              <p class="assistant-placeholder">KreyōList AI context is initialized. Ask me to curate events, track rewards, or organize task lists securely within your space.</p>
             </div>
           </div>
 
@@ -532,6 +534,6 @@
   </div>
 
   <!-- Main Orchestration Script (ES Module) -->
-  <script type="module" src="./js/app.js?v=1.0.29"></script>
+  <script type="module" src="./js/app.js?v=1.0.30"></script>
 </body>
 </html>

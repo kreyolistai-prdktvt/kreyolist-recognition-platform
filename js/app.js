@@ -12,19 +12,20 @@ const state = {
   modalElement: null,
   firebaseConfigured: false,
   activeTab: "home", // default active tab
+  selectedEmailId: 1, // default selected email
   inbox: [
-    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true },
-    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true },
-    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true },
-    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true },
-    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false },
-    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false },
-    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false }
+    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true, state: "added", body: "Hi HelpDesk, I've been locked out of my Active Directory domain account after typing my password wrong three times. Please unlock it ASAP, I need to access the client database for Q2 audit. Thanks!" },
+    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true, state: "added", body: "Alert: Multiple failed SSH attempts detected from IP 192.168.1.104 attempting to access root on prod-server-01. Please investigate auth logs and secure compliance status." },
+    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true, state: "not_added", body: "The replacement parts for the Lenovo developer workstation have been delivered. Let me know when you can perform the motherboard swap and rebuild the standard OS image." },
+    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true, state: "none", body: "Hi, please create a new user profile, configure corporate SSH keys, and email temporary credentials to our new remote engineering hire who starts on Monday." },
+    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false, state: "none", body: "Trigger: CPU usage exceeded 85% on db-staging-02. Please review current query execution plans, check locking queries, and optimize active logs." },
+    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false, state: "none", body: "Hi, our VIP Sales Director is locked out of Salesforce and needs immediate AD override. Secondary authorization is attached. Please process ASAP." },
+    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false, state: "none", body: "Diagnostics run on Unit-B complete. Memory test passed, drive check passed. Please log this completion in the asset inventory system." }
   ],
   tasks: [
     { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false, source: "Outlook - Jena Charles" },
     { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false, source: "Outlook - Security Operations Center" },
-    { id: 3, title: "Replace motherboard and re-image developer laptop", priority: "normal", completed: false, source: "Outlook - Marcus Vance" },
+    { id: 3, title: "Review database performance and clean query logs on staging", priority: "normal", completed: false, source: "Internal System" },
     { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false, source: "Outlook - HR Onboarding" },
     { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false, source: "Outlook - Datadog Alerts" },
     { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false, source: "Outlook - HelpDesk Escalation" },
@@ -391,6 +392,9 @@ function renderHomeView() {
       if (item.unread) {
         li.classList.add("bg-[#0078D4]/5");
       }
+      if (item.id === state.selectedEmailId) {
+        li.classList.add("selected");
+      }
       li.innerHTML = `
         <div class="sender-avatar">${item.avatar}</div>
         <div class="inbox-item-content">
@@ -408,19 +412,97 @@ function renderHomeView() {
         li.classList.add("bg-[#0078D4]/5");
       });
       li.addEventListener("mouseleave", () => {
-        if (!item.unread) {
+        if (!item.unread && item.id !== state.selectedEmailId) {
           li.classList.remove("bg-[#0078D4]/5");
         }
       });
       
-      // Toggle unread state on click
+      // Toggle unread state and select email on click
       li.addEventListener("click", () => {
         item.unread = false;
+        state.selectedEmailId = item.id;
         renderHomeView();
       });
       
       inboxListMount.appendChild(li);
     });
+  }
+
+  // 6. Render selected email details inside Reading Pane
+  const readingPaneMount = document.getElementById("reading-pane-mount");
+  if (readingPaneMount) {
+    const email = state.inbox.find(item => item.id === state.selectedEmailId);
+    if (email) {
+      readingPaneMount.innerHTML = `
+        <div class="reading-header">
+          <h3 class="reading-subject">${email.subject}</h3>
+          <div class="reading-sender-row">
+            <div class="reading-sender-info">
+              <div class="reading-avatar">${email.avatar}</div>
+              <div>
+                <div class="reading-sender-name">${email.sender}</div>
+                <div class="reading-time">To: Jean Bird • ${email.time}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reading-body-container scrollbar-thin">
+          <p class="reading-body-text">${email.body}</p>
+        </div>
+        <div class="reading-actions-bar">
+          ${email.state === 'not_added' ? `
+            <button class="btn-add-task" id="btn-add-task-trigger">
+              <span class="sparkle-icon">✦</span> Add to Task list
+            </button>
+          ` : email.state === 'added' ? `
+            <div class="btn-added-task">
+              <span class="check-icon">✓</span> Added to Tasks
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      // Setup Add to Task list click handler
+      const addTaskTriggerBtn = readingPaneMount.querySelector("#btn-add-task-trigger");
+      if (addTaskTriggerBtn) {
+        addTaskTriggerBtn.addEventListener("click", () => {
+          // Add new task dynamically
+          const newTaskId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
+          const newTask = {
+            id: newTaskId,
+            title: email.subject.replace("LOCKED OUT: ", "").replace("CRITICAL: ", "").replace("WARNING: ", ""),
+            priority: email.subject.toLowerCase().includes("critical") || email.subject.toLowerCase().includes("locked out") ? "high" : "normal",
+            completed: false,
+            source: `Outlook - ${email.sender}`
+          };
+          state.tasks.push(newTask);
+
+          // Transition email state to 'added'
+          email.state = 'added';
+
+          // Re-render dashboard
+          renderHomeView();
+
+          // Scroll task list to bottom smoothly
+          const tasksList = document.querySelector(".tasks-list");
+          if (tasksList) {
+            setTimeout(() => {
+              tasksList.scrollTo({
+                top: tasksList.scrollHeight,
+                behavior: "smooth"
+              });
+            }, 100);
+          }
+        });
+      }
+    } else {
+      readingPaneMount.innerHTML = `
+        <div class="reading-empty-state">
+          <span class="reading-empty-icon">✉</span>
+          <p>Select an item to read</p>
+        </div>
+      `;
+    }
   }
   
   if (window.checkAssistantFabState) {
