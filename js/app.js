@@ -22,13 +22,13 @@ const state = {
     { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false }
   ],
   tasks: [
-    { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false, source: "Gmail - Jena Charles" },
-    { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false, source: "Gmail - Security Operations Center" },
-    { id: 3, title: "Replace motherboard and re-image developer laptop", priority: "normal", completed: false, source: "Gmail - Marcus Vance" },
-    { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false, source: "Gmail - HR Onboarding" },
-    { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false, source: "Gmail - Datadog Alerts" },
-    { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false, source: "Gmail - HelpDesk Escalation" },
-    { id: 7, title: "Update laptop hardware asset inventory log for Unit-B", priority: "low", completed: false, source: "Gmail - Laptop Provisioning" },
+    { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false, source: "Outlook - Jena Charles" },
+    { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false, source: "Outlook - Security Operations Center" },
+    { id: 3, title: "Replace motherboard and re-image developer laptop", priority: "normal", completed: false, source: "Outlook - Marcus Vance" },
+    { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false, source: "Outlook - HR Onboarding" },
+    { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false, source: "Outlook - Datadog Alerts" },
+    { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false, source: "Outlook - HelpDesk Escalation" },
+    { id: 7, title: "Update laptop hardware asset inventory log for Unit-B", priority: "low", completed: false, source: "Outlook - Laptop Provisioning" },
     { id: 8, title: "Verify daily backups across enterprise storage clusters", priority: "high", completed: false, source: "Internal System" },
     { id: 9, title: "Run patch updates on staging environment firewall rules", priority: "normal", completed: false, source: "Internal System" },
     { id: 10, title: "Audit root user access logs for Q2 infrastructure compliance", priority: "normal", completed: false, source: "Compliance System" }
@@ -349,7 +349,7 @@ function renderHomeView() {
         </div>
         ${task.source ? `
         <div class="task-source-badge">
-          <span class="source-icon">${task.source.includes('Gmail') ? '✉' : '⚙'}</span>
+          <span class="source-icon">${task.source.includes('Outlook') ? '✉' : '⚙'}</span>
           <span class="source-text">Source: ${task.source}</span>
         </div>
         ` : ''}
@@ -615,7 +615,7 @@ let activeDossierTaskId = null;
 // Mock context dossier data for KreyoList tasks (Gmail/Outlook MCP, Attachments, Jira tickets)
 const dossierMockData = {
   1: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 10",
     emails: [
@@ -635,7 +635,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   2: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 10",
     emails: [
@@ -655,7 +655,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   3: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 12",
     emails: [
@@ -675,7 +675,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   4: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
@@ -695,7 +695,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   5: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
@@ -715,7 +715,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   6: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 18",
     emails: [
@@ -735,7 +735,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   7: {
-    platform: "Gmail",
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 20",
     emails: [
