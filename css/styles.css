@@ -2098,8 +2098,37 @@ body.light-mode .tooltip-footer {
 .task-info {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.task-title-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.task-source-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.task-source-badge .source-icon {
+  font-size: 0.75rem;
+  color: var(--color-accent-vibrant);
+  opacity: 0.8;
+}
+
+.task-row.completed .task-source-badge {
+  opacity: 0.35;
 }
 
 .task-title {
@@ -3052,9 +3081,15 @@ body.light-mode .delegation-textarea {
   .homepage-dashboard-wrapper {
     flex: 1;
     min-height: 0;
-    height: 100%;
-    max-height: 100%;
+    height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
     overflow: hidden;
+    display: flex;
+    gap: 0 !important;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-low);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
 
   .dashboard-panel {
@@ -3063,10 +3098,15 @@ body.light-mode .delegation-textarea {
     height: 100%;
     max-height: 100%;
     overflow: hidden;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 
   .inbox-panel {
     flex: 1.1;
+    border-right: 1px solid var(--color-border-low) !important;
   }
 
   .execution-panel {
@@ -3076,14 +3116,18 @@ body.light-mode .delegation-textarea {
     height: 100%;
     max-height: 100%;
     overflow: hidden;
-    gap: 1.5rem;
+    gap: 0 !important;
   }
 
   .tasks-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 180px);
+    height: 100%;
     overflow: hidden;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 
   .scroll-fade-container {
