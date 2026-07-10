@@ -387,7 +387,10 @@ function renderHomeView() {
     
     state.inbox.forEach(item => {
       const li = document.createElement("li");
-      li.className = `inbox-item ${item.unread ? 'unread' : ''}`;
+      li.className = `inbox-item ${item.unread ? 'unread border-[#0078D4]' : ''}`;
+      if (item.unread) {
+        li.classList.add("bg-[#0078D4]/5");
+      }
       li.innerHTML = `
         <div class="sender-avatar">${item.avatar}</div>
         <div class="inbox-item-content">
@@ -399,6 +402,16 @@ function renderHomeView() {
           <span class="chevron-arrow">&rsaquo;</span>
         </div>
       `;
+      
+      // Dynamic hover class states
+      li.addEventListener("mouseenter", () => {
+        li.classList.add("bg-[#0078D4]/5");
+      });
+      li.addEventListener("mouseleave", () => {
+        if (!item.unread) {
+          li.classList.remove("bg-[#0078D4]/5");
+        }
+      });
       
       // Toggle unread state on click
       li.addEventListener("click", () => {

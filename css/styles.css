@@ -3406,3 +3406,12 @@ body.light-mode .delegation-textarea {
 .command-action-btn svg {
   stroke-width: 1.5px;
 }
+
+/* Tailwind utility fallbacks for dynamic active cards */
+.border-\[\#0078D4\] {
+  border-left: 3px solid #0078D4 !important;
+}
+.bg-\[\#0078D4\]\/5 {
+  background: rgba(0, 120, 212, 0.05) !important;
+  border-color: rgba(0, 120, 212, 0.3) !important;
+}
