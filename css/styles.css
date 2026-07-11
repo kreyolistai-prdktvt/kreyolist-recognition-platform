@@ -3111,8 +3111,21 @@ body.light-mode .delegation-textarea {
     border-radius: 0 !important;
   }
 
+  #home-view {
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
   .inbox-panel {
     flex: 25 25 0% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow-y: auto !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
   }
 
@@ -3125,10 +3138,10 @@ body.light-mode .delegation-textarea {
 
   .tasks-container {
     flex: 30 30 0% !important;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow-y: auto !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -3139,6 +3152,10 @@ body.light-mode .delegation-textarea {
   .homepage-dashboard-wrapper.reading-pane-active .inbox-panel {
     width: 300px !important;
     flex: 0 0 300px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow-y: auto !important;
     border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
   }
 
@@ -3152,6 +3169,10 @@ body.light-mode .delegation-textarea {
   .homepage-dashboard-wrapper.reading-pane-active .tasks-container {
     width: 360px !important;
     flex: 0 0 360px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow-y: auto !important;
     border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
   }
 
