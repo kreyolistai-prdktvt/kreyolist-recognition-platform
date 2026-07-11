@@ -3551,11 +3551,56 @@ body.light-mode .delegation-textarea {
   color: var(--color-text-muted);
   font-size: 0.88rem;
   text-align: center;
-  gap: 12px;
+  gap: 16px;
   padding: 2rem 0;
 }
 
+.reading-empty-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
 .reading-empty-icon {
-  font-size: 2rem;
-  opacity: 0.4;
+  opacity: 0.35;
+}
+
+.reading-empty-text {
+  max-width: 240px;
+  line-height: 1.5;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.reading-header-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.reading-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted); /* text-zinc-500 equivalent */
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.reading-close-btn:hover {
+  color: var(--color-text-primary); /* hover:text-white equivalent */
+  background-color: rgba(255, 255, 255, 0.05);
 }

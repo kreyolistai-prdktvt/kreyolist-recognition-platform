@@ -12,7 +12,7 @@ const state = {
   modalElement: null,
   firebaseConfigured: false,
   activeTab: "home", // default active tab
-  selectedEmailId: 1, // default selected email
+  selectedEmailId: null, // default selected email
   inbox: [
     { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true, state: "added", body: "Hello Jean,\n\nI hope you’re well.\n\nI’m locked out of my Active Directory domain account. I entered my password incorrectly three times this morning.\n\nI need access to the client database to prepare for the upcoming Q2 audit. Any downtime will impact our schedule. Please prioritize this.\n\nLet me know when the account is reset or if you need me to verify security details.\n\nThanks,\nJena Charles" },
     { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true, state: "added", body: "Hello Jean,\n\nI hope this email finds you well.\n\nOur automated monitoring tools have flagged multiple unauthorized SSH login attempts on our core production cluster [Node-04] starting at 07:15 AM. The traffic appears to be originating from an unmapped external IP address.\n\nPlease inspect the authentication log files immediately, update the active firewall rules to block this range, and ensure our deployment pipelines remain secure. Let us know your findings as soon as possible.\n\nBest regards,\nSOC Team" },
@@ -81,6 +81,16 @@ async function init() {
   setupProfileDropdown();
   setupDossierHandlers();
   setupAssistantFabScrollDetector();
+
+  // Escape key global listener to close/deselect active reading email
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (state.selectedEmailId !== null) {
+        state.selectedEmailId = null;
+        renderHomeView();
+      }
+    }
+  });
 
   // Render initial interface
   renderFilterBar();
@@ -431,77 +441,90 @@ function renderHomeView() {
   // 6. Render selected email details inside Reading Pane
   const readingPaneMount = document.getElementById("reading-pane-mount");
   if (readingPaneMount) {
-    const email = state.inbox.find(item => item.id === state.selectedEmailId);
-    if (email) {
-      readingPaneMount.innerHTML = `
-        <div class="reading-header">
-          <h3 class="reading-subject">${email.subject}</h3>
-          <div class="reading-sender-row">
-            <div class="reading-sender-info">
-              <div class="reading-avatar">${email.avatar}</div>
-              <div>
-                <div class="reading-sender-name">${email.sender}</div>
-                <div class="reading-time">To: Jean Bird • ${email.time}</div>
+    if (state.selectedEmailId !== null) {
+      readingPaneMount.style.display = "flex";
+      const email = state.inbox.find(item => item.id === state.selectedEmailId);
+      if (email) {
+        readingPaneMount.innerHTML = `
+          <div class="reading-header">
+            <div class="reading-header-top-row">
+              <h3 class="reading-subject">${email.subject}</h3>
+              <button class="reading-close-btn" id="reading-close-btn" aria-label="Close Email">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div class="reading-sender-row">
+              <div class="reading-sender-info">
+                <div class="reading-avatar">${email.avatar}</div>
+                <div>
+                  <div class="reading-sender-name">${email.sender}</div>
+                  <div class="reading-time">To: Jean Bird • ${email.time}</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="reading-body-container scrollbar-thin">
-          <p class="reading-body-text">${email.body}</p>
-        </div>
-        <div class="reading-actions-bar">
-          ${email.state === 'not_added' ? `
-            <button class="btn-add-task" id="btn-add-task-trigger">
-              <span class="sparkle-icon">✦</span> Add to Task list
-            </button>
-          ` : email.state === 'added' ? `
-            <div class="btn-added-task">
-              <span class="check-icon">✓</span> Added to Tasks
-            </div>
-          ` : ''}
-        </div>
-      `;
+          <div class="reading-body-container scrollbar-thin">
+            <p class="reading-body-text">${email.body}</p>
+          </div>
+          <div class="reading-actions-bar">
+            ${email.state === 'not_added' ? `
+              <button class="btn-add-task" id="btn-add-task-trigger">
+                <span class="sparkle-icon">✦</span> Add to Task list
+              </button>
+            ` : email.state === 'added' ? `
+              <div class="btn-added-task">
+                <span class="check-icon">✓</span> Added to Tasks
+              </div>
+            ` : ''}
+          </div>
+        `;
 
-      // Setup Add to Task list click handler
-      const addTaskTriggerBtn = readingPaneMount.querySelector("#btn-add-task-trigger");
-      if (addTaskTriggerBtn) {
-        addTaskTriggerBtn.addEventListener("click", () => {
-          // Add new task dynamically
-          const newTaskId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
-          const newTask = {
-            id: newTaskId,
-            title: email.subject.replace("LOCKED OUT: ", "").replace("CRITICAL: ", "").replace("WARNING: ", ""),
-            priority: email.subject.toLowerCase().includes("critical") || email.subject.toLowerCase().includes("locked out") ? "high" : "normal",
-            completed: false,
-            source: `Outlook - ${email.sender}`
-          };
-          state.tasks.push(newTask);
+        // Setup Close button click handler
+        const closeBtn = readingPaneMount.querySelector("#reading-close-btn");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => {
+            state.selectedEmailId = null;
+            renderHomeView();
+          });
+        }
 
-          // Transition email state to 'added'
-          email.state = 'added';
+        // Setup Add to Task list click handler
+        const addTaskTriggerBtn = readingPaneMount.querySelector("#btn-add-task-trigger");
+        if (addTaskTriggerBtn) {
+          addTaskTriggerBtn.addEventListener("click", () => {
+            // Add new task dynamically
+            const newTaskId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
+            const newTask = {
+              id: newTaskId,
+              title: email.subject.replace("LOCKED OUT: ", "").replace("CRITICAL: ", "").replace("WARNING: ", ""),
+              priority: email.subject.toLowerCase().includes("critical") || email.subject.toLowerCase().includes("locked out") ? "high" : "normal",
+              completed: false,
+              source: `Outlook - ${email.sender}`
+            };
+            state.tasks.push(newTask);
 
-          // Re-render dashboard
-          renderHomeView();
+            // Transition email state to 'added'
+            email.state = 'added';
 
-          // Scroll task list to bottom smoothly
-          const tasksList = document.querySelector(".tasks-list");
-          if (tasksList) {
-            setTimeout(() => {
-              tasksList.scrollTo({
-                top: tasksList.scrollHeight,
-                behavior: "smooth"
-              });
-            }, 100);
-          }
-        });
+            // Re-render dashboard
+            renderHomeView();
+
+            // Scroll task list to bottom smoothly
+            const tasksList = document.querySelector(".tasks-list");
+            if (tasksList) {
+              setTimeout(() => {
+                tasksList.scrollTo({
+                  top: tasksList.scrollHeight,
+                  behavior: "smooth"
+                });
+              }, 100);
+            }
+          });
+        }
       }
     } else {
-      readingPaneMount.innerHTML = `
-        <div class="reading-empty-state">
-          <span class="reading-empty-icon">✉</span>
-          <p>Select an item to read</p>
-        </div>
-      `;
+      readingPaneMount.style.display = "none";
+      readingPaneMount.innerHTML = "";
     }
   }
   
