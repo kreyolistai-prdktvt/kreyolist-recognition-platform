@@ -3082,20 +3082,21 @@ body.light-mode .delegation-textarea {
     height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
+    padding: 0 !important;
   }
 
   .homepage-dashboard-wrapper {
     flex: 1;
     min-height: 0;
-    height: calc(100vh - 200px);
-    max-height: calc(100vh - 200px);
+    height: 100% !important;
+    max-height: 100% !important;
     overflow: hidden;
     display: flex;
     gap: 0 !important;
     background: #0D0D0D;
-    border: 1px solid var(--color-border-low);
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   .dashboard-panel {
@@ -3132,6 +3133,26 @@ body.light-mode .delegation-textarea {
     border: none !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+  }
+
+  /* Full Bleed aspect ratios when Reading Pane is open/active */
+  .homepage-dashboard-wrapper.reading-pane-active .inbox-panel {
+    width: 300px !important;
+    flex: 0 0 300px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .homepage-dashboard-wrapper.reading-pane-active .reading-panel {
+    flex: 1 1 0% !important;
+    min-width: 450px !important;
+    padding: 2rem !important; /* matches p-8 padding */
+    border-right: none !important;
+  }
+
+  .homepage-dashboard-wrapper.reading-pane-active .tasks-container {
+    width: 360px !important;
+    flex: 0 0 360px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
   }
 
   .scroll-fade-container {

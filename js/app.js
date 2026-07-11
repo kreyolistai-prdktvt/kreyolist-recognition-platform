@@ -315,6 +315,15 @@ function switchTab(tabName) {
  * Renders the Workspace Homepage (Home View).
  */
 function renderHomeView() {
+  const homeView = document.getElementById("home-view");
+  if (homeView) {
+    if (state.selectedEmailId !== null && state.activeSystemTab === "Outlook") {
+      homeView.classList.add("reading-pane-active");
+    } else {
+      homeView.classList.remove("reading-pane-active");
+    }
+  }
+
   const progressPercent = document.getElementById("horizon-progress-percent");
   const activeFill = document.getElementById("horizon-active-fill");
   const expectedFill = document.getElementById("horizon-expected-fill");
