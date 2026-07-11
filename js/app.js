@@ -12,6 +12,7 @@ const state = {
   modalElement: null,
   firebaseConfigured: false,
   activeTab: "home", // default active tab
+  activeSystemTab: "Home", // default active system tab
   selectedEmailId: null, // default selected email
   inbox: [
     { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true, state: "added", body: "Hello Jean,\n\nI hope you’re well.\n\nI’m locked out of my Active Directory domain account. I entered my password incorrectly three times this morning.\n\nI need access to the client database to prepare for the upcoming Q2 audit. Any downtime will impact our schedule. Please prioritize this.\n\nLet me know when the account is reset or if you need me to verify security details.\n\nThanks,\nJena Charles" },
@@ -242,14 +243,26 @@ function renderModal() {
  */
 function setupTabNavigation() {
   const navHome = document.getElementById("nav-item-home");
+  const navOutlook = document.getElementById("nav-item-outlook");
   const navRec = document.getElementById("nav-item-recognition");
 
-  if (navHome && navRec) {
+  if (navHome) {
     navHome.addEventListener("click", (e) => {
       e.preventDefault();
+      state.activeSystemTab = "Home";
       switchTab("home");
     });
+  }
 
+  if (navOutlook) {
+    navOutlook.addEventListener("click", (e) => {
+      e.preventDefault();
+      state.activeSystemTab = "Outlook";
+      switchTab("home");
+    });
+  }
+
+  if (navRec) {
     navRec.addEventListener("click", (e) => {
       e.preventDefault();
       switchTab("recognition");
@@ -262,25 +275,35 @@ function setupTabNavigation() {
  * @param {string} tabName - The name of the tab to switch to.
  */
 function switchTab(tabName) {
-  if (state.activeTab === tabName) return;
+  // If activeTab is home and we are switching activeSystemTab, we still want to re-render.
+  // So we only return early if both activeTab and activeSystemTab are unchanged.
+  if (state.activeTab === tabName && tabName === "recognition") return;
   state.activeTab = tabName;
 
   const navHome = document.getElementById("nav-item-home");
+  const navOutlook = document.getElementById("nav-item-outlook");
   const navRec = document.getElementById("nav-item-recognition");
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
   const appMain = document.querySelector(".app-main-scrollable");
 
+  // Reset active classes
+  if (navHome) navHome.classList.remove("active");
+  if (navOutlook) navOutlook.classList.remove("active");
+  if (navRec) navRec.classList.remove("active");
+
   if (tabName === "home") {
-    navHome.classList.add("active");
-    navRec.classList.remove("active");
+    if (state.activeSystemTab === "Outlook") {
+      if (navOutlook) navOutlook.classList.add("active");
+    } else {
+      if (navHome) navHome.classList.add("active");
+    }
     recView.style.display = "none";
-    homeView.style.display = "block";
+    homeView.style.display = "flex";
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else {
-    navRec.classList.add("active");
-    navHome.classList.remove("active");
+    if (navRec) navRec.classList.add("active");
     homeView.style.display = "none";
     recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
@@ -384,148 +407,164 @@ function renderHomeView() {
     tasksListMount.appendChild(li);
   });
 
-  // 5. Render Inbox list dynamically
-  const inboxListMount = document.querySelector(".inbox-list");
-  const unreadIndicator = document.querySelector(".unread-indicator");
-  if (inboxListMount) {
-    inboxListMount.innerHTML = "";
-    
+  // 5. Render active view inside systems dynamic canvas
+  const outlookInboxPanel = document.getElementById("outlook-inbox-panel");
+  const readingPaneMount = document.getElementById("reading-pane-mount");
+  const consolidatedFeedPlaceholder = document.getElementById("consolidated-feed-placeholder");
+
+  if (state.activeSystemTab === "Outlook") {
+    if (outlookInboxPanel) outlookInboxPanel.style.display = "flex";
+    if (consolidatedFeedPlaceholder) consolidatedFeedPlaceholder.style.display = "none";
+
     // Count unread items
+    const unreadIndicator = document.querySelector(".unread-indicator");
     const unreadCount = state.inbox.filter(item => item.unread).length;
     if (unreadIndicator) {
       unreadIndicator.textContent = `${unreadCount} unread`;
     }
-    
-    state.inbox.forEach(item => {
-      const li = document.createElement("li");
-      li.className = `inbox-item ${item.unread ? 'unread border-[#0078D4]' : ''}`;
-      if (item.unread) {
-        li.classList.add("bg-[#0078D4]/5");
-      }
-      if (item.id === state.selectedEmailId) {
-        li.classList.add("selected");
-      }
-      li.innerHTML = `
-        <div class="sender-avatar">${item.avatar}</div>
-        <div class="inbox-item-content">
-          <div class="inbox-item-sender">${item.sender}</div>
-          <div class="inbox-item-subject">${item.subject}</div>
-        </div>
-        <div class="inbox-item-meta">
-          <span class="inbox-item-time">${item.time}</span>
-          <span class="chevron-arrow">&rsaquo;</span>
-        </div>
-      `;
-      
-      // Dynamic hover class states
-      li.addEventListener("mouseenter", () => {
-        li.classList.add("bg-[#0078D4]/5");
-      });
-      li.addEventListener("mouseleave", () => {
-        if (!item.unread && item.id !== state.selectedEmailId) {
-          li.classList.remove("bg-[#0078D4]/5");
-        }
-      });
-      
-      // Toggle unread state and select email on click
-      li.addEventListener("click", () => {
-        item.unread = false;
-        state.selectedEmailId = item.id;
-        renderHomeView();
-      });
-      
-      inboxListMount.appendChild(li);
-    });
-  }
 
-  // 6. Render selected email details inside Reading Pane
-  const readingPaneMount = document.getElementById("reading-pane-mount");
-  if (readingPaneMount) {
-    if (state.selectedEmailId !== null) {
-      readingPaneMount.style.display = "flex";
-      const email = state.inbox.find(item => item.id === state.selectedEmailId);
-      if (email) {
-        readingPaneMount.innerHTML = `
-          <div class="reading-header">
-            <div class="reading-header-top-row">
-              <h3 class="reading-subject">${email.subject}</h3>
-              <button class="reading-close-btn" id="reading-close-btn" aria-label="Close Email">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            </div>
-            <div class="reading-sender-row">
-              <div class="reading-sender-info">
-                <div class="reading-avatar">${email.avatar}</div>
-                <div>
-                  <div class="reading-sender-name">${email.sender}</div>
-                  <div class="reading-time">To: Jean Bird • ${email.time}</div>
+    // Populate Inbox list dynamically
+    const inboxListMount = document.querySelector(".inbox-list");
+    if (inboxListMount) {
+      inboxListMount.innerHTML = "";
+      state.inbox.forEach(item => {
+        const li = document.createElement("li");
+        li.className = `inbox-item ${item.unread ? 'unread border-[#0078D4]' : ''}`;
+        if (item.unread) {
+          li.classList.add("bg-[#0078D4]/5");
+        }
+        if (item.id === state.selectedEmailId) {
+          li.classList.add("selected");
+        }
+        li.innerHTML = `
+          <div class="sender-avatar">${item.avatar}</div>
+          <div class="inbox-item-content">
+            <div class="inbox-item-sender">${item.sender}</div>
+            <div class="inbox-item-subject">${item.subject}</div>
+          </div>
+          <div class="inbox-item-meta">
+            <span class="inbox-item-time">${item.time}</span>
+            <span class="chevron-arrow">&rsaquo;</span>
+          </div>
+        `;
+        
+        // Dynamic hover class states
+        li.addEventListener("mouseenter", () => {
+          li.classList.add("bg-[#0078D4]/5");
+        });
+        li.addEventListener("mouseleave", () => {
+          if (!item.unread && item.id !== state.selectedEmailId) {
+            li.classList.remove("bg-[#0078D4]/5");
+          }
+        });
+        
+        // Toggle unread state and select email on click
+        li.addEventListener("click", () => {
+          item.unread = false;
+          state.selectedEmailId = item.id;
+          renderHomeView();
+        });
+        
+        inboxListMount.appendChild(li);
+      });
+    }
+
+    // Render selected email details inside Reading Pane
+    if (readingPaneMount) {
+      if (state.selectedEmailId !== null) {
+        readingPaneMount.style.display = "flex";
+        const email = state.inbox.find(item => item.id === state.selectedEmailId);
+        if (email) {
+          readingPaneMount.innerHTML = `
+            <div class="reading-header">
+              <div class="reading-header-top-row">
+                <h3 class="reading-subject">${email.subject}</h3>
+                <button class="reading-close-btn" id="reading-close-btn" aria-label="Close Email">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+              <div class="reading-sender-row">
+                <div class="reading-sender-info">
+                  <div class="reading-avatar">${email.avatar}</div>
+                  <div>
+                    <div class="reading-sender-name">${email.sender}</div>
+                    <div class="reading-time">To: Jean Bird • ${email.time}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="reading-body-container scrollbar-thin">
-            <p class="reading-body-text">${email.body}</p>
-          </div>
-          <div class="reading-actions-bar">
-            ${email.state === 'not_added' ? `
-              <button class="btn-add-task" id="btn-add-task-trigger">
-                <span class="sparkle-icon">✦</span> Add to Task list
-              </button>
-            ` : email.state === 'added' ? `
-              <div class="btn-added-task">
-                <span class="check-icon">✓</span> Added to Tasks
-              </div>
-            ` : ''}
-          </div>
-        `;
+            <div class="reading-body-container scrollbar-thin">
+              <p class="reading-body-text">${email.body}</p>
+            </div>
+            <div class="reading-actions-bar">
+              ${email.state === 'not_added' ? `
+                <button class="btn-add-task" id="btn-add-task-trigger">
+                  <span class="sparkle-icon">✦</span> Add to Task list
+                </button>
+              ` : email.state === 'added' ? `
+                <div class="btn-added-task">
+                  <span class="check-icon">✓</span> Added to Tasks
+                </div>
+              ` : ''}
+            </div>
+          `;
 
-        // Setup Close button click handler
-        const closeBtn = readingPaneMount.querySelector("#reading-close-btn");
-        if (closeBtn) {
-          closeBtn.addEventListener("click", () => {
-            state.selectedEmailId = null;
-            renderHomeView();
-          });
+          // Setup Close button click handler
+          const closeBtn = readingPaneMount.querySelector("#reading-close-btn");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+              state.selectedEmailId = null;
+              renderHomeView();
+            });
+          }
+
+          // Setup Add to Task list click handler
+          const addTaskTriggerBtn = readingPaneMount.querySelector("#btn-add-task-trigger");
+          if (addTaskTriggerBtn) {
+            addTaskTriggerBtn.addEventListener("click", () => {
+              // Add new task dynamically
+              const newTaskId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
+              const newTask = {
+                id: newTaskId,
+                title: email.subject.replace("LOCKED OUT: ", "").replace("CRITICAL: ", "").replace("WARNING: ", ""),
+                priority: email.subject.toLowerCase().includes("critical") || email.subject.toLowerCase().includes("locked out") ? "high" : "normal",
+                completed: false,
+                source: `Outlook - ${email.sender}`
+              };
+              state.tasks.push(newTask);
+
+              // Transition email state to 'added'
+              email.state = 'added';
+
+              // Re-render dashboard
+              renderHomeView();
+
+              // Scroll task list to bottom smoothly
+              const tasksList = document.querySelector(".tasks-list");
+              if (tasksList) {
+                setTimeout(() => {
+                  tasksList.scrollTo({
+                    top: tasksList.scrollHeight,
+                    behavior: "smooth"
+                  });
+                }, 100);
+              }
+            });
+          }
         }
-
-        // Setup Add to Task list click handler
-        const addTaskTriggerBtn = readingPaneMount.querySelector("#btn-add-task-trigger");
-        if (addTaskTriggerBtn) {
-          addTaskTriggerBtn.addEventListener("click", () => {
-            // Add new task dynamically
-            const newTaskId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
-            const newTask = {
-              id: newTaskId,
-              title: email.subject.replace("LOCKED OUT: ", "").replace("CRITICAL: ", "").replace("WARNING: ", ""),
-              priority: email.subject.toLowerCase().includes("critical") || email.subject.toLowerCase().includes("locked out") ? "high" : "normal",
-              completed: false,
-              source: `Outlook - ${email.sender}`
-            };
-            state.tasks.push(newTask);
-
-            // Transition email state to 'added'
-            email.state = 'added';
-
-            // Re-render dashboard
-            renderHomeView();
-
-            // Scroll task list to bottom smoothly
-            const tasksList = document.querySelector(".tasks-list");
-            if (tasksList) {
-              setTimeout(() => {
-                tasksList.scrollTo({
-                  top: tasksList.scrollHeight,
-                  behavior: "smooth"
-                });
-              }, 100);
-            }
-          });
-        }
+      } else {
+        readingPaneMount.style.display = "none";
+        readingPaneMount.innerHTML = "";
       }
-    } else {
+    }
+  } else {
+    // consolidated feed active System Tab
+    if (outlookInboxPanel) outlookInboxPanel.style.display = "none";
+    if (readingPaneMount) {
       readingPaneMount.style.display = "none";
       readingPaneMount.innerHTML = "";
     }
+    if (consolidatedFeedPlaceholder) consolidatedFeedPlaceholder.style.display = "flex";
   }
   
   if (window.checkAssistantFabState) {
