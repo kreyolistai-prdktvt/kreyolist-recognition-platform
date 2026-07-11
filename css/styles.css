@@ -3077,6 +3077,10 @@ body.light-mode .delegation-textarea {
 
 /* Independent Scroll Columns Layout - Desktop only */
 @media (min-width: 851px) {
+  .app-container {
+    padding: 2.5rem 0 0 3.5rem !important;
+  }
+
   .app-main-scrollable.home-active {
     overflow: hidden;
     height: calc(100vh - 120px);
@@ -3112,12 +3116,21 @@ body.light-mode .delegation-textarea {
   }
 
   #home-view {
+    position: relative !important;
     height: calc(100vh - 120px) !important;
     max-height: calc(100vh - 120px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
+  }
+
+  .assistant-drawer:not(.fab-active) {
+    position: absolute !important;
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    z-index: 50 !important;
+    width: 320px !important;
   }
 
   .inbox-panel {
