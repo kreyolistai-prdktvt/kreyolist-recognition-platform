@@ -13,15 +13,79 @@ const state = {
   firebaseConfigured: false,
   activeTab: "Home", // default active tab
   activeSystemTab: "Home", // default active system tab
-  selectedEmailId: null, // default selected email
+  activeSlackContact: "Donaldy Salvant", // active slack conversation contact
+  activeEmailId: null, // default active email
   inbox: [
-    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true },
-    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true },
-    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true },
-    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true },
-    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false },
-    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false },
-    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false }
+    { 
+      id: 1, 
+      sender: "Jena Charles", 
+      avatar: "JC", 
+      subject: "Urgent: Active Directory Account Unlock Request – Jena Charles", 
+      time: "8:14 AM", 
+      unread: true,
+      body: "Hello Jean,\n\nI hope you are doing well.\n\nI am writing to request the immediate unlocking of my Active Directory domain account. I have been locked out after entering my password incorrectly three times while trying to log in this morning.\n\nThis access is critical right now, as I need to get into the client database to prepare data for the upcoming Q2 audit. Any extended downtime will impact our preparation schedule, so I would appreciate your prompt attention to this matter.\n\nPlease let me know once it has been reset or if you need me to verify any security details on my end.\n\nSincerely,\n\nJena Charles",
+      state: "not_added"
+    },
+    { 
+      id: 2, 
+      sender: "Security Operations Center", 
+      avatar: "SO", 
+      subject: "CRITICAL: Unrecognized ssh attempts on production server", 
+      time: "7:45 AM", 
+      unread: true,
+      body: "Alert: Multiple failed SSH attempts detected from IP 192.168.1.104 attempting to access root on prod-server-01. Please investigate auth logs and secure compliance status.",
+      state: "not_added"
+    },
+    { 
+      id: 3, 
+      sender: "Marcus Vance", 
+      avatar: "MV", 
+      subject: "Motherboard replacement parts have arrived for dev laptop", 
+      time: "Yesterday", 
+      unread: true,
+      body: "The replacement parts for the Lenovo developer workstation have been delivered. Let me know when you can perform the motherboard swap and rebuild the standard OS image.",
+      state: "not_added"
+    },
+    { 
+      id: 4, 
+      sender: "HR Onboarding", 
+      avatar: "HR", 
+      subject: "Password reset required for new remote engineer", 
+      time: "Yesterday", 
+      unread: true,
+      body: "Hi, please create a new user profile, configure corporate SSH keys, and email temporary credentials to our new remote engineering hire who starts on Monday.",
+      state: "not_added"
+    },
+    { 
+      id: 5, 
+      sender: "Datadog Alerts", 
+      avatar: "DA", 
+      subject: "WARNING: CPU spike on staging database server", 
+      time: "Oct 12", 
+      unread: false,
+      body: "Trigger: CPU usage exceeded 85% on db-staging-02. Please review current query execution plans, check locking queries, and optimize active logs.",
+      state: "not_added"
+    },
+    { 
+      id: 6, 
+      sender: "HelpDesk Escalation", 
+      avatar: "HE", 
+      subject: "Account unlock request: VIP Sales Director", 
+      time: "Oct 12", 
+      unread: false,
+      body: "Hi, our VIP Sales Director is locked out of Salesforce and needs immediate AD override. Secondary authorization is attached. Please process ASAP.",
+      state: "not_added"
+    },
+    { 
+      id: 7, 
+      sender: "Laptop Provisioning", 
+      avatar: "LP", 
+      subject: "Hardware diagnostics check complete for Unit-B", 
+      time: "Oct 10", 
+      unread: false,
+      body: "Diagnostics run on Unit-B complete. Memory test passed, drive check passed. Please log this completion in the asset inventory system.",
+      state: "not_added"
+    }
   ],
   tasks: [
     { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false },
@@ -86,8 +150,8 @@ async function init() {
   // Escape key global listener to close/deselect active reading email
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      if (state.selectedEmailId !== null) {
-        state.selectedEmailId = null;
+      if (state.activeEmailId !== null) {
+        state.activeEmailId = null;
         renderHomeView();
       }
     }
@@ -248,50 +312,58 @@ function renderModal() {
 function setupTabNavigation() {
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
-  const navCalendar = document.getElementById("nav-item-calendar");
-  const navRec = document.getElementById("nav-item-recognition");
+  const navCalendar = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Calendar");
+  const navRec = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
 
   if (navHome) {
     navHome.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Home");
+      setActiveTab("Home");
     });
   }
 
   if (navOutlook) {
     navOutlook.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Outlook");
+      setActiveTab("Outlook");
     });
   }
 
   if (navCalendar) {
     navCalendar.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Calendar");
+      setActiveTab("Calendar");
     });
   }
 
   if (navRec) {
     navRec.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Recognition");
+      setActiveTab("Recognition");
+    });
+  }
+
+  const navSlack = document.getElementById("nav-item-slack");
+  if (navSlack) {
+    navSlack.addEventListener("click", (e) => {
+      e.preventDefault();
+      setActiveTab("Slack");
     });
   }
 
   if (navRewards) {
     navRewards.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Rewards");
+      setActiveTab("Rewards");
     });
   }
 
   if (navAwards) {
     navAwards.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("Awards");
+      setActiveTab("Awards");
     });
   }
 }
@@ -300,7 +372,7 @@ function setupTabNavigation() {
  * Switches the active tab view.
  * @param {string} tabName - The name of the tab to switch to.
  */
-function switchTab(tabName) {
+function setActiveTab(tabName) {
   if (state.activeTab === tabName) return;
   state.activeTab = tabName;
 
@@ -311,17 +383,20 @@ function switchTab(tabName) {
 
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
-  const navCalendar = document.getElementById("nav-item-calendar");
-  const navRec = document.getElementById("nav-item-recognition");
+  const navCalendar = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Calendar");
+  const navRec = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
+  const navSlack = document.getElementById("nav-item-slack");
 
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
   const calendarView = document.getElementById("calendar-view");
   const rewardsView = document.getElementById("rewards-view");
   const awardsView = document.getElementById("awards-view");
+  const slackView = document.getElementById("slack-view");
   const appMain = document.querySelector(".app-main-scrollable");
+  const greetingEl = document.querySelector(".recognition-portal-greeting");
 
   // Apply active wayfinding highlight
   if (navHome) {
@@ -348,29 +423,198 @@ function switchTab(tabName) {
     if (state.activeTab === "Awards") navAwards.classList.add("active");
     else navAwards.classList.remove("active");
   }
+  if (navSlack) {
+    if (state.activeTab === "Slack") navSlack.classList.add("active");
+    else navSlack.classList.remove("active");
+  }
 
   // Hide all views first
-  if (homeView) homeView.style.display = "none";
+  if (homeView) {
+    homeView.classList.remove("active-view");
+    homeView.style.display = "none";
+  }
   if (recView) recView.style.display = "none";
   if (calendarView) calendarView.style.display = "none";
   if (rewardsView) rewardsView.style.display = "none";
   if (awardsView) awardsView.style.display = "none";
+  if (slackView) {
+    slackView.classList.remove("active-view");
+    slackView.style.display = "none";
+  }
+
+  // Control greeting element display condition strictly tied to activeTab === 'Recognition'
+  if (greetingEl) {
+    greetingEl.style.display = state.activeTab === "Recognition" ? "block" : "none";
+  }
 
   // Lock target view display conditions
   if (state.activeTab === "Home") {
-    if (homeView) homeView.style.display = "flex";
+    if (homeView) {
+      homeView.classList.add("active-view");
+      homeView.style.display = "flex";
+    }
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else if (state.activeTab === "Outlook") {
-    if (homeView) homeView.style.display = "flex";
+    if (homeView) {
+      homeView.classList.add("active-view");
+      homeView.style.display = "flex";
+    }
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else if (state.activeTab === "Calendar") {
     if (calendarView) {
-      calendarView.innerHTML = '<div class="w-full h-full text-zinc-500 p-8">Calendar view coming soon...</div>';
+      calendarView.innerHTML = `
+        <div class="calendar-wrapper">
+          <!-- Left Sidebar Column (24%) -->
+          <div class="calendar-sidebar-left">
+            <div class="mini-calendar-title">July 2026</div>
+            <div class="mini-calendar-grid">
+              <div class="mini-day-header">Su</div>
+              <div class="mini-day-header">Mo</div>
+              <div class="mini-day-header">Tu</div>
+              <div class="mini-day-header">We</div>
+              <div class="mini-day-header">Th</div>
+              <div class="mini-day-header">Fr</div>
+              <div class="mini-day-header">Sa</div>
+              
+              <div class="mini-day other-month">28</div>
+              <div class="mini-day other-month">29</div>
+              <div class="mini-day other-month">30</div>
+              
+              <div class="mini-day">1</div>
+              <div class="mini-day">2</div>
+              <div class="mini-day">3</div>
+              <div class="mini-day">4</div>
+              <div class="mini-day">5</div>
+              <div class="mini-day">6</div>
+              <div class="mini-day">7</div>
+              <div class="mini-day">8</div>
+              <div class="mini-day">9</div>
+              <div class="mini-day">10</div>
+              <div class="mini-day">11</div>
+              <div class="mini-day today">12</div>
+              <div class="mini-day">13</div>
+              <div class="mini-day">14</div>
+              <div class="mini-day">15</div>
+              <div class="mini-day">16</div>
+              <div class="mini-day">17</div>
+              <div class="mini-day">18</div>
+              <div class="mini-day">19</div>
+              <div class="mini-day">20</div>
+              <div class="mini-day">21</div>
+              <div class="mini-day">22</div>
+              <div class="mini-day">23</div>
+              <div class="mini-day">24</div>
+              <div class="mini-day">25</div>
+              <div class="mini-day">26</div>
+              <div class="mini-day">27</div>
+              <div class="mini-day">28</div>
+              <div class="mini-day">29</div>
+              <div class="mini-day">30</div>
+              <div class="mini-day">31</div>
+              
+              <div class="mini-day other-month">1</div>
+              <div class="mini-day other-month">2</div>
+            </div>
+          </div>
+          
+          <!-- Center Monthly Grid Column (50%) -->
+          <div class="calendar-center-grid">
+            <div class="main-calendar-header">
+              <div class="main-calendar-title">July 2026</div>
+            </div>
+            
+            <div class="main-calendar-grid">
+              <div class="main-day-header">Sunday</div>
+              <div class="main-day-header">Monday</div>
+              <div class="main-day-header">Tuesday</div>
+              <div class="main-day-header">Wednesday</div>
+              <div class="main-day-header">Thursday</div>
+              <div class="main-day-header">Friday</div>
+              <div class="main-day-header">Saturday</div>
+              
+              <!-- Week 1 -->
+              <div class="main-calendar-cell other-month"><span class="day-number">28</span></div>
+              <div class="main-calendar-cell other-month"><span class="day-number">29</span></div>
+              <div class="main-calendar-cell other-month"><span class="day-number">30</span></div>
+              <div class="main-calendar-cell"><span class="day-number">1</span></div>
+              <div class="main-calendar-cell"><span class="day-number">2</span></div>
+              <div class="main-calendar-cell"><span class="day-number">3</span></div>
+              <div class="main-calendar-cell"><span class="day-number">4</span></div>
+              
+              <!-- Week 2 -->
+              <div class="main-calendar-cell"><span class="day-number">5</span></div>
+              <div class="main-calendar-cell"><span class="day-number">6</span></div>
+              <div class="main-calendar-cell"><span class="day-number">7</span></div>
+              <div class="main-calendar-cell"><span class="day-number">8</span></div>
+              <div class="main-calendar-cell"><span class="day-number">9</span></div>
+              <div class="main-calendar-cell"><span class="day-number">10</span></div>
+              <div class="main-calendar-cell"><span class="day-number">11</span></div>
+              
+              <!-- Week 3 -->
+              <div class="main-calendar-cell today">
+                <span class="day-number">12</span>
+                <div class="calendar-event regular">9:00 AM Production Server Sync</div>
+                <div class="calendar-event regular">2:00 PM Deep Work Focus</div>
+              </div>
+              <div class="main-calendar-cell">
+                <span class="day-number">13</span>
+                <div class="calendar-event system-buffer">🤖 System Lock: Q2 Audit Preparation Buffer (2 Hours)</div>
+              </div>
+              <div class="main-calendar-cell"><span class="day-number">14</span></div>
+              <div class="main-calendar-cell"><span class="day-number">15</span></div>
+              <div class="main-calendar-cell"><span class="day-number">16</span></div>
+              <div class="main-calendar-cell"><span class="day-number">17</span></div>
+              <div class="main-calendar-cell"><span class="day-number">18</span></div>
+              
+              <!-- Week 4 -->
+              <div class="main-calendar-cell"><span class="day-number">19</span></div>
+              <div class="main-calendar-cell"><span class="day-number">20</span></div>
+              <div class="main-calendar-cell"><span class="day-number">21</span></div>
+              <div class="main-calendar-cell"><span class="day-number">22</span></div>
+              <div class="main-calendar-cell"><span class="day-number">23</span></div>
+              <div class="main-calendar-cell"><span class="day-number">24</span></div>
+              <div class="main-calendar-cell"><span class="day-number">25</span></div>
+              
+              <!-- Week 5 -->
+              <div class="main-calendar-cell"><span class="day-number">26</span></div>
+              <div class="main-calendar-cell"><span class="day-number">27</span></div>
+              <div class="main-calendar-cell"><span class="day-number">28</span></div>
+              <div class="main-calendar-cell"><span class="day-number">29</span></div>
+              <div class="main-calendar-cell"><span class="day-number">30</span></div>
+              <div class="main-calendar-cell"><span class="day-number">31</span></div>
+              <div class="main-calendar-cell other-month"><span class="day-number">1</span></div>
+            </div>
+          </div>
+          
+          <!-- Right Agenda Sidebar Column (26%) -->
+          <div class="calendar-sidebar-right">
+            <div class="agenda-title">Today's Agenda</div>
+            <div class="agenda-subtitle">Sunday, July 12, 2026</div>
+            
+            <div class="agenda-list">
+              <div class="agenda-item">
+                <span class="agenda-time">9:00 AM - 10:00 AM</span>
+                <span class="agenda-text">Production Server Sync</span>
+              </div>
+              <div class="agenda-item">
+                <span class="agenda-time">2:00 PM - 4:00 PM</span>
+                <span class="agenda-text">Deep Work Focus</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
       calendarView.style.display = "block";
     }
     if (appMain) appMain.classList.remove("home-active");
+  } else if (state.activeTab === "Slack") {
+    if (slackView) {
+      slackView.classList.add("active-view");
+    }
+    renderSlackView();
+    if (appMain) appMain.classList.add("home-active");
   } else if (state.activeTab === "Recognition") {
     if (recView) recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
@@ -390,7 +634,7 @@ function switchTab(tabName) {
 function renderHomeView() {
   const homeView = document.getElementById("home-view");
   if (homeView) {
-    if (state.selectedEmailId !== null && state.activeSystemTab === "Outlook") {
+    if (state.activeEmailId !== null && state.activeSystemTab === "Outlook") {
       homeView.classList.add("reading-pane-active");
     } else {
       homeView.classList.remove("reading-pane-active");
@@ -515,27 +759,50 @@ function renderHomeView() {
         if (item.unread) {
           li.classList.add("bg-[#0078D4]/5");
         }
-        if (item.id === state.selectedEmailId) {
+        
+        const isAnyEmailOpen = (state.activeEmailId !== null);
+        const isCurrentActiveEmail = (item.id === state.activeEmailId);
+        
+        if (isCurrentActiveEmail) {
           li.classList.add("selected");
         }
-        li.innerHTML = `
-          <div class="sender-avatar">${item.avatar}</div>
-          <div class="inbox-item-content">
-            <div class="inbox-item-sender">${item.sender}</div>
-            <div class="inbox-item-subject">${item.subject}</div>
-          </div>
-          <div class="inbox-item-meta">
-            <span class="inbox-item-time">${item.time}</span>
-            <span class="chevron-arrow">&rsaquo;</span>
-          </div>
-        `;
+        
+        if (isAnyEmailOpen) {
+          // Compact layout for ALL cards when reading is active
+          li.innerHTML = `
+            <div class="inbox-item-compact-wrapper" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                <div class="sender-avatar" style="flex-shrink: 0; width: 28px; height: 28px; font-size: 0.75rem;">${item.avatar}</div>
+                <div class="inbox-item-sender" style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.88rem; color: #FFFFFF; flex: 1; min-width: 0;">${item.sender}</div>
+              </div>
+              <div class="inbox-item-meta" style="flex-shrink: 0; margin-left: auto; display: flex; align-items: center;">
+                <span class="inbox-item-time" style="font-size: 0.72rem; color: var(--color-text-muted);">${item.time}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          // Full detailed layout for all cards when no email is active
+          const snippetText = item.body ? item.body.replace(/\n/g, ' ').substring(0, 50) + '...' : '';
+          li.innerHTML = `
+            <div class="sender-avatar" style="flex-shrink: 0;">${item.avatar}</div>
+            <div class="inbox-item-content" style="min-width: 0;">
+              <div class="inbox-item-sender">${item.sender}</div>
+              <div class="inbox-item-subject" style="font-weight: 600; margin-bottom: 2px;">${item.subject}</div>
+              <div class="inbox-item-snippet" style="font-size: 0.78rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${snippetText}</div>
+            </div>
+            <div class="inbox-item-meta" style="flex-shrink: 0; display: flex; align-items: center; gap: 12px;">
+              <span class="inbox-item-time">${item.time}</span>
+              <span class="chevron-arrow">&rsaquo;</span>
+            </div>
+          `;
+        }
         
         // Dynamic hover class states
         li.addEventListener("mouseenter", () => {
           li.classList.add("bg-[#0078D4]/5");
         });
         li.addEventListener("mouseleave", () => {
-          if (!item.unread && item.id !== state.selectedEmailId) {
+          if (!item.unread && item.id !== state.activeEmailId) {
             li.classList.remove("bg-[#0078D4]/5");
           }
         });
@@ -543,7 +810,7 @@ function renderHomeView() {
         // Toggle unread state and select email on click
         li.addEventListener("click", () => {
           item.unread = false;
-          state.selectedEmailId = item.id;
+          state.activeEmailId = item.id;
           renderHomeView();
         });
         
@@ -553,9 +820,9 @@ function renderHomeView() {
 
     // Render selected email details inside Reading Pane
     if (readingPaneMount) {
-      if (state.selectedEmailId !== null) {
+      if (state.activeEmailId !== null) {
         readingPaneMount.style.display = "flex";
-        const email = state.inbox.find(item => item.id === state.selectedEmailId);
+        const email = state.inbox.find(item => item.id === state.activeEmailId);
         if (email) {
           readingPaneMount.innerHTML = `
             <div class="reading-header">
@@ -576,10 +843,19 @@ function renderHomeView() {
               </div>
             </div>
             <div class="reading-body-container scrollbar-thin">
-              <p class="reading-body-text">${email.body}</p>
+              ${email.id === 1 ? `
+                <div class="agent-insight-banner">
+                  🤖 Agent Note: Jena Charles is locked out. Access is critical for the upcoming Q2 Audit data preparation. This action item has been summarized and moved to the top of your high-priority task list.
+                </div>
+              ` : ''}
+              <p class="reading-body-text" style="white-space: pre-line;">${email.body}</p>
             </div>
             <div class="reading-actions-bar">
-              ${email.state === 'not_added' ? `
+              ${email.id === 1 ? `
+                <div class="btn-added-task" style="border: 1px solid #4ADE80; color: #4ADE80; background: rgba(74, 222, 128, 0.05); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; cursor: default;">
+                  <span class="check-icon">✓</span> Synced to Tasks
+                </div>
+              ` : email.state === 'not_added' ? `
                 <button class="btn-add-task" id="btn-add-task-trigger">
                   <span class="sparkle-icon">✦</span> Add to Task list
                 </button>
@@ -595,7 +871,7 @@ function renderHomeView() {
           const closeBtn = readingPaneMount.querySelector("#reading-close-btn");
           if (closeBtn) {
             closeBtn.addEventListener("click", () => {
-              state.selectedEmailId = null;
+              state.activeEmailId = null;
               renderHomeView();
             });
           }
@@ -1458,6 +1734,104 @@ function setupAssistantFabScrollDetector() {
   
   // Register scroll detector as a global property so other elements can force refresh it
   window.checkAssistantFabState = checkAssistantFab;
+}
+
+// Slack Chat Module Helpers
+window.selectSlackChat = function(contactName) {
+  state.activeSlackContact = contactName;
+  renderSlackView();
+};
+
+function renderSlackView() {
+  const slackView = document.getElementById("slack-view");
+  if (!slackView) return;
+  
+  const contact = state.activeSlackContact || "Donaldy Salvant";
+  
+  let messageContent = "";
+  if (contact === "Donaldy Salvant") {
+    messageContent = `
+      <div class="slack-message-row sent">
+        <div class="slack-message-bubble">
+          <div>call me when u get a chance</div>
+          <span class="slack-message-time">4:06 PM</span>
+        </div>
+      </div>
+    `;
+  } else if (contact === "Claryce Medard") {
+    messageContent = `
+      <div class="slack-message-row sent">
+        <div class="slack-message-bubble">
+          <div>Hi Claryce, I've updated the AD permissions as requested.</div>
+          <span class="slack-message-time">4:15 PM</span>
+        </div>
+      </div>
+    `;
+  } else {
+    messageContent = `
+      <div class="slack-message-row sent">
+        <div class="slack-message-bubble">
+          <div>hey Wilner, let's sync on the audit tasks later today.</div>
+          <span class="slack-message-time">4:10 PM</span>
+        </div>
+      </div>
+    `;
+  }
+
+  slackView.innerHTML = `
+    <div class="slack-wrapper">
+      <!-- Left Sidebar Panel (24%) -->
+      <div class="slack-sidebar">
+        <div class="slack-filters">
+          <span class="slack-filter-pill">Unread</span>
+          <span class="slack-filter-pill">Channels</span>
+          <span class="slack-filter-pill active">Chats</span>
+        </div>
+        
+        <div>
+          <div class="slack-section-header">Direct Messages</div>
+          <div class="slack-chat-list">
+            <div class="slack-chat-item ${contact === "Donaldy Salvant" ? "active" : ""}" onclick="selectSlackChat('Donaldy Salvant')">
+              <div class="slack-chat-avatar">DS</div>
+              <div class="slack-chat-name">Donaldy Salvant</div>
+            </div>
+            <div class="slack-chat-item ${contact === "Wilner Sainlot" ? "active" : ""}" onclick="selectSlackChat('Wilner Sainlot')">
+              <div class="slack-chat-avatar">WS</div>
+              <div class="slack-chat-name">Wilner Sainlot</div>
+            </div>
+            <div class="slack-chat-item ${contact === "Claryce Medard" ? "active" : ""}" onclick="selectSlackChat('Claryce Medard')">
+              <div class="slack-chat-avatar">CM</div>
+              <div class="slack-chat-name">Claryce Medard</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Conversation Panel (76%) -->
+      <div class="slack-chat-area">
+        <div class="slack-chat-header">
+          <div class="slack-header-name">${contact}</div>
+        </div>
+        
+        <div class="slack-chat-history">
+          ${messageContent}
+        </div>
+        
+        <!-- Input Field -->
+        <div class="slack-input-container">
+          <div class="slack-input-wrapper">
+            <input type="text" class="slack-input-field" placeholder="Type a message" />
+            <div class="slack-input-actions">
+              <span class="action-icon" style="cursor: pointer; margin-right: 8px;">☺</span>
+              <span class="action-icon" style="cursor: pointer;">📎</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  slackView.classList.add("active-view");
+  slackView.style.display = "flex";
 }
 
 // Bootstrap when DOM is ready
