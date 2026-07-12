@@ -15,25 +15,25 @@ const state = {
   activeSystemTab: "Home", // default active system tab
   selectedEmailId: null, // default selected email
   inbox: [
-    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true, state: "added", body: "Hello Jean,\n\nI hope you’re well.\n\nI’m locked out of my Active Directory domain account. I entered my password incorrectly three times this morning.\n\nI need access to the client database to prepare for the upcoming Q2 audit. Any downtime will impact our schedule. Please prioritize this.\n\nLet me know when the account is reset or if you need me to verify security details.\n\nThanks,\nJena Charles" },
-    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true, state: "added", body: "Hello Jean,\n\nI hope this email finds you well.\n\nOur automated monitoring tools have flagged multiple unauthorized SSH login attempts on our core production cluster [Node-04] starting at 07:15 AM. The traffic appears to be originating from an unmapped external IP address.\n\nPlease inspect the authentication log files immediately, update the active firewall rules to block this range, and ensure our deployment pipelines remain secure. Let us know your findings as soon as possible.\n\nBest regards,\nSOC Team" },
-    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true, state: "not_added", body: "Hi Jean,\n\nHope you're having a good week.\n\nThe replacement system board for the developer laptop (Unit-B) has officially been delivered to the front desk logistics area.\n\nWhen you have a moment, please retrieve the hardware, execute the physical motherboard swap, and re-image the machine so we can return it to production.\n\nThanks for the help,\nMarcus Vance" },
-    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true, state: "none", body: "Hi, please create a new user profile, configure corporate SSH keys, and email temporary credentials to our new remote engineering hire who starts on Monday." },
-    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false, state: "none", body: "Trigger: CPU usage exceeded 85% on db-staging-02. Please review current query execution plans, check locking queries, and optimize active logs." },
-    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false, state: "none", body: "Hi, our VIP Sales Director is locked out of Salesforce and needs immediate AD override. Secondary authorization is attached. Please process ASAP." },
-    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false, state: "none", body: "Diagnostics run on Unit-B complete. Memory test passed, drive check passed. Please log this completion in the asset inventory system." }
+    { id: 1, sender: "Jena Charles", avatar: "JC", subject: "LOCKED OUT: Please unlock account ASAP", time: "8:14 AM", unread: true },
+    { id: 2, sender: "Security Operations Center", avatar: "SO", subject: "CRITICAL: Unrecognized ssh attempts on production server", time: "7:45 AM", unread: true },
+    { id: 3, sender: "Marcus Vance", avatar: "MV", subject: "Motherboard replacement parts have arrived for dev laptop", time: "Yesterday", unread: true },
+    { id: 4, sender: "HR Onboarding", avatar: "HR", subject: "Password reset required for new remote engineer", time: "Yesterday", unread: true },
+    { id: 5, sender: "Datadog Alerts", avatar: "DA", subject: "WARNING: CPU spike on staging database server", time: "Oct 12", unread: false },
+    { id: 6, sender: "HelpDesk Escalation", avatar: "HE", subject: "Account unlock request: VIP Sales Director", time: "Oct 12", unread: false },
+    { id: 7, sender: "Laptop Provisioning", avatar: "LP", subject: "Hardware diagnostics check complete for Unit-B", time: "Oct 10", unread: false }
   ],
   tasks: [
-    { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false, source: "Outlook - Jena Charles" },
-    { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false, source: "Outlook - Security Operations Center" },
-    { id: 3, title: "Review database performance and clean query logs on staging", priority: "normal", completed: false, source: "Internal System" },
-    { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false, source: "Outlook - HR Onboarding" },
-    { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false, source: "Outlook - Datadog Alerts" },
-    { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false, source: "Outlook - HelpDesk Escalation" },
-    { id: 7, title: "Update laptop hardware asset inventory log for Unit-B", priority: "low", completed: false, source: "Outlook - Laptop Provisioning" },
-    { id: 8, title: "Verify daily backups across enterprise storage clusters", priority: "high", completed: false, source: "Internal System" },
-    { id: 9, title: "Run patch updates on staging environment firewall rules", priority: "normal", completed: false, source: "Internal System" },
-    { id: 10, title: "Audit root user access logs for Q2 infrastructure compliance", priority: "normal", completed: false, source: "Compliance System" }
+    { id: 1, title: "Unlock Jena Charles' Active Directory domain account", priority: "high", completed: false },
+    { id: 2, title: "Investigate production server SSH unauthorized access lines", priority: "high", completed: false },
+    { id: 3, title: "Replace motherboard and re-image developer laptop", priority: "normal", completed: false },
+    { id: 4, title: "Reset password and generate temporary keys for new engineer onboarding", priority: "normal", completed: false },
+    { id: 5, title: "Analyze staging database CPU metrics and check query logs", priority: "normal", completed: false },
+    { id: 6, title: "Review secondary authorization to unlock VIP Sales account", priority: "high", completed: false },
+    { id: 7, title: "Update laptop hardware asset inventory log for Unit-B", priority: "low", completed: false },
+    { id: 8, title: "Verify daily backups across enterprise storage clusters", priority: "high", completed: false },
+    { id: 9, title: "Run patch updates on staging environment firewall rules", priority: "normal", completed: false },
+    { id: 10, title: "Audit root user access logs for Q2 infrastructure compliance", priority: "normal", completed: false }
   ]
 };
 
@@ -806,6 +806,26 @@ const dossierMockData = {
     dueDate: "Due July 10",
     emails: [
       {
+        sender: "Jena Charles",
+        time: "8:14 AM",
+        subject: "LOCKED OUT: Please unlock account ASAP",
+        body: "Hi HelpDesk, I've been locked out of my Active Directory domain account after typing my password wrong three times. Please unlock it ASAP, I need to access the client database for Q2 audit. Thanks!"
+      }
+    ],
+    attachments: [
+      { name: "ad_unlock_request_log.txt", size: "1.2 KB • Text Log", linkText: "View Logs" }
+    ],
+    jiraId: "SYS-9012",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  2: {
+    platform: "Gmail",
+    platformIcon: "✉",
+    dueDate: "Due July 10",
+    emails: [
+      {
         sender: "Security Operations Center",
         time: "7:45 AM",
         subject: "CRITICAL: Unrecognized ssh attempts on production server",
@@ -821,7 +841,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   3: {
-    platform: "Outlook",
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 12",
     emails: [
@@ -841,7 +861,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   4: {
-    platform: "Outlook",
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
@@ -861,7 +881,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   5: {
-    platform: "Outlook",
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
@@ -881,7 +901,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   6: {
-    platform: "Outlook",
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 18",
     emails: [
@@ -901,7 +921,7 @@ const dossierMockData = {
     jiraDeps: "None"
   },
   7: {
-    platform: "Outlook",
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 20",
     emails: [
