@@ -81,6 +81,16 @@ async function init() {
   setupDossierHandlers();
   setupAssistantFabScrollDetector();
 
+  // Escape key global listener to close/deselect active reading email
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (state.selectedEmailId !== null) {
+        state.selectedEmailId = null;
+        renderHomeView();
+      }
+    }
+  });
+
   // Render initial interface
   renderFilterBar();
   renderGrid();
@@ -343,8 +353,16 @@ function renderHomeView() {
         <span class="radio-circle"></span>
       </div>
       <div class="task-info">
-        <span class="task-title">${task.title}</span>
-        <span class="priority-tag">${task.priority}</span>
+        <div class="task-title-row">
+          <span class="task-title">${task.title}</span>
+          <span class="priority-tag">${task.priority}</span>
+        </div>
+        ${task.source ? `
+        <div class="task-source-badge">
+          <span class="source-icon">${task.source.includes('Outlook') ? '✉' : '⚙'}</span>
+          <span class="source-text">Source: ${task.source}</span>
+        </div>
+        ` : ''}
       </div>
     `;
 
@@ -607,7 +625,27 @@ let activeDossierTaskId = null;
 // Mock context dossier data for KreyoList tasks (Gmail/Outlook MCP, Attachments, Jira tickets)
 const dossierMockData = {
   1: {
-    platform: "Gmail",
+    platform: "Outlook",
+    platformIcon: "✉",
+    dueDate: "Due July 10",
+    emails: [
+      {
+        sender: "Jena Charles",
+        time: "8:14 AM",
+        subject: "LOCKED OUT: Please unlock account ASAP",
+        body: "Hi HelpDesk, I've been locked out of my Active Directory domain account after typing my password wrong three times. Please unlock it ASAP, I need to access the client database for Q2 audit. Thanks!"
+      }
+    ],
+    attachments: [
+      { name: "ad_unlock_request_log.txt", size: "1.2 KB • Text Log", linkText: "View Logs" }
+    ],
+    jiraId: "SYS-9012",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  2: {
+    platform: "Outlook",
     platformIcon: "✉",
     dueDate: "Due July 10",
     emails: [
@@ -872,7 +910,7 @@ function openActionDossier(task) {
     </div>
     <div class="tracker-row">
       <span class="tracker-label">Assignee:</span>
-      <span class="tracker-val">Alex Mercer</span>
+      <span class="tracker-val">Jean Bird</span>
     </div>
     <div class="tracker-row">
       <span class="tracker-label">Dependencies:</span>
