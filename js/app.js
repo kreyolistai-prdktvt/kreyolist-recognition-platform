@@ -367,7 +367,7 @@ function switchTab(tabName) {
     renderHomeView();
   } else if (state.activeTab === "Calendar") {
     if (calendarView) {
-      calendarView.innerHTML = "<div></div>";
+      calendarView.innerHTML = '<div class="w-full h-full text-zinc-500 p-8">Calendar view coming soon...</div>';
       calendarView.style.display = "block";
     }
     if (appMain) appMain.classList.remove("home-active");
