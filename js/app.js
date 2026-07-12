@@ -245,6 +245,8 @@ function setupTabNavigation() {
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
   const navRec = document.getElementById("nav-item-recognition");
+  const navRewards = document.getElementById("nav-item-rewards");
+  const navAwards = document.getElementById("nav-item-awards");
 
   if (navHome) {
     navHome.addEventListener("click", (e) => {
@@ -268,6 +270,20 @@ function setupTabNavigation() {
       switchTab("recognition");
     });
   }
+
+  if (navRewards) {
+    navRewards.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchTab("rewards");
+    });
+  }
+
+  if (navAwards) {
+    navAwards.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchTab("awards");
+    });
+  }
 }
 
 /**
@@ -277,12 +293,14 @@ function setupTabNavigation() {
 function switchTab(tabName) {
   // If activeTab is home and we are switching activeSystemTab, we still want to re-render.
   // So we only return early if both activeTab and activeSystemTab are unchanged.
-  if (state.activeTab === tabName && tabName === "recognition") return;
+  if (state.activeTab === tabName && (tabName === "recognition" || tabName === "rewards" || tabName === "awards")) return;
   state.activeTab = tabName;
 
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
   const navRec = document.getElementById("nav-item-recognition");
+  const navRewards = document.getElementById("nav-item-rewards");
+  const navAwards = document.getElementById("nav-item-awards");
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
   const appMain = document.querySelector(".app-main-scrollable");
@@ -291,6 +309,8 @@ function switchTab(tabName) {
   if (navHome) navHome.classList.remove("active");
   if (navOutlook) navOutlook.classList.remove("active");
   if (navRec) navRec.classList.remove("active");
+  if (navRewards) navRewards.classList.remove("active");
+  if (navAwards) navAwards.classList.remove("active");
 
   if (tabName === "home") {
     if (state.activeSystemTab === "Outlook") {
@@ -303,7 +323,10 @@ function switchTab(tabName) {
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else {
-    if (navRec) navRec.classList.add("active");
+    if (tabName === "recognition" && navRec) navRec.classList.add("active");
+    if (tabName === "rewards" && navRewards) navRewards.classList.add("active");
+    if (tabName === "awards" && navAwards) navAwards.classList.add("active");
+    
     homeView.style.display = "none";
     recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
