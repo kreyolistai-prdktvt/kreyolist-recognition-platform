@@ -143,6 +143,10 @@ function renderFilterBar() {
  * Filters, sorts, and renders the venue discovery cards grid.
  */
 function renderGrid() {
+  if (state.activeTab !== "Recognition") {
+    if (dom.gridContainer) dom.gridContainer.innerHTML = "";
+    return;
+  }
   if (!dom.gridContainer) return;
   
   // Grab currently rendered cards
@@ -319,13 +323,31 @@ function switchTab(tabName) {
   const awardsView = document.getElementById("awards-view");
   const appMain = document.querySelector(".app-main-scrollable");
 
-  // Reset active classes
-  if (navHome) navHome.classList.remove("active");
-  if (navOutlook) navOutlook.classList.remove("active");
-  if (navCalendar) navCalendar.classList.remove("active");
-  if (navRec) navRec.classList.remove("active");
-  if (navRewards) navRewards.classList.remove("active");
-  if (navAwards) navAwards.classList.remove("active");
+  // Apply active wayfinding highlight
+  if (navHome) {
+    if (state.activeTab === "Home") navHome.classList.add("active");
+    else navHome.classList.remove("active");
+  }
+  if (navOutlook) {
+    if (state.activeTab === "Outlook") navOutlook.classList.add("active");
+    else navOutlook.classList.remove("active");
+  }
+  if (navCalendar) {
+    if (state.activeTab === "Calendar") navCalendar.classList.add("active");
+    else navCalendar.classList.remove("active");
+  }
+  if (navRec) {
+    if (state.activeTab === "Recognition") navRec.classList.add("active");
+    else navRec.classList.remove("active");
+  }
+  if (navRewards) {
+    if (state.activeTab === "Rewards") navRewards.classList.add("active");
+    else navRewards.classList.remove("active");
+  }
+  if (navAwards) {
+    if (state.activeTab === "Awards") navAwards.classList.add("active");
+    else navAwards.classList.remove("active");
+  }
 
   // Hide all views first
   if (homeView) homeView.style.display = "none";
@@ -334,32 +356,29 @@ function switchTab(tabName) {
   if (rewardsView) rewardsView.style.display = "none";
   if (awardsView) awardsView.style.display = "none";
 
-  // Apply active wayfinding highlight and show target view
-  if (tabName === "Home") {
-    if (navHome) navHome.classList.add("active");
+  // Lock target view display conditions
+  if (state.activeTab === "Home") {
     if (homeView) homeView.style.display = "flex";
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
-  } else if (tabName === "Outlook") {
-    if (navOutlook) navOutlook.classList.add("active");
+  } else if (state.activeTab === "Outlook") {
     if (homeView) homeView.style.display = "flex";
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
-  } else if (tabName === "Calendar") {
-    if (navCalendar) navCalendar.classList.add("active");
-    if (calendarView) calendarView.style.display = "block";
+  } else if (state.activeTab === "Calendar") {
+    if (calendarView) {
+      calendarView.innerHTML = "<div></div>";
+      calendarView.style.display = "block";
+    }
     if (appMain) appMain.classList.remove("home-active");
-  } else if (tabName === "Recognition") {
-    if (navRec) navRec.classList.add("active");
+  } else if (state.activeTab === "Recognition") {
     if (recView) recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
     renderGrid();
-  } else if (tabName === "Rewards") {
-    if (navRewards) navRewards.classList.add("active");
+  } else if (state.activeTab === "Rewards") {
     if (rewardsView) rewardsView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
-  } else if (tabName === "Awards") {
-    if (navAwards) navAwards.classList.add("active");
+  } else if (state.activeTab === "Awards") {
     if (awardsView) awardsView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
   }
