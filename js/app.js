@@ -298,6 +298,7 @@ function switchTab(tabName) {
 
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
+  const navCalendar = document.getElementById("nav-item-calendar");
   const navRec = document.getElementById("nav-item-recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
@@ -308,6 +309,7 @@ function switchTab(tabName) {
   // Reset active classes
   if (navHome) navHome.classList.remove("active");
   if (navOutlook) navOutlook.classList.remove("active");
+  if (navCalendar) navCalendar.classList.remove("active");
   if (navRec) navRec.classList.remove("active");
   if (navRewards) navRewards.classList.remove("active");
   if (navAwards) navAwards.classList.remove("active");
