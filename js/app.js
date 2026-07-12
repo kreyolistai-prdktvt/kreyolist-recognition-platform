@@ -437,7 +437,6 @@ function renderHomeView() {
       inboxListMount.appendChild(li);
     });
   }
-
   // 6. Render selected email details inside Reading Pane
   const readingPaneMount = document.getElementById("reading-pane-mount");
   if (readingPaneMount) {
@@ -794,6 +793,26 @@ const dossierMockData = {
   },
   4: {
     platform: "Outlook",
+    platformIcon: "✉",
+    dueDate: "Due July 12",
+    emails: [
+      {
+        sender: "Marcus Vance",
+        time: "Yesterday",
+        subject: "Motherboard replacement parts have arrived for dev laptop",
+        body: "The replacement parts for the Lenovo developer workstation have been delivered. Let me know when you can perform the motherboard swap and rebuild the standard OS image."
+      }
+    ],
+    attachments: [
+      { name: "parts_delivery_receipt.pdf", size: "1.1 MB • PDF Document", linkText: "Open PDF" }
+    ],
+    jiraId: "HW-1205",
+    jiraStatus: "To Do",
+    jiraStatusClass: "badge-todo",
+    jiraDeps: "None"
+  },
+  4: {
+    platform: "Gmail",
     platformIcon: "✉",
     dueDate: "Due July 15",
     emails: [
