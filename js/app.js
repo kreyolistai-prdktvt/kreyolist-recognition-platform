@@ -11,7 +11,7 @@ const state = {
   openVenue: null,
   modalElement: null,
   firebaseConfigured: false,
-  activeTab: "home", // default active tab
+  activeTab: "Home", // default active tab
   activeSystemTab: "Home", // default active system tab
   selectedEmailId: null, // default selected email
   inbox: [
@@ -244,6 +244,7 @@ function renderModal() {
 function setupTabNavigation() {
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
+  const navCalendar = document.getElementById("nav-item-calendar");
   const navRec = document.getElementById("nav-item-recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
@@ -251,37 +252,42 @@ function setupTabNavigation() {
   if (navHome) {
     navHome.addEventListener("click", (e) => {
       e.preventDefault();
-      state.activeSystemTab = "Home";
-      switchTab("home");
+      switchTab("Home");
     });
   }
 
   if (navOutlook) {
     navOutlook.addEventListener("click", (e) => {
       e.preventDefault();
-      state.activeSystemTab = "Outlook";
-      switchTab("home");
+      switchTab("Outlook");
+    });
+  }
+
+  if (navCalendar) {
+    navCalendar.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchTab("Calendar");
     });
   }
 
   if (navRec) {
     navRec.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("recognition");
+      switchTab("Recognition");
     });
   }
 
   if (navRewards) {
     navRewards.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("rewards");
+      switchTab("Rewards");
     });
   }
 
   if (navAwards) {
     navAwards.addEventListener("click", (e) => {
       e.preventDefault();
-      switchTab("awards");
+      switchTab("Awards");
     });
   }
 }
@@ -291,46 +297,71 @@ function setupTabNavigation() {
  * @param {string} tabName - The name of the tab to switch to.
  */
 function switchTab(tabName) {
-  // If activeTab is home and we are switching activeSystemTab, we still want to re-render.
-  // So we only return early if both activeTab and activeSystemTab are unchanged.
-  if (state.activeTab === tabName && (tabName === "recognition" || tabName === "rewards" || tabName === "awards")) return;
+  if (state.activeTab === tabName) return;
   state.activeTab = tabName;
+
+  // Cache state.activeSystemTab if switching between Home and Outlook
+  if (tabName === "Home" || tabName === "Outlook") {
+    state.activeSystemTab = tabName;
+  }
 
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
+  const navCalendar = document.getElementById("nav-item-calendar");
   const navRec = document.getElementById("nav-item-recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
+
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
+  const calendarView = document.getElementById("calendar-view");
+  const rewardsView = document.getElementById("rewards-view");
+  const awardsView = document.getElementById("awards-view");
   const appMain = document.querySelector(".app-main-scrollable");
 
   // Reset active classes
   if (navHome) navHome.classList.remove("active");
   if (navOutlook) navOutlook.classList.remove("active");
+  if (navCalendar) navCalendar.classList.remove("active");
   if (navRec) navRec.classList.remove("active");
   if (navRewards) navRewards.classList.remove("active");
   if (navAwards) navAwards.classList.remove("active");
 
-  if (tabName === "home") {
-    if (state.activeSystemTab === "Outlook") {
-      if (navOutlook) navOutlook.classList.add("active");
-    } else {
-      if (navHome) navHome.classList.add("active");
-    }
-    recView.style.display = "none";
-    homeView.style.display = "flex";
+  // Hide all views first
+  if (homeView) homeView.style.display = "none";
+  if (recView) recView.style.display = "none";
+  if (calendarView) calendarView.style.display = "none";
+  if (rewardsView) rewardsView.style.display = "none";
+  if (awardsView) awardsView.style.display = "none";
+
+  // Apply active wayfinding highlight and show target view
+  if (tabName === "Home") {
+    if (navHome) navHome.classList.add("active");
+    if (homeView) homeView.style.display = "flex";
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
-  } else {
-    if (tabName === "recognition" && navRec) navRec.classList.add("active");
-    if (tabName === "rewards" && navRewards) navRewards.classList.add("active");
-    if (tabName === "awards" && navAwards) navAwards.classList.add("active");
-    
-    homeView.style.display = "none";
-    recView.style.display = "block";
+  } else if (tabName === "Outlook") {
+    if (navOutlook) navOutlook.classList.add("active");
+    if (homeView) homeView.style.display = "flex";
+    if (appMain) appMain.classList.add("home-active");
+    renderHomeView();
+  } else if (tabName === "Calendar") {
+    if (navCalendar) navCalendar.classList.add("active");
+    if (calendarView) calendarView.style.display = "block";
+    if (appMain) appMain.classList.remove("home-active");
+  } else if (tabName === "Recognition") {
+    if (navRec) navRec.classList.add("active");
+    if (recView) recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
     renderGrid();
+  } else if (tabName === "Rewards") {
+    if (navRewards) navRewards.classList.add("active");
+    if (rewardsView) rewardsView.style.display = "block";
+    if (appMain) appMain.classList.remove("home-active");
+  } else if (tabName === "Awards") {
+    if (navAwards) navAwards.classList.add("active");
+    if (awardsView) awardsView.style.display = "block";
+    if (appMain) appMain.classList.remove("home-active");
   }
 }
 
