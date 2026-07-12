@@ -25,8 +25,540 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="./css/styles.css?v=1.0.40">
   
-  <!-- Favicon placeholder -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
+  <!-- Custom overrides for 3-column Outlook/Tasks layout & Agent Banner styling -->
+  <style>
+    #home-view.reading-pane-active #systems-dynamic-canvas {
+      display: contents !important;
+    }
+    #home-view.reading-pane-active .homepage-dashboard-wrapper {
+      gap: 0 !important;
+    }
+    #home-view.reading-pane-active .inbox-panel {
+      width: 24% !important;
+      flex: 0 0 24% !important;
+      max-width: 24% !important;
+    }
+    #home-view.reading-pane-active .reading-panel {
+      flex: 1 1 0% !important;
+      min-width: 0 !important;
+      padding: 1.5rem !important; /* p-6 is 1.5rem */
+      overflow-y: auto !important;
+      height: 100% !important;
+    }
+    #home-view.reading-pane-active .tasks-container {
+      width: 26% !important;
+      flex: 0 0 26% !important;
+      max-width: 26% !important;
+    }
+    .agent-insight-banner {
+      background: rgba(255, 193, 7, 0.08);
+      border-left: 4px solid #FFC107;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: #E5E5E7;
+      line-height: 1.5;
+    }
+    .inbox-item.selected {
+      border-left: 3px solid #FF5F1F !important;
+    }
+    
+    /* Calendar Workspace Premium styling */
+    #calendar-view {
+      padding: 0 !important;
+      height: calc(100vh - 120px) !important;
+      max-height: calc(100vh - 120px) !important;
+      overflow: hidden !important;
+    }
+    
+    .calendar-wrapper {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      background: #0D0D0D;
+      color: #FFFFFF;
+      box-sizing: border-box;
+    }
+    
+    .calendar-sidebar-left {
+      width: 24%;
+      flex: 0 0 24%;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.01);
+    }
+    
+    .calendar-center-grid {
+      width: 50%;
+      flex: 1 1 0%;
+      padding: 1.5rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+    }
+    
+    .calendar-sidebar-right {
+      width: 26%;
+      flex: 0 0 26%;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.01);
+    }
+    
+    /* Mini-month Calendar styling */
+    .mini-calendar-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .mini-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+    
+    .mini-day-header {
+      font-weight: 600;
+      color: var(--color-text-muted);
+      padding-bottom: 6px;
+    }
+    
+    .mini-day {
+      padding: 6px 0;
+      color: rgba(255, 255, 255, 0.8);
+      border-radius: 4px;
+    }
+    .mini-day.other-month {
+      color: rgba(255, 255, 255, 0.25);
+    }
+    .mini-day.today {
+      background: rgba(255, 95, 31, 0.15);
+      border: 1px solid #FF5F1F;
+      color: #FF5F1F;
+      font-weight: 600;
+    }
+    
+    /* Main Calendar Grid styling */
+    .main-calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .main-calendar-title {
+      font-size: 1.25rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+    }
+    
+    .main-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: auto repeat(5, 1fr);
+      flex: 1;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 500px;
+    }
+    
+    .main-day-header {
+      text-align: center;
+      padding: 8px 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.01);
+    }
+    
+    .main-calendar-cell {
+      position: relative;
+      padding: 8px;
+      min-height: 85px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-sizing: border-box;
+    }
+    
+    .main-calendar-cell.other-month {
+      background: rgba(255, 255, 255, 0.005);
+    }
+    
+    .main-calendar-cell.other-month .day-number {
+      color: rgba(255, 255, 255, 0.25);
+    }
+    
+    .main-calendar-cell.today {
+      background: rgba(255, 95, 31, 0.03);
+    }
+    
+    .main-calendar-cell.today .day-number {
+      background: #FF5F1F;
+      color: #000000;
+      font-weight: 600;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .day-number {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      align-self: flex-start;
+      margin-bottom: 4px;
+    }
+    
+    /* Calendar Event block styling */
+    .calendar-event {
+      font-size: 0.72rem;
+      padding: 4px 6px;
+      border-radius: 4px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    
+    .calendar-event.system-buffer {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #A5B4FC;
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.1);
+      font-weight: 500;
+      white-space: normal;
+    }
+    
+    .calendar-event.regular {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.80);
+    }
+    
+    /* Agenda right sidebar styling */
+    .agenda-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 0.25rem;
+    }
+    
+    .agenda-subtitle {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-bottom: 1.25rem;
+    }
+    
+    .agenda-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    
+    .agenda-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .agenda-time {
+      font-size: 0.7rem;
+      color: #FF5F1F;
+      font-weight: 600;
+    }
+    
+    .agenda-text {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+    
+    /* Home View display isolation overrides to prevent layout leaks */
+    #home-view {
+      display: none !important;
+    }
+    #home-view.active-view {
+      display: flex !important;
+    }
+    
+    /* Slack Workspace Premium styling */
+    #slack-view {
+      display: none !important;
+    }
+    #slack-view.active-view {
+      padding: 0 !important;
+      height: calc(100vh - 120px) !important;
+      max-height: calc(100vh - 120px) !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .slack-wrapper {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      background: #080808;
+      color: #FFFFFF;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    .slack-sidebar {
+      width: 24%;
+      flex: 0 0 24%;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.01);
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+    
+    .slack-chat-area {
+      width: 76%;
+      flex: 1 1 0%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #050505;
+      overflow: hidden;
+      min-height: 0;
+    }
+    
+    /* Sidebar Filter Pills */
+    .slack-filters {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    
+    .slack-filter-pill {
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .slack-filter-pill.active, .slack-filter-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    /* Sidebar Chat List */
+    .slack-section-header {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      flex-shrink: 0;
+    }
+    
+    .slack-chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .slack-chat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    
+    .slack-chat-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .slack-chat-item.active {
+      background: rgba(255, 95, 31, 0.05);
+      border-color: rgba(255, 95, 31, 0.15);
+    }
+    
+    .slack-chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 95, 31, 0.08);
+      border: 1px solid rgba(255, 95, 31, 0.15);
+      color: var(--color-accent-vibrant);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    
+    .slack-chat-item.active .slack-chat-avatar {
+      background: rgba(255, 95, 31, 0.15);
+      border-color: #FF5F1F;
+    }
+    
+    .slack-chat-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .slack-chat-item.active .slack-chat-name {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    
+    /* Right Conversation Area */
+    .slack-chat-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    
+    .slack-header-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+    
+    .slack-chat-history {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 1rem;
+      min-height: 0;
+    }
+    
+    /* Message Bubble */
+    .slack-message-row {
+      display: flex;
+      width: 100%;
+    }
+    
+    .slack-message-row.sent {
+      justify-content: flex-end;
+    }
+    
+    .slack-message-bubble {
+      max-width: 60%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .slack-message-row.sent .slack-message-bubble {
+      background: rgba(255, 95, 31, 0.1);
+      border: 1px solid rgba(255, 95, 31, 0.2);
+      color: #FFFFFF;
+      border-bottom-right-radius: 2px;
+    }
+    
+    .slack-message-time {
+      font-size: 0.68rem;
+      color: var(--color-text-muted);
+      align-self: flex-end;
+    }
+    
+    /* Input Area */
+    .slack-input-container {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    
+    .slack-input-wrapper {
+      position: relative;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+    }
+    
+    .slack-input-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #FFFFFF;
+      font-size: 0.88rem;
+      outline: none;
+      padding-right: 48px;
+    }
+    
+    .slack-input-field::placeholder {
+      color: var(--color-text-muted);
+    }
+    
+    .slack-input-actions {
+      position: absolute;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--color-text-muted);
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 <body>
   
@@ -77,20 +609,20 @@
               <span class="sidebar-text">Calendar</span>
             </a>
           </li>
+          <li class="sidebar-nav-item" id="nav-item-slack">
+            <a href="#" class="sidebar-nav-link">
+              <span class="sidebar-icon">
+                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </span>
+              <span class="sidebar-text">Slack</span>
+            </a>
+          </li>
           <li class="sidebar-nav-item">
             <a href="#" class="sidebar-nav-link">
               <span class="sidebar-icon">
                 <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
               </span>
               <span class="sidebar-text">Jira</span>
-            </a>
-          </li>
-          <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              </span>
-              <span class="sidebar-text">Slack</span>
             </a>
           </li>
           <li class="sidebar-nav-item disabled">
@@ -265,6 +797,35 @@
           
           <!-- Venue Directory Cards Grid Mount -->
           <main class="venue-grid" id="venue-grid-mount" aria-live="polite"></main>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendar-view" style="display: none; padding: 2.5rem; color: #FFFFFF;">
+          <h2 class="section-title" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Inter', sans-serif;">Calendar Workspace</h2>
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 4px;">
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; line-height: 1.6;">Schedule coordination and calendar management module placeholder.</p>
+          </div>
+        </div>
+
+        <!-- Slack View -->
+        <div id="slack-view" style="display: none; color: #FFFFFF;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Rewards View -->
+        <div id="rewards-view" style="display: none; padding: 2.5rem; color: #FFFFFF;">
+          <h2 class="section-title" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Inter', sans-serif;">Rewards & Redemptions</h2>
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 4px;">
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; line-height: 1.6;">Curated employee perks and recognition points redemptions panel placeholder.</p>
+          </div>
+        </div>
+
+        <!-- Awards View -->
+        <div id="awards-view" style="display: none; padding: 2.5rem; color: #FFFFFF;">
+          <h2 class="section-title" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Inter', sans-serif;">Awards & Honors</h2>
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 4px;">
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; line-height: 1.6;">Corporate achievements, trophies, and annual peer performance milestones placeholder.</p>
+          </div>
         </div>
 
         <!-- Home View -->
