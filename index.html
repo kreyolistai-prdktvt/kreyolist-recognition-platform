@@ -558,6 +558,471 @@
       color: var(--color-text-muted);
       font-size: 0.95rem;
     }
+    
+    /* Infrastructure Dashboard Layout & Custom Grid overrides */
+    .infra-dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      overflow-y: auto;
+      height: calc(100vh - 120px);
+      background: #08080A;
+      box-sizing: border-box;
+      scrollbar-width: thin;
+    }
+    
+    .infra-dashboard::-webkit-scrollbar {
+      width: 6px;
+    }
+    .infra-dashboard::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .infra-dashboard::-webkit-scrollbar-thumb {
+      background: var(--color-border-mid);
+      border-radius: 3px;
+    }
+    .infra-dashboard::-webkit-scrollbar-thumb:hover {
+      background: var(--color-accent-vibrant);
+    }
+
+    .infra-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      width: 100%;
+    }
+    
+    .infra-grid-4 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .col-span-2 {
+      grid-column: span 1;
+    }
+
+    @media (min-width: 768px) {
+      .infra-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .infra-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .infra-grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .col-span-2 {
+        grid-column: span 2 / span 2;
+      }
+    }
+    
+    .infra-card {
+      background: rgba(18, 18, 18, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 220px;
+      box-sizing: border-box;
+      gap: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    
+    .infra-card:hover {
+      border-color: rgba(255, 95, 31, 0.25);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .gamified-banner {
+      background: linear-gradient(135deg, #1E1510 0%, #121212 100%);
+      border: 1px solid #3E2312;
+      position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+
+    .gamified-banner:hover {
+      border-color: #5C3218;
+    }
+
+    .zap-icon-overlay {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      opacity: 0.05;
+      pointer-events: none;
+      color: #D97706;
+      animation: pulse-slow 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-slow {
+      0%, 100% { transform: scale(1); opacity: 0.05; }
+      50% { transform: scale(1.08); opacity: 0.1; }
+    }
+
+    .infra-card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .infra-card-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #737373;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .infra-card-hero {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .infra-card-subvalue {
+      font-size: 0.85rem;
+      color: #A3A3A3;
+      margin-top: 4px;
+    }
+    
+    /* Badges */
+    .infra-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      letter-spacing: 0.05em;
+    }
+    
+    .infra-badge.critical {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #F87171;
+    }
+    
+    .infra-badge.warning {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #FBBF24;
+    }
+    
+    .infra-badge.info {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93C5FD;
+    }
+
+    .infra-badge.active-status {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #10B981;
+    }
+
+    /* List entries */
+    .infra-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    
+    .infra-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+    
+    .infra-list-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .infra-list-dot.warning {
+      background: #FBBF24;
+    }
+    
+    /* Progress Bars */
+    .infra-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.8rem;
+    }
+    
+    .infra-progress-label {
+      color: rgba(255, 255, 255, 0.7);
+      width: 80px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    
+    .infra-progress-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .infra-progress-fill {
+      height: 100%;
+      background: #0078D4; /* Blue progress slider bar */
+      border-radius: 3px;
+    }
+    
+    .infra-progress-val {
+      color: #FFFFFF;
+      font-weight: 500;
+      width: 55px;
+      text-align: right;
+    }
+    
+    /* Multi-segment Risk Slider */
+    .risk-slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .risk-slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    
+    .risk-slider-track {
+      display: flex;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+    
+    .risk-slider-pointer {
+      position: absolute;
+      top: 50%;
+      left: 16.6%; /* middle of high risk segment */
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #EF4444;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 0 8px #EF4444;
+    }
+    
+    .risk-slider-segment {
+      flex: 1;
+      height: 100%;
+    }
+    
+    .risk-slider-segment.high {
+      background: #EF4444;
+      opacity: 0.2;
+    }
+    
+    .risk-slider-segment.medium {
+      background: #F59E0B;
+      opacity: 0.2;
+    }
+    
+    .risk-slider-segment.low {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Footer Action buttons */
+    .infra-btn {
+      align-self: flex-start;
+      background: #1C1917;
+      border: 1px solid #44403C;
+      color: #E5E5E5;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .infra-btn:hover {
+      background: #292524;
+      border-color: #57534E;
+    }
+    
+    .infra-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Toggle Pills */
+    .infra-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    
+    .infra-pill {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+    }
+    .infra-pill.active {
+      background: rgba(255, 95, 31, 0.1);
+      border-color: #FF5F1F;
+      color: #FF5F1F;
+    }
+
+    /* Sub-header */
+    .infra-dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-left: 2rem;
+      padding-right: 3rem;
+    }
+
+    .infra-profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #261C14;
+      border: 1px solid #D97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #F59E0B;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .infra-profile-avatar:hover {
+      background-color: #3E2312 !important;
+    }
+
+    .infra-header-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+
+    .infra-header-subtitle {
+      font-size: 0.75rem;
+      color: #737373;
+      margin-top: 4px;
+    }
+
+    /* Additional Utility Styles */
+    .section-title-kpi {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #525252;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .flex-col-between {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .gap-1 { gap: 0.25rem; }
+    .gap-1.5 { gap: 0.375rem; }
+    .w-full { width: 100%; }
+    .mt-4 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .flex-1 { flex: 1; }
+    .h-2.5 { height: 10px; }
+    .h-10 { height: 40px; }
+    .items-end { align-items: flex-end; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .font-extrabold { font-weight: 800; }
+    .font-serif { font-family: var(--font-display); }
+    
+    .status-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #181818;
+      border: 1px solid #262626;
+      font-size: 0.75rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-dot.connected { background-color: #10B981; }
+    .status-dot.error { background-color: #EF4444; }
+    .status-dot.syncing { 
+      background-color: #F59E0B; 
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .animate-pulse-green {
+      animation: pulse-green 2s infinite;
+    }
+
+    @keyframes pulse-green {
+      0%, 100% { background-color: #10B981; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      50% { background-color: #059669; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+    }
   </style>
 </head>
 <body>
@@ -830,7 +1295,10 @@
 
         <!-- Home View -->
         <div id="home-view" class="h-[calc(100vh-120px)] overflow-hidden flex flex-col w-full">
-          <div class="homepage-dashboard-wrapper">
+          <!-- Container for System Infrastructure Dashboard (Home tab) -->
+          <div id="infra-dashboard-mount" style="display: none;"></div>
+
+          <div class="homepage-dashboard-wrapper" id="outlook-view-container">
             <!-- Dynamic Left Workspace Slate -->
             <div id="systems-dynamic-canvas" class="flex flex-row flex-1 min-w-0" style="display: flex;">
               <!-- Pane 1: Outlook Inbox Panel -->
@@ -1102,6 +1570,6 @@
   </div>
 
   <!-- Main Orchestration Script (ES Module) -->
-  <script type="module" src="./js/app.js?v=1.0.40"></script>
+  <script type="module" src="./js/app.js?v=1.0.41"></script>
 </body>
 </html>

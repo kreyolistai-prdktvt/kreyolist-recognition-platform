@@ -15,6 +15,8 @@ const state = {
   activeSystemTab: "Home", // default active system tab
   activeSlackContact: "Donaldy Salvant", // active slack conversation contact
   activeEmailId: null, // default active email
+  rewardProgress: 68,
+  isSyncingAll: false,
   inbox: [
     { 
       id: 1, 
@@ -164,7 +166,21 @@ async function init() {
   // Initialize default Home View layout and scroll states
   const appMain = document.querySelector(".app-main-scrollable");
   if (appMain) appMain.classList.add("home-active");
-  renderHomeView();
+  
+  const homeView = document.getElementById("home-view");
+  const infraMount = document.getElementById("infra-dashboard-mount");
+  const outlookContainer = document.getElementById("outlook-view-container");
+  if (homeView) {
+    homeView.classList.add("active-view");
+    homeView.style.display = "flex";
+  }
+  if (infraMount) {
+    infraMount.style.display = "grid";
+    renderInfraDashboard();
+  }
+  if (outlookContainer) {
+    outlookContainer.style.display = "none";
+  }
 }
 
 /**
@@ -432,6 +448,10 @@ function setActiveTab(tabName) {
   if (homeView) {
     homeView.classList.remove("active-view");
     homeView.style.display = "none";
+    const infraMount = document.getElementById("infra-dashboard-mount");
+    const outlookContainer = document.getElementById("outlook-view-container");
+    if (infraMount) infraMount.style.display = "none";
+    if (outlookContainer) outlookContainer.style.display = "none";
   }
   if (recView) recView.style.display = "none";
   if (calendarView) calendarView.style.display = "none";
@@ -449,13 +469,29 @@ function setActiveTab(tabName) {
 
   // Lock target view display conditions
   if (state.activeTab === "Home") {
+    const infraMount = document.getElementById("infra-dashboard-mount");
+    const outlookContainer = document.getElementById("outlook-view-container");
+    if (infraMount) {
+      infraMount.style.display = "grid";
+      renderInfraDashboard();
+    }
+    if (outlookContainer) {
+      outlookContainer.style.display = "none";
+    }
     if (homeView) {
       homeView.classList.add("active-view");
       homeView.style.display = "flex";
     }
     if (appMain) appMain.classList.add("home-active");
-    renderHomeView();
   } else if (state.activeTab === "Outlook") {
+    const infraMount = document.getElementById("infra-dashboard-mount");
+    const outlookContainer = document.getElementById("outlook-view-container");
+    if (infraMount) {
+      infraMount.style.display = "none";
+    }
+    if (outlookContainer) {
+      outlookContainer.style.display = "flex";
+    }
     if (homeView) {
       homeView.classList.add("active-view");
       homeView.style.display = "flex";
@@ -927,6 +963,11 @@ function renderHomeView() {
   
   if (window.checkAssistantFabState) {
     window.checkAssistantFabState();
+  }
+
+  const infraMount = document.getElementById("infra-dashboard-mount");
+  if (infraMount && infraMount.style.display !== "none") {
+    renderInfraDashboard();
   }
 }
 
@@ -1832,6 +1873,354 @@ function renderSlackView() {
   `;
   slackView.classList.add("active-view");
   slackView.style.display = "flex";
+}
+
+function renderInfraDashboard() {
+  const infraMount = document.getElementById("infra-dashboard-mount");
+  if (!infraMount) return;
+
+  const completedCount = state.tasks.filter(t => t.completed).length;
+  const uncompletedHighPriorityCount = state.tasks.filter(t => t.priority === "high" && !t.completed).length;
+  
+  // Calculate points and progress dynamically
+  const points = 1100 + completedCount * 90;
+  const rewardProgress = Math.min(100, Math.round((points / 2000) * 100));
+  
+  // Enterprise sync states
+  const outlookStatus = state.isSyncingAll ? "syncing" : "connected";
+  const outlookTime = state.isSyncingAll ? "Syncing..." : "Synced 1m ago";
+  const jiraStatus = state.isSyncingAll ? "syncing" : "connected";
+  const jiraTime = state.isSyncingAll ? "Syncing..." : "Synced 4m ago";
+  const slackStatus = "syncing";
+  const slackTime = "Syncing...";
+  const asanaStatus = state.isSyncingAll ? "syncing" : "error";
+  const asanaTime = state.isSyncingAll ? "Syncing..." : "Auth Error (401)";
+
+  infraMount.className = "infra-dashboard";
+  infraMount.innerHTML = `
+    <!-- Sub-header -->
+    <div class="infra-dashboard-header">
+      <div>
+        <h1 class="infra-header-title">IT Engineering Dashboard</h1>
+        <p class="infra-header-subtitle">Live insight into helpdesk queues, infrastructure syncs, and your daily gamified progress.</p>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 8px; background: #1A1A1A; padding: 6px 12px; border-radius: 9999px; border: 1px solid #262626;">
+          <span class="status-dot connected animate-pulse-green" style="width: 8px; height: 8px;"></span>
+          <span style="font-size: 11px; color: #A3A3A3; font-weight: 500;">Agent Engine: Active</span>
+        </div>
+        <div class="infra-profile-avatar" title="Donaldy Salvant">
+          DS
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: SYSTEM & GAMIFICATION BANNER -->
+    <div class="infra-grid-3">
+      <!-- Gamified Productivity Meter (Reward Synthesizer) -->
+      <div class="infra-card col-span-2 gamified-banner">
+        <div class="zap-icon-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        
+        <div style="z-index: 2;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; width: 100%;">
+            <span style="background: #451A03; color: #F59E0B; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase;">
+              Work-Life Synthesis Active
+            </span>
+            <span style="font-size: 11px; color: #A3A3A3; display: flex; align-items: center; gap: 4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <span style="color: #10B981; font-weight: 600;">+12%</span> vs Yesterday
+            </span>
+          </div>
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #FFFFFF; margin-bottom: 4px;">Your Daily Progress</h2>
+          <p style="font-size: 12px; color: #A3A3A3; max-width: 480px; line-height: 1.5; margin-bottom: 0;">
+            ${uncompletedHighPriorityCount > 0 ? `Resolve <span style="color: #FFFFFF; font-weight: 600;">${uncompletedHighPriorityCount} more</span> critical high-priority tickets to unlock your target reward milestone:` : `All critical high-priority tickets resolved! Your target reward milestone is ready:`} <span style="color: #FFFFFF; font-weight: 600;">Free Local Roast Coffee</span>.
+          </p>
+        </div>
+
+        <!-- Progress Bar and Metrics -->
+        <div class="mt-4" style="display: flex; flex-direction: column; gap: 8px; z-index: 2;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+            <span style="color: #D97706; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2v10h3V12zM22 12h-3v10h3V12zM12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5H12Z"/></svg>
+              <span>${points.toLocaleString()} pts / 2,000 pts to reward</span>
+            </span>
+            <span style="color: #A3A3A3;">${rewardProgress}% complete</span>
+          </div>
+          <div style="width: 100%; height: 10px; background: #1C1917; border-radius: 9999px; overflow: hidden; border: 1px solid #2E2520; position: relative;">
+            <div style="height: 100%; width: ${rewardProgress}%; background: linear-gradient(90deg, #D97706 0%, #F59E0B 100%); border-radius: 9999px; transition: width 0.5s ease-in-out;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick KPI Snapshot Card -->
+      <div class="infra-card flex-col-between">
+        <div>
+          <span class="infra-card-title">SLA Breach Metric</span>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 8px;">
+            <span class="text-4xl font-extrabold text-white">98.4%</span>
+            <span style="font-size: 12px; color: #10B981; font-weight: 600;">▲ 0.8%</span>
+          </div>
+          <p style="font-size: 11px; color: #737373; line-height: 1.4; margin-top: 8px; margin-bottom: 0;">
+            Target threshold remains &gt;95.0% for enterprise compliance schedules.
+          </p>
+        </div>
+
+        <!-- Sparkline Visual -->
+        <div class="h-10 w-full flex items-end gap-1 mt-4" style="height: 40px; display: flex; align-items: flex-end; gap: 3px; margin-top: 16px;">
+          <div class="sparkline-bar" style="height: 40%;"></div>
+          <div class="sparkline-bar" style="height: 50%;"></div>
+          <div class="sparkline-bar" style="height: 45%;"></div>
+          <div class="sparkline-bar" style="height: 60%;"></div>
+          <div class="sparkline-bar" style="height: 70%;"></div>
+          <div class="sparkline-bar" style="height: 65%;"></div>
+          <div class="sparkline-bar" style="height: 80%;"></div>
+          <div class="sparkline-bar" style="height: 75%;"></div>
+          <div class="sparkline-bar" style="height: 90%;"></div>
+          <div class="sparkline-bar" style="height: 85%;"></div>
+          <div class="sparkline-bar" style="height: 95%;"></div>
+          <div class="sparkline-bar active" style="height: 98.4%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: KEY PERFORMANCE INDICATORS -->
+    <div>
+      <h3 class="section-title-kpi">Core Performance Indicators (KPIs)</h3>
+      <div class="infra-grid-4">
+        <!-- Card 1: Active Connection Stack -->
+        <div class="infra-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+            <span style="font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase;">Active Connection Stack</span>
+            <div style="padding: 6px; background: #1A1A1A; border-radius: 6px; border: 1px solid #262626; display: flex; align-items: center; justify-content: center; color: #3B82F6;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <span class="text-2xl font-bold text-white">28 / 32 Apps</span>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px;">
+              <span style="color: #10B981; font-weight: 600;">+4 Connected</span>
+              <span style="color: #525252;">•</span>
+              <span style="color: #737373; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="Connected API SaaS Integrations">Connected API SaaS Integrations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Avg Ticket Resolution Speed -->
+        <div class="infra-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+            <span style="font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase;">Avg Resolution Speed</span>
+            <div style="padding: 6px; background: #1A1A1A; border-radius: 6px; border: 1px solid #262626; display: flex; align-items: center; justify-content: center; color: #10B981;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <span class="text-2xl font-bold text-white">14.2 mins</span>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px;">
+              <span style="color: #10B981; font-weight: 600;">-3.5m Faster</span>
+              <span style="color: #525252;">•</span>
+              <span style="color: #737373; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="Target SLA: under 30 minutes">Target SLA: under 30m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: System Vulnerability Score -->
+        <div class="infra-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+            <span style="font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase;">Vulnerability Score</span>
+            <div style="padding: 6px; background: #1A1A1A; border-radius: 6px; border: 1px solid #262626; display: flex; align-items: center; justify-content: center; color: #EF4444;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <span class="text-2xl font-bold text-white">82.91%</span>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px;">
+              <span style="color: #EF4444; font-weight: 600;">Needs Action</span>
+              <span style="color: #525252;">•</span>
+              <span style="color: #737373; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="Microsoft Secure Score metrics">Secure Score metrics</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Pending User Alerts -->
+        <div class="infra-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+            <span style="font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase;">Pending User Alerts</span>
+            <div style="padding: 6px; background: #1A1A1A; border-radius: 6px; border: 1px solid #262626; display: flex; align-items: center; justify-content: center; color: #F59E0B;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <span class="text-2xl font-bold text-white">1 User Risk</span>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px;">
+              <span style="color: #F59E0B; font-weight: 600;">Critical</span>
+              <span style="color: #525252;">•</span>
+              <span style="color: #737373; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="Identity compliance flags triggered">Identity flags triggered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ALERT TILES & INTEGRATIONS -->
+    <div class="infra-grid-3">
+      <!-- Left Box: Critical Alert Queue -->
+      <div class="infra-card col-span-2" style="justify-content: flex-start; gap: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; width: 100%;">
+          <div>
+            <h4 style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin: 0;">Critical Alert Queue</h4>
+            <p style="font-size: 11px; color: #737373; margin: 2px 0 0 0;">Actions requiring direct engineering intervention today</p>
+          </div>
+          <span class="infra-badge critical" style="background: #450A0A; border: 1px solid #7F1D1D; color: #F87171; font-weight: 600;">
+            3 Immediate Failures
+          </span>
+        </div>
+
+        <!-- Alert Rows -->
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+          <!-- Alert 1 (Critical) -->
+          <div style="padding: 12px 16px; border-radius: 8px; border: 1px solid #7F1D1D; background: #180A0A; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <div style="color: #EF4444; margin-top: 2px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 9px; font-weight: 700; background: #450A0A; color: #F87171; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Service Health</span>
+                  <span style="font-size: 10px; color: #737373;">Updated 5 mins ago</span>
+                </div>
+                <p style="font-size: 13px; font-weight: 500; color: #FFFFFF; margin: 6px 0 0 0;">SharePoint Sync Interruption (1 active incident, 1 advisory)</p>
+              </div>
+            </div>
+            <button class="infra-btn" style="padding: 6px 12px; font-size: 11px;">
+              <span>Run Diagnostic</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <!-- Alert 2 (Warning) -->
+          <div style="padding: 12px 16px; border-radius: 8px; border: 1px solid #78350F; background: #17110C; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <div style="color: #F59E0B; margin-top: 2px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 9px; font-weight: 700; background: #451A03; color: #FBBF24; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">License Allocations</span>
+                  <span style="font-size: 10px; color: #737373;">Updated 2 hours ago</span>
+                </div>
+                <p style="font-size: 13px; font-weight: 500; color: #FFFFFF; margin: 6px 0 0 0;">249 agentic runtime licenses lack defined ownership parameters</p>
+              </div>
+            </div>
+            <button class="infra-btn" style="padding: 6px 12px; font-size: 11px;">
+              <span>Re-assign Owners</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <!-- Alert 3 (Info) -->
+          <div style="padding: 12px 16px; border-radius: 8px; border: 1px solid #1E3A8A; background: #0A101D; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <div style="color: #60A5FA; margin-top: 2px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 9px; font-weight: 700; background: #1E1B4B; color: #93C5FD; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Service Health</span>
+                  <span style="font-size: 10px; color: #737373;">Updated 4 hours ago</span>
+                </div>
+                <p style="font-size: 13px; font-weight: 500; color: #FFFFFF; margin: 6px 0 0 0;">Microsoft Teams API throttling warning (0 incidents, 1 advisory)</p>
+              </div>
+            </div>
+            <button class="infra-btn" style="padding: 6px 12px; font-size: 11px;">
+              <span>Optimize Webhook</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Box: App Connections & Sync Status -->
+      <div class="infra-card flex-col-between">
+        <div style="width: 100%;">
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; width: 100%; margin-bottom: 12px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin: 0;">Enterprise Stack Syncs</h4>
+            <button id="sync-all-stack-btn" style="font-size: 11px; color: #D97706; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: color 0.2s; padding: 4px 8px; border-radius: 4px;">
+              <svg id="sync-all-icon" style="transition: transform 0.2s;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>${state.isSyncingAll ? "Syncing..." : "Sync All"}</span>
+            </button>
+          </div>
+
+          <!-- Sync statuses -->
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <div class="status-badge-row">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <span class="status-dot ${outlookStatus}"></span>
+                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Outlook Enterprise Mail API</span>
+              </div>
+              <span style="color: #737373; font-family: monospace; font-size: 10px;">${outlookTime}</span>
+            </div>
+
+            <div class="status-badge-row">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <span class="status-dot ${jiraStatus}"></span>
+                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Jira Workspace Integration</span>
+              </div>
+              <span style="color: #737373; font-family: monospace; font-size: 10px;">${jiraTime}</span>
+            </div>
+
+            <div class="status-badge-row">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <span class="status-dot ${slackStatus}"></span>
+                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Slack Webhook Pipeline</span>
+              </div>
+              <span style="color: #737373; font-family: monospace; font-size: 10px;">${slackTime}</span>
+            </div>
+
+            <div class="status-badge-row">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <span class="status-dot ${asanaStatus}"></span>
+                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Asana Management (Legacy Core)</span>
+              </div>
+              <span style="color: #737373; font-family: monospace; font-size: 10px;">${asanaTime}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions Footer inside card -->
+        <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 16px; margin-top: 12px; width: 100%;">
+          <button class="infra-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 10px;">
+            <span>Connect New App Core</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Attach event listener for sync all button
+  const syncBtn = document.getElementById("sync-all-stack-btn");
+  if (syncBtn) {
+    if (state.isSyncingAll) {
+      const icon = document.getElementById("sync-all-icon");
+      if (icon) {
+        icon.style.animation = "spin 1s linear infinite";
+      }
+    }
+    syncBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (state.isSyncingAll) return;
+      state.isSyncingAll = true;
+      renderInfraDashboard();
+      
+      setTimeout(() => {
+        state.isSyncingAll = false;
+        renderInfraDashboard();
+      }, 2000);
+    });
+  }
 }
 
 // Bootstrap when DOM is ready
