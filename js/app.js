@@ -11,7 +11,7 @@ const state = {
   openVenue: null,
   modalElement: null,
   firebaseConfigured: false,
-  activeTab: "Home", // default active tab
+  activeTab: "Outlook", // default active tab
   activeTeamsContactId: "claryce", // active Teams chat conversation contact
   chatBonusPoints: 0,
   selectedCalendarDate: "2026-07-14",
@@ -359,24 +359,8 @@ async function init() {
   renderFilterBar();
   renderGrid();
   
-  // Initialize default Home View layout and scroll states
-  const appMain = document.querySelector(".app-main-scrollable");
-  if (appMain) appMain.classList.add("home-active");
-  
-  const homeView = document.getElementById("home-view");
-  const infraMount = document.getElementById("infra-dashboard-mount");
-  const outlookContainer = document.getElementById("outlook-view-container");
-  if (homeView) {
-    homeView.classList.add("active-view");
-    homeView.style.display = "flex";
-  }
-  if (infraMount) {
-    infraMount.style.display = "grid";
-    renderInfraDashboard();
-  }
-  if (outlookContainer) {
-    outlookContainer.style.display = "none";
-  }
+  // Initialize default active view
+  setActiveTab(state.activeTab, true);
 }
 
 /**
@@ -564,8 +548,8 @@ function setupTabNavigation() {
  * Switches the active tab view.
  * @param {string} tabName - The name of the tab to switch to.
  */
-function setActiveTab(tabName) {
-  if (state.activeTab === tabName) return;
+function setActiveTab(tabName, force = false) {
+  if (state.activeTab === tabName && !force) return;
   state.activeTab = tabName;
 
   if (tabName === "Home" || tabName === "Outlook") {
