@@ -64,12 +64,16 @@
       border-left: 3px solid #FF5F1F !important;
     }
     
-    /* Calendar Workspace Premium styling */
     #calendar-view {
+      display: none !important;
+    }
+    #calendar-view.active-view {
       padding: 0 !important;
       height: calc(100vh - 120px) !important;
       max-height: calc(100vh - 120px) !important;
       overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
     }
     
     .calendar-wrapper {
@@ -78,229 +82,193 @@
       width: 100%;
       height: 100%;
       min-height: 0;
-      background: #0D0D0D;
-      color: #FFFFFF;
+      background: #0A0A0A;
+      color: #E5E5E5;
       box-sizing: border-box;
+      overflow: hidden;
     }
     
     .calendar-sidebar-left {
-      width: 24%;
-      flex: 0 0 24%;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      width: 320px;
+      flex: 0 0 320px;
+      border-right: 1px solid #1F1F1F;
       padding: 1.5rem;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      background: rgba(255, 255, 255, 0.01);
+      background: #0F0F0F;
+      gap: 1.5rem;
+      overflow-y: auto;
     }
     
     .calendar-center-grid {
-      width: 50%;
-      flex: 1 1 0%;
-      padding: 1.5rem;
-      box-sizing: border-box;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      background: #0B0B0B;
       overflow-y: auto;
       height: 100%;
-    }
-    
-    .calendar-sidebar-right {
-      width: 26%;
-      flex: 0 0 26%;
-      border-left: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 1.5rem;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      background: rgba(255, 255, 255, 0.01);
-    }
-    
-    /* Mini-month Calendar styling */
-    .mini-calendar-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #FFFFFF;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    
-    .mini-calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      text-align: center;
-      font-size: 0.75rem;
-    }
-    
-    .mini-day-header {
-      font-weight: 600;
-      color: var(--color-text-muted);
-      padding-bottom: 6px;
-    }
-    
-    .mini-day {
-      padding: 6px 0;
-      color: rgba(255, 255, 255, 0.8);
-      border-radius: 4px;
-    }
-    .mini-day.other-month {
-      color: rgba(255, 255, 255, 0.25);
-    }
-    .mini-day.today {
-      background: rgba(255, 95, 31, 0.15);
-      border: 1px solid #FF5F1F;
-      color: #FF5F1F;
-      font-weight: 600;
-    }
-    
-    /* Main Calendar Grid styling */
-    .main-calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    
-    .main-calendar-title {
-      font-size: 1.25rem;
-      font-family: var(--font-display);
-      font-weight: 600;
-    }
-    
-    .main-calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: auto repeat(5, 1fr);
-      flex: 1;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      border-left: 1px solid rgba(255, 255, 255, 0.05);
-      min-height: 500px;
-    }
-    
-    .main-day-header {
-      text-align: center;
-      padding: 8px 0;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--color-text-muted);
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      background: rgba(255, 255, 255, 0.01);
-    }
-    
-    .main-calendar-cell {
-      position: relative;
-      padding: 8px;
-      min-height: 85px;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
       box-sizing: border-box;
     }
     
-    .main-calendar-cell.other-month {
-      background: rgba(255, 255, 255, 0.005);
-    }
-    
-    .main-calendar-cell.other-month .day-number {
-      color: rgba(255, 255, 255, 0.25);
-    }
-    
-    .main-calendar-cell.today {
-      background: rgba(255, 95, 31, 0.03);
-    }
-    
-    .main-calendar-cell.today .day-number {
-      background: #FF5F1F;
-      color: #000000;
-      font-weight: 600;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: inline-flex;
+    /* Calendar Grid days button */
+    .calendar-day-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-    
-    .day-number {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.6);
-      align-self: flex-start;
-      margin-bottom: 4px;
-    }
-    
-    /* Calendar Event block styling */
-    .calendar-event {
-      font-size: 0.72rem;
-      padding: 4px 6px;
-      border-radius: 4px;
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-    
-    .calendar-event.system-buffer {
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.4);
-      color: #A5B4FC;
-      box-shadow: 0 0 8px rgba(99, 102, 241, 0.1);
-      font-weight: 500;
-      white-space: normal;
-    }
-    
-    .calendar-event.regular {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.80);
-    }
-    
-    /* Agenda right sidebar styling */
-    .agenda-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #FFFFFF;
-      margin-bottom: 0.25rem;
-    }
-    
-    .agenda-subtitle {
+      position: relative;
       font-size: 0.75rem;
-      color: var(--color-text-muted);
-      margin-bottom: 1.25rem;
-    }
-    
-    .agenda-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
-    }
-    
-    .agenda-item {
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    
-    .agenda-time {
-      font-size: 0.7rem;
-      color: #FF5F1F;
-      font-weight: 600;
-    }
-    
-    .agenda-text {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.9);
       font-weight: 500;
+      background: transparent;
+      border: none;
+      color: #E5E5E5;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 0 auto;
+    }
+    
+    .calendar-day-btn:hover:not(:disabled) {
+      background: #161616;
+    }
+
+    .calendar-day-btn:disabled {
+      color: #333333;
+      cursor: default;
+    }
+    
+    .calendar-day-btn.selected {
+      background: #D97706 !important;
+      color: #000000 !important;
+      font-weight: 700 !important;
+    }
+    
+    .calendar-day-btn.today {
+      border: 1px solid #D97706;
+      color: #F59E0B;
+    }
+
+    .calendar-day-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #737373;
+      position: absolute;
+      bottom: 4px;
+    }
+    
+    /* Event card styling */
+    .calendar-event-card {
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+      transition: transform 0.2s ease;
+    }
+
+    @media (min-width: 768px) {
+      .calendar-event-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+    }
+    
+    .calendar-event-card:hover {
+      transform: scale(1.005);
+    }
+
+    /* Event Types backgrounds and borders */
+    .calendar-event-card.engineering {
+      border-color: #3E2312;
+      background-color: #17110C;
+    }
+    .calendar-event-card.business {
+      border-color: #1E3A8A;
+      background-color: #0A101D;
+    }
+    .calendar-event-card.security {
+      border-color: #7F1D1D;
+      background-color: #180A0A;
+    }
+    .calendar-event-card.focus {
+      border-color: #065F46;
+      background-color: #061F1A;
+    }
+    .calendar-event-card.kreyo-reward {
+      border-color: #581C87;
+      background-color: #1E112C;
+    }
+
+    .calendar-event-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .calendar-event-badge.engineering { background: #451A03; color: #FBBF24; }
+    .calendar-event-badge.business { background: #1E1B4B; color: #93C5FD; }
+    .calendar-event-badge.security { background: #450A0A; color: #F87171; }
+    .calendar-event-badge.focus { background: #064E3B; color: #34D399; }
+    .calendar-event-badge.kreyo-reward { background: #3B0764; color: #C084FC; }
+
+    .calendar-event-teammate {
+      font-size: 10px;
+      background: #161616;
+      border: 1px solid #262626;
+      color: #E5E5E5;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .calendar-score-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #111111;
+      border: 1px solid #222222;
+      padding: 12px 16px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .calendar-score-label {
+      font-size: 9px;
+      color: #737373;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .calendar-score-value {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .calendar-score-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #261C14;
+      border: 1px solid #D97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #F59E0B;
     }
     
     /* Home View display isolation overrides to prevent layout leaks */
@@ -1366,36 +1334,44 @@
       </div>
 
       <!-- Top Anchor Home View -->
-      <ul class="sidebar-nav-list" style="margin-bottom: 1.5rem; flex-shrink: 0;">
-        <li class="sidebar-nav-item active" id="nav-item-home">
-          <a href="#" class="sidebar-nav-link">
-            <span class="sidebar-icon">
-              <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            </span>
-            <span class="sidebar-text">Home</span>
-            <span class="sidebar-badge">10</span>
-          </a>
-        </li>
-      </ul>
+      <!-- Navigation Menu -->
+      <nav class="sidebar-section" style="margin-top: 1.5rem;">
+        <div class="sidebar-section-header">MAIN MENU</div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item active" id="nav-item-home">
+            <a href="#" class="sidebar-nav-link" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="sidebar-icon">
+                  <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </span>
+                <span class="sidebar-text">Home</span>
+              </div>
+              <span class="sidebar-badge" style="background: #D97706; color: black; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px;">10</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-      <!-- Systems/Data Streams Section -->
       <nav class="sidebar-section">
         <div class="sidebar-section-header">SYSTEMS</div>
         <ul class="sidebar-nav-list">
           <li class="sidebar-nav-item" id="nav-item-outlook">
-            <a href="#" class="sidebar-nav-link">
+            <a href="#" class="sidebar-nav-link" style="display: flex; align-items: center; gap: 12px; width: 100%;">
               <span class="sidebar-icon">
                 <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </span>
               <span class="sidebar-text">Outlook</span>
             </a>
           </li>
-          <li class="sidebar-nav-item" id="nav-item-recognition">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              </span>
-              <span class="sidebar-text">Calendar</span>
+          <li class="sidebar-nav-item" id="nav-item-calendar">
+            <a href="#" class="sidebar-nav-link" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="sidebar-icon">
+                  <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="sidebar-text">Calendar</span>
+              </div>
+              <span class="sidebar-badge" style="background: #D97706; color: black; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px;">3</span>
             </a>
           </li>
           <li class="sidebar-nav-item" id="nav-item-teams">
@@ -1409,85 +1385,34 @@
               <span class="sidebar-badge" style="background: #D97706; color: black; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px;">4</span>
             </a>
           </li>
-          <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              </span>
-              <span class="sidebar-text">Jira</span>
-            </a>
-          </li>
-          <li class="sidebar-nav-item disabled">
-            <div class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
-              </span>
-              <span class="sidebar-text">Asana</span>
-              <span class="sidebar-badge-soon">soon</span>
-            </div>
-          </li>
         </ul>
       </nav>
 
-      <!-- Culture Section -->
       <nav class="sidebar-section">
         <div class="sidebar-section-header">CULTURE</div>
         <ul class="sidebar-nav-list">
           <li class="sidebar-nav-item" id="nav-item-recognition">
-            <a href="#" class="sidebar-nav-link">
+            <a href="#" class="sidebar-nav-link" style="display: flex; align-items: center; gap: 12px; width: 100%;">
               <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
               </span>
               <span class="sidebar-text">Recognition</span>
-            </a>
-          </li>
-          <li class="sidebar-nav-item" id="nav-item-rewards">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5H12Z"/></svg>
-              </span>
-              <span class="sidebar-text">Rewards</span>
-            </a>
-          </li>
-          <li class="sidebar-nav-item" id="nav-item-awards">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a6 6 0 0 1 6 6v1a8 8 0 0 1-6 8 8 8 0 0 1-6-8V8a6 6 0 0 1 6-6Z"/></svg>
-              </span>
-              <span class="sidebar-text">Awards</span>
             </a>
           </li>
         </ul>
       </nav>
 
-      <!-- Bottom Section -->
-      <div class="sidebar-bottom-section">
+      <div class="sidebar-bottom-section" style="padding-top: 16px; border-top: 1px solid #1F1F1F; margin-top: auto; flex-shrink: 0; width: 100%;">
         <ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link">
+          <li class="sidebar-nav-item" id="nav-item-settings">
+            <a href="#" class="sidebar-nav-link" style="display: flex; align-items: center; gap: 12px; width: 100%;">
               <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg>
+                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
               </span>
               <span class="sidebar-text">Admin Settings</span>
             </a>
           </li>
-          <li class="sidebar-nav-item">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-              </span>
-              <span class="sidebar-text">Manage Integrations</span>
-            </a>
-          </li>
         </ul>
-        <div class="sidebar-footer">
-          <a href="#" class="sidebar-footer-link">
-            <span class="sidebar-icon">
-              <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </span>
-            <span class="sidebar-text">Account & Settings</span>
-          </a>
-        </div>
       </div>
     </aside>
 
@@ -1577,6 +1502,11 @@
 
       <!-- Scrollable Content Pane -->
       <div class="app-main-scrollable">
+        <!-- Fallback Connection View -->
+        <div id="fallback-view" style="display: none; height: 100%;">
+          <!-- Dynamically populated fallback screen -->
+        </div>
+
         <!-- Recognition View -->
         <div id="recognition-view" style="display: none;">
           <!-- Micro-Personalization Greeting Layer -->
@@ -1592,11 +1522,8 @@
         </div>
 
         <!-- Calendar View -->
-        <div id="calendar-view" style="display: none; padding: 2.5rem; color: #FFFFFF;">
-          <h2 class="section-title" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Inter', sans-serif;">Calendar Workspace</h2>
-          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 4px;">
-            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; line-height: 1.6;">Schedule coordination and calendar management module placeholder.</p>
-          </div>
+        <div id="calendar-view" style="display: none; color: #FFFFFF;">
+          <!-- Dynamically populated -->
         </div>
 
         <!-- MS Teams View -->

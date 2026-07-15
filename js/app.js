@@ -12,9 +12,96 @@ const state = {
   modalElement: null,
   firebaseConfigured: false,
   activeTab: "Home", // default active tab
-  activeSystemTab: "Home", // default active system tab
   activeTeamsContactId: "claryce", // active Teams chat conversation contact
   chatBonusPoints: 0,
+  selectedCalendarDate: "2026-07-14",
+  calendarEvents: {
+    "2026-07-12": [
+      { 
+        id: "1", 
+        title: "Production Server Sync", 
+        time: "9:00 AM", 
+        duration: "1 hr", 
+        type: "engineering", 
+        attendees: ["Standly L."],
+        points: 50,
+        description: "Verify deployment handshake pipelines."
+      },
+      { 
+        id: "2", 
+        title: "Deep Work Focus Block", 
+        time: "2:00 PM", 
+        duration: "2 hrs", 
+        type: "focus",
+        points: 100,
+        description: "No-meeting execution block for core backend development."
+      }
+    ],
+    "2026-07-13": [
+      { 
+        id: "3", 
+        title: "🔒 System Lock: Q2 Audit Prep", 
+        time: "10:00 AM", 
+        duration: "2 hrs", 
+        type: "security", 
+        attendees: ["Wilner S."],
+        points: 75,
+        description: "Prepare target compliance buffers and rotate secret keys."
+      }
+    ],
+    "2026-07-14": [
+      { 
+        id: "4", 
+        title: "M365 Migration Strategy", 
+        time: "11:00 AM", 
+        duration: "1.5 hrs", 
+        type: "business", 
+        attendees: ["Lawrence J."],
+        points: 60,
+        description: "Align enterprise target timelines for Nike and Amazon pipelines."
+      },
+      { 
+        id: "5", 
+        title: "Database Schema Lock", 
+        time: "1:30 PM", 
+        duration: "1 hr", 
+        type: "engineering", 
+        attendees: ["Claryce M."],
+        points: 50,
+        description: "Review index structures and migration tables for Firebase."
+      },
+      { 
+        id: "6", 
+        title: "AI for Humanity Roundtable Prep", 
+        time: "4:00 PM", 
+        duration: "1 hr", 
+        type: "business", 
+        attendees: ["Chris L."],
+        points: 40,
+        description: "Coordinate Silicon Valley deck outlines with Chris."
+      }
+    ],
+    "2026-07-15": [
+      { 
+        id: "7", 
+        title: "System Integration Review", 
+        time: "10:00 AM", 
+        duration: "1.5 hrs", 
+        type: "security", 
+        attendees: ["Wilner S.", "Standly L."],
+        points: 80
+      },
+      { 
+        id: "8", 
+        title: "Weekly Ledger Sync", 
+        time: "3:00 PM", 
+        duration: "1 hr", 
+        type: "engineering", 
+        attendees: ["Ricky S."],
+        points: 40
+      }
+    ]
+  },
   teamsContacts: [
     {
       id: "claryce",
@@ -437,10 +524,9 @@ function renderModal() {
 function setupTabNavigation() {
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
-  const navCalendar = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Calendar");
-  const navRec = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Recognition");
-  const navRewards = document.getElementById("nav-item-rewards");
-  const navAwards = document.getElementById("nav-item-awards");
+  const navCalendar = document.getElementById("nav-item-calendar");
+  const navTeams = document.getElementById("nav-item-teams");
+  const navRec = document.getElementById("nav-item-recognition");
 
   if (navHome) {
     navHome.addEventListener("click", (e) => {
@@ -448,47 +534,28 @@ function setupTabNavigation() {
       setActiveTab("Home");
     });
   }
-
   if (navOutlook) {
     navOutlook.addEventListener("click", (e) => {
       e.preventDefault();
       setActiveTab("Outlook");
     });
   }
-
   if (navCalendar) {
     navCalendar.addEventListener("click", (e) => {
       e.preventDefault();
       setActiveTab("Calendar");
     });
   }
-
-  if (navRec) {
-    navRec.addEventListener("click", (e) => {
-      e.preventDefault();
-      setActiveTab("Recognition");
-    });
-  }
-
-  const navTeams = document.getElementById("nav-item-teams");
   if (navTeams) {
     navTeams.addEventListener("click", (e) => {
       e.preventDefault();
       setActiveTab("Teams");
     });
   }
-
-  if (navRewards) {
-    navRewards.addEventListener("click", (e) => {
+  if (navRec) {
+    navRec.addEventListener("click", (e) => {
       e.preventDefault();
-      setActiveTab("Rewards");
-    });
-  }
-
-  if (navAwards) {
-    navAwards.addEventListener("click", (e) => {
-      e.preventDefault();
-      setActiveTab("Awards");
+      setActiveTab("Recognition");
     });
   }
 }
@@ -501,57 +568,38 @@ function setActiveTab(tabName) {
   if (state.activeTab === tabName) return;
   state.activeTab = tabName;
 
-  // Cache state.activeSystemTab if switching between Home and Outlook
   if (tabName === "Home" || tabName === "Outlook") {
     state.activeSystemTab = tabName;
   }
 
   const navHome = document.getElementById("nav-item-home");
   const navOutlook = document.getElementById("nav-item-outlook");
-  const navCalendar = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Calendar");
-  const navRec = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Recognition");
-  const navRewards = document.getElementById("nav-item-rewards");
-  const navAwards = document.getElementById("nav-item-awards");
+  const navCalendar = document.getElementById("nav-item-calendar");
   const navTeams = document.getElementById("nav-item-teams");
+  const navRec = document.getElementById("nav-item-recognition");
 
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
   const calendarView = document.getElementById("calendar-view");
-  const rewardsView = document.getElementById("rewards-view");
-  const awardsView = document.getElementById("awards-view");
   const teamsView = document.getElementById("teams-view");
   const appMain = document.querySelector(".app-main-scrollable");
   const greetingEl = document.querySelector(".recognition-portal-greeting");
 
   // Apply active wayfinding highlight
-  if (navHome) {
-    if (state.activeTab === "Home") navHome.classList.add("active");
-    else navHome.classList.remove("active");
-  }
-  if (navOutlook) {
-    if (state.activeTab === "Outlook") navOutlook.classList.add("active");
-    else navOutlook.classList.remove("active");
-  }
-  if (navCalendar) {
-    if (state.activeTab === "Calendar") navCalendar.classList.add("active");
-    else navCalendar.classList.remove("active");
-  }
-  if (navRec) {
-    if (state.activeTab === "Recognition") navRec.classList.add("active");
-    else navRec.classList.remove("active");
-  }
-  if (navRewards) {
-    if (state.activeTab === "Rewards") navRewards.classList.add("active");
-    else navRewards.classList.remove("active");
-  }
-  if (navAwards) {
-    if (state.activeTab === "Awards") navAwards.classList.add("active");
-    else navAwards.classList.remove("active");
-  }
-  if (navTeams) {
-    if (state.activeTab === "Teams") navTeams.classList.add("active");
-    else navTeams.classList.remove("active");
-  }
+  const navs = [
+    { name: "Home", el: navHome },
+    { name: "Outlook", el: navOutlook },
+    { name: "Calendar", el: navCalendar },
+    { name: "Teams", el: navTeams },
+    { name: "Recognition", el: navRec }
+  ];
+
+  navs.forEach(item => {
+    if (item.el) {
+      if (state.activeTab === item.name) item.el.classList.add("active");
+      else item.el.classList.remove("active");
+    }
+  });
 
   // Hide all views first
   if (homeView) {
@@ -563,15 +611,15 @@ function setActiveTab(tabName) {
     if (outlookContainer) outlookContainer.style.display = "none";
   }
   if (recView) recView.style.display = "none";
-  if (calendarView) calendarView.style.display = "none";
-  if (rewardsView) rewardsView.style.display = "none";
-  if (awardsView) awardsView.style.display = "none";
+  if (calendarView) {
+    calendarView.classList.remove("active-view");
+    calendarView.style.display = "none";
+  }
   if (teamsView) {
     teamsView.classList.remove("active-view");
     teamsView.style.display = "none";
   }
 
-  // Control greeting element display condition strictly tied to activeTab === 'Recognition'
   if (greetingEl) {
     greetingEl.style.display = state.activeTab === "Recognition" ? "block" : "none";
   }
@@ -579,13 +627,9 @@ function setActiveTab(tabName) {
   // Lock target view display conditions
   if (state.activeTab === "Home") {
     const infraMount = document.getElementById("infra-dashboard-mount");
-    const outlookContainer = document.getElementById("outlook-view-container");
     if (infraMount) {
       infraMount.style.display = "grid";
       renderInfraDashboard();
-    }
-    if (outlookContainer) {
-      outlookContainer.style.display = "none";
     }
     if (homeView) {
       homeView.classList.add("active-view");
@@ -608,155 +652,12 @@ function setActiveTab(tabName) {
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else if (state.activeTab === "Calendar") {
-    if (calendarView) {
-      calendarView.innerHTML = `
-        <div class="calendar-wrapper">
-          <!-- Left Sidebar Column (24%) -->
-          <div class="calendar-sidebar-left">
-            <div class="mini-calendar-title">July 2026</div>
-            <div class="mini-calendar-grid">
-              <div class="mini-day-header">Su</div>
-              <div class="mini-day-header">Mo</div>
-              <div class="mini-day-header">Tu</div>
-              <div class="mini-day-header">We</div>
-              <div class="mini-day-header">Th</div>
-              <div class="mini-day-header">Fr</div>
-              <div class="mini-day-header">Sa</div>
-              
-              <div class="mini-day other-month">28</div>
-              <div class="mini-day other-month">29</div>
-              <div class="mini-day other-month">30</div>
-              
-              <div class="mini-day">1</div>
-              <div class="mini-day">2</div>
-              <div class="mini-day">3</div>
-              <div class="mini-day">4</div>
-              <div class="mini-day">5</div>
-              <div class="mini-day">6</div>
-              <div class="mini-day">7</div>
-              <div class="mini-day">8</div>
-              <div class="mini-day">9</div>
-              <div class="mini-day">10</div>
-              <div class="mini-day">11</div>
-              <div class="mini-day today">12</div>
-              <div class="mini-day">13</div>
-              <div class="mini-day">14</div>
-              <div class="mini-day">15</div>
-              <div class="mini-day">16</div>
-              <div class="mini-day">17</div>
-              <div class="mini-day">18</div>
-              <div class="mini-day">19</div>
-              <div class="mini-day">20</div>
-              <div class="mini-day">21</div>
-              <div class="mini-day">22</div>
-              <div class="mini-day">23</div>
-              <div class="mini-day">24</div>
-              <div class="mini-day">25</div>
-              <div class="mini-day">26</div>
-              <div class="mini-day">27</div>
-              <div class="mini-day">28</div>
-              <div class="mini-day">29</div>
-              <div class="mini-day">30</div>
-              <div class="mini-day">31</div>
-              
-              <div class="mini-day other-month">1</div>
-              <div class="mini-day other-month">2</div>
-            </div>
-          </div>
-          
-          <!-- Center Monthly Grid Column (50%) -->
-          <div class="calendar-center-grid">
-            <div class="main-calendar-header">
-              <div class="main-calendar-title">July 2026</div>
-            </div>
-            
-            <div class="main-calendar-grid">
-              <div class="main-day-header">Sunday</div>
-              <div class="main-day-header">Monday</div>
-              <div class="main-day-header">Tuesday</div>
-              <div class="main-day-header">Wednesday</div>
-              <div class="main-day-header">Thursday</div>
-              <div class="main-day-header">Friday</div>
-              <div class="main-day-header">Saturday</div>
-              
-              <!-- Week 1 -->
-              <div class="main-calendar-cell other-month"><span class="day-number">28</span></div>
-              <div class="main-calendar-cell other-month"><span class="day-number">29</span></div>
-              <div class="main-calendar-cell other-month"><span class="day-number">30</span></div>
-              <div class="main-calendar-cell"><span class="day-number">1</span></div>
-              <div class="main-calendar-cell"><span class="day-number">2</span></div>
-              <div class="main-calendar-cell"><span class="day-number">3</span></div>
-              <div class="main-calendar-cell"><span class="day-number">4</span></div>
-              
-              <!-- Week 2 -->
-              <div class="main-calendar-cell"><span class="day-number">5</span></div>
-              <div class="main-calendar-cell"><span class="day-number">6</span></div>
-              <div class="main-calendar-cell"><span class="day-number">7</span></div>
-              <div class="main-calendar-cell"><span class="day-number">8</span></div>
-              <div class="main-calendar-cell"><span class="day-number">9</span></div>
-              <div class="main-calendar-cell"><span class="day-number">10</span></div>
-              <div class="main-calendar-cell"><span class="day-number">11</span></div>
-              
-              <!-- Week 3 -->
-              <div class="main-calendar-cell today">
-                <span class="day-number">12</span>
-                <div class="calendar-event regular">9:00 AM Production Server Sync</div>
-                <div class="calendar-event regular">2:00 PM Deep Work Focus</div>
-              </div>
-              <div class="main-calendar-cell">
-                <span class="day-number">13</span>
-                <div class="calendar-event system-buffer">🤖 System Lock: Q2 Audit Preparation Buffer (2 Hours)</div>
-              </div>
-              <div class="main-calendar-cell"><span class="day-number">14</span></div>
-              <div class="main-calendar-cell"><span class="day-number">15</span></div>
-              <div class="main-calendar-cell"><span class="day-number">16</span></div>
-              <div class="main-calendar-cell"><span class="day-number">17</span></div>
-              <div class="main-calendar-cell"><span class="day-number">18</span></div>
-              
-              <!-- Week 4 -->
-              <div class="main-calendar-cell"><span class="day-number">19</span></div>
-              <div class="main-calendar-cell"><span class="day-number">20</span></div>
-              <div class="main-calendar-cell"><span class="day-number">21</span></div>
-              <div class="main-calendar-cell"><span class="day-number">22</span></div>
-              <div class="main-calendar-cell"><span class="day-number">23</span></div>
-              <div class="main-calendar-cell"><span class="day-number">24</span></div>
-              <div class="main-calendar-cell"><span class="day-number">25</span></div>
-              
-              <!-- Week 5 -->
-              <div class="main-calendar-cell"><span class="day-number">26</span></div>
-              <div class="main-calendar-cell"><span class="day-number">27</span></div>
-              <div class="main-calendar-cell"><span class="day-number">28</span></div>
-              <div class="main-calendar-cell"><span class="day-number">29</span></div>
-              <div class="main-calendar-cell"><span class="day-number">30</span></div>
-              <div class="main-calendar-cell"><span class="day-number">31</span></div>
-              <div class="main-calendar-cell other-month"><span class="day-number">1</span></div>
-            </div>
-          </div>
-          
-          <!-- Right Agenda Sidebar Column (26%) -->
-          <div class="calendar-sidebar-right">
-            <div class="agenda-title">Today's Agenda</div>
-            <div class="agenda-subtitle">Sunday, July 12, 2026</div>
-            
-            <div class="agenda-list">
-              <div class="agenda-item">
-                <span class="agenda-time">9:00 AM - 10:00 AM</span>
-                <span class="agenda-text">Production Server Sync</span>
-              </div>
-              <div class="agenda-item">
-                <span class="agenda-time">2:00 PM - 4:00 PM</span>
-                <span class="agenda-text">Deep Work Focus</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      calendarView.style.display = "block";
-    }
+    renderCalendarView();
     if (appMain) appMain.classList.remove("home-active");
   } else if (state.activeTab === "Teams") {
     if (teamsView) {
       teamsView.classList.add("active-view");
+      teamsView.style.display = "flex";
     }
     renderTeamsView();
     if (appMain) appMain.classList.add("home-active");
@@ -764,12 +665,6 @@ function setActiveTab(tabName) {
     if (recView) recView.style.display = "block";
     if (appMain) appMain.classList.remove("home-active");
     renderGrid();
-  } else if (state.activeTab === "Rewards") {
-    if (rewardsView) rewardsView.style.display = "block";
-    if (appMain) appMain.classList.remove("home-active");
-  } else if (state.activeTab === "Awards") {
-    if (awardsView) awardsView.style.display = "block";
-    if (appMain) appMain.classList.remove("home-active");
   }
 }
 
@@ -2487,6 +2382,246 @@ function renderInfraDashboard() {
       }, 2000);
     });
   }
+}
+
+// Calendar Module Helpers
+window.selectCalendarDate = function(dateStr) {
+  state.selectedCalendarDate = dateStr;
+  renderCalendarView();
+};
+
+function renderCalendarView() {
+  const calendarView = document.getElementById("calendar-view");
+  if (!calendarView) return;
+
+  const selectedDate = state.selectedCalendarDate || "2026-07-14";
+  const activeEvents = state.calendarEvents[selectedDate] || [];
+
+  // Generate days grid HTML
+  const daysList = [
+    { day: 28, date: "2026-06-28", currentMonth: false },
+    { day: 29, date: "2026-06-29", currentMonth: false },
+    { day: 30, date: "2026-06-30", currentMonth: false },
+    { day: 1, date: "2026-07-01", currentMonth: true },
+    { day: 2, date: "2026-07-02", currentMonth: true },
+    { day: 3, date: "2026-07-03", currentMonth: true },
+    { day: 4, date: "2026-07-04", currentMonth: true },
+    { day: 5, date: "2026-07-05", currentMonth: true },
+    { day: 6, date: "2026-07-06", currentMonth: true },
+    { day: 7, date: "2026-07-07", currentMonth: true },
+    { day: 8, date: "2026-07-08", currentMonth: true },
+    { day: 9, date: "2026-07-09", currentMonth: true },
+    { day: 10, date: "2026-07-10", currentMonth: true },
+    { day: 11, date: "2026-07-11", currentMonth: true },
+    { day: 12, date: "2026-07-12", currentMonth: true },
+    { day: 13, date: "2026-07-13", currentMonth: true },
+    { day: 14, date: "2026-07-14", currentMonth: true, isToday: true },
+    { day: 15, date: "2026-07-15", currentMonth: true },
+    { day: 16, date: "2026-07-16", currentMonth: true },
+    { day: 17, date: "2026-07-17", currentMonth: true },
+    { day: 18, date: "2026-07-18", currentMonth: true },
+    { day: 19, date: "2026-07-19", currentMonth: true },
+    { day: 20, date: "2026-07-20", currentMonth: true },
+    { day: 21, date: "2026-07-21", currentMonth: true },
+    { day: 22, date: "2026-07-22", currentMonth: true },
+    { day: 23, date: "2026-07-23", currentMonth: true },
+    { day: 24, date: "2026-07-24", currentMonth: true },
+    { day: 25, date: "2026-07-25", currentMonth: true },
+    { day: 26, date: "2026-07-26", currentMonth: true },
+    { day: 27, date: "2026-07-27", currentMonth: true },
+    { day: 28, date: "2026-07-28", currentMonth: true },
+    { day: 29, date: "2026-07-29", currentMonth: true },
+    { day: 30, date: "2026-07-30", currentMonth: true },
+    { day: 31, date: "2026-07-31", currentMonth: true }
+  ];
+
+  let gridHtml = "";
+  daysList.forEach(dObj => {
+    const isSelected = selectedDate === dObj.date;
+    const hasEvents = state.calendarEvents[dObj.date] && state.calendarEvents[dObj.date].length > 0;
+    
+    let btnClass = "calendar-day-btn";
+    if (isSelected) btnClass += " selected";
+    if (dObj.isToday) btnClass += " today";
+
+    gridHtml += `
+      <button 
+        ${dObj.currentMonth ? `onclick="selectCalendarDate('${dObj.date}')"` : "disabled"}
+        class="${btnClass}"
+      >
+        <span>${dObj.day}</span>
+        ${hasEvents && !isSelected ? `<span class="calendar-day-dot"></span>` : ""}
+      </button>
+    `;
+  });
+
+  // Calculate day total points
+  let dayTotalPoints = 0;
+  activeEvents.forEach(evt => {
+    if (evt.points) dayTotalPoints += evt.points;
+  });
+
+  // Format selected date description
+  const dateObj = new Date(selectedDate);
+  const formattedDateString = dateObj.toLocaleDateString("en-US", { 
+    weekday: 'long', 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
+  // Render events list
+  let eventsHtml = "";
+  if (activeEvents.length === 0) {
+    eventsHtml = `
+      <div class="flex flex-col items-center justify-center h-64 border border-dashed border-[#1F1F1F] rounded-xl text-center p-6" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3F3F46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <p class="text-sm font-medium" style="color: #737373; font-weight: 500; font-size: 14px; margin: 0;">No scheduled events found for this date.</p>
+        <p class="text-xs" style="color: #525252; font-size: 12px; margin-top: 4px; margin-bottom: 0;">Keep focus blocks and core sprint sessions logged for progress tracking.</p>
+      </div>
+    `;
+  } else {
+    activeEvents.forEach(evt => {
+      // Build attendees HTML if they exist
+      let attendeesHtml = "";
+      if (evt.attendees && evt.attendees.length > 0) {
+        let spanList = "";
+        evt.attendees.forEach(person => {
+          spanList += `<span class="calendar-event-teammate">${person}</span>`;
+        });
+        attendeesHtml = `
+          <div style="display: flex; align-items: center; gap: 6px; padding-top: 4px;">
+            <span style="font-size: 10px; color: #525252; font-weight: 600;">Teammates:</span>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              ${spanList}
+            </div>
+          </div>
+        `;
+      }
+
+      // Build points HTML if they exist
+      let pointsHtml = "";
+      if (evt.points) {
+        pointsHtml = `
+          <div class="calendar-score-box">
+            <div style="text-align: right;">
+              <span class="calendar-score-label">Kreyō Score</span>
+              <span class="calendar-score-value">+${evt.points} Points</span>
+            </div>
+            <div class="calendar-score-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+          </div>
+        `;
+      }
+
+      eventsHtml += `
+        <div class="calendar-event-card ${evt.type}">
+          <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span class="calendar-event-badge ${evt.type}">${evt.type}</span>
+              <span style="font-size: 12px; color: #737373; display: inline-flex; align-items: center; gap: 4px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ${evt.time} (${evt.duration})
+              </span>
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #FFFFFF; margin: 0;">${evt.title}</h4>
+            ${evt.description ? `<p style="font-size: 12px; color: #A3A3A3; margin: 0; line-height: 1.5; max-width: 480px;">${evt.description}</p>` : ""}
+            ${attendeesHtml}
+          </div>
+          ${pointsHtml}
+        </div>
+      `;
+    });
+  }
+
+  calendarView.innerHTML = `
+    <div class="calendar-wrapper">
+      <!-- Left Sub-Column: Mini Date Navigator -->
+      <div class="calendar-sidebar-left">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <h2 style="font-size: 14px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">My Schedule</h2>
+          <button style="padding: 6px; background: #1A1A1A; hover:bg-[#262626]; border: 1px solid #262626; color: #A3A3A3; border-radius: 6px; display: flex; align-items: center; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+
+        <!-- Month navigator title -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
+          <span style="font-size: 14px; font-weight: 600; color: #FFFFFF;">July 2026</span>
+          <div style="display: flex; gap: 4px;">
+            <button style="padding: 4px; background: transparent; border: none; color: #A3A3A3; cursor: pointer; border-radius: 4px;" title="Previous Month">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button style="padding: 4px; background: transparent; border: none; color: #A3A3A3; cursor: pointer; border-radius: 4px;" title="Next Month">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Days grid header & buttons -->
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px 0; text-align: center; font-size: 12px; margin-top: 12px;">
+          <span style="color: #525252; font-weight: 600;">Su</span>
+          <span style="color: #525252; font-weight: 600;">Mo</span>
+          <span style="color: #525252; font-weight: 600;">Tu</span>
+          <span style="color: #525252; font-weight: 600;">We</span>
+          <span style="color: #525252; font-weight: 600;">Th</span>
+          <span style="color: #525252; font-weight: 600;">Fr</span>
+          <span style="color: #525252; font-weight: 600;">Sa</span>
+          
+          ${gridHtml}
+        </div>
+
+        <!-- Progress Integration Card -->
+        <div style="padding-top: 16px; border-top: 1px solid #1F1F1F; margin-top: auto;">
+          <div style="padding: 1rem; background: #141414; border: 1px solid #262626; border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 10px; font-weight: 700; color: #737373; text-transform: uppercase; letter-spacing: 0.05em;">Active Integration</span>
+              <span style="font-size: 9px; color: #10B981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981;" class="animate-pulse"></span>
+                Live
+              </span>
+            </div>
+            <p style="font-size: 11px; color: #A3A3A3; margin: 0; line-height: 1.5;">
+              Complete your target focus periods and collaborative sync events today to hit your milestones.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Area: Big Calendar Board -->
+      <div class="calendar-center-grid">
+        <!-- Header -->
+        <header class="teams-chat-header" style="height: 64px; border-bottom: 1px solid #1F1F1F; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; background: #0D0D0D; flex-shrink: 0; box-sizing: border-box;">
+          <div>
+            <h3 style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin: 0;">Daily Agenda Review</h3>
+            <p style="font-size: 12px; color: #737373; margin: 2px 0 0 0;">Review meeting metrics, target slots, and logged points for ${formattedDateString}</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; color: #A3A3A3;">Focus Target Score:</span>
+            <span style="background: #261C14; color: #F59E0B; border: 1px solid #451A03; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 4px;">
+              +150 pts Max
+            </span>
+          </div>
+        </header>
+
+        <!-- Events List -->
+        <div style="flex: 1; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; box-sizing: border-box; max-width: 900px; width: 100%;">
+          ${eventsHtml}
+        </div>
+
+        <!-- Footer -->
+        <div style="padding: 1.5rem; background: #0D0D0D; border-top: 1px solid #1F1F1F; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #737373; flex-shrink: 0; box-sizing: border-box;">
+          <span>Enterprise Integration Core v1.4.2 Active</span>
+          <span>Total Logged Points Today: +${dayTotalPoints} pts</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Ensure view display classes are active
+  calendarView.classList.add("active-view");
+  calendarView.style.display = "flex";
 }
 
 // Bootstrap when DOM is ready
