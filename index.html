@@ -311,11 +311,11 @@
       display: flex !important;
     }
     
-    /* Slack Workspace Premium styling */
-    #slack-view {
+    /* MS Teams Workspace Premium styling */
+    #teams-view {
       display: none !important;
     }
-    #slack-view.active-view {
+    #teams-view.active-view {
       padding: 0 !important;
       height: calc(100vh - 120px) !important;
       max-height: calc(100vh - 120px) !important;
@@ -324,239 +324,563 @@
       flex-direction: column !important;
     }
     
-    .slack-wrapper {
+    .teams-wrapper {
       display: flex;
       flex-direction: row;
       width: 100%;
       height: 100%;
       min-height: 0;
-      background: #080808;
-      color: #FFFFFF;
+      background: #0A0A0A;
+      color: #E5E5E5;
       box-sizing: border-box;
       overflow: hidden;
     }
     
-    .slack-sidebar {
-      width: 24%;
-      flex: 0 0 24%;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 1.5rem;
-      box-sizing: border-box;
+    .teams-sidebar {
+      width: 320px;
+      flex: 0 0 320px;
+      border-right: 1px solid #1F1F1F;
       display: flex;
       flex-direction: column;
-      background: rgba(255, 255, 255, 0.01);
-      gap: 1.5rem;
-      overflow-y: auto;
+      background: #0F0F0F;
+      box-sizing: border-box;
+      overflow: hidden;
     }
     
-    .slack-chat-area {
-      width: 76%;
-      flex: 1 1 0%;
-      box-sizing: border-box;
+    .teams-chat-area {
+      flex: 1;
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: #050505;
+      background: #0B0B0B;
       overflow: hidden;
       min-height: 0;
+      box-sizing: border-box;
     }
-    
-    /* Sidebar Filter Pills */
-    .slack-filters {
+
+    .teams-search-container {
+      padding: 1rem;
+      border-bottom: 1px solid #1F1F1F;
       display: flex;
-      gap: 8px;
-      flex-shrink: 0;
+      flex-direction: column;
+      gap: 0.75rem;
     }
-    
-    .slack-filter-pill {
-      font-size: 0.75rem;
-      padding: 6px 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.6);
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
+
+    .teams-search-wrapper {
+      position: relative;
+      width: 100%;
     }
-    
-    .slack-filter-pill.active, .slack-filter-pill:hover {
-      background: rgba(255, 255, 255, 0.08);
+
+    .teams-search-input {
+      width: 100%;
+      background: #1A1A1A;
+      border: 1px solid #262626;
       color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.15);
+      font-size: 0.75rem;
+      border-radius: 8px;
+      padding: 8px 12px 8px 32px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease;
+    }
+
+    .teams-search-input:focus {
+      border-color: #D97706;
+    }
+
+    .teams-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #525252;
+      display: flex;
+      align-items: center;
     }
     
-    /* Sidebar Chat List */
-    .slack-section-header {
+    .teams-chat-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .teams-chat-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .teams-chat-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 95, 31, 0.08);
+      border-radius: 2px;
+    }
+    
+    .teams-chat-item {
+      width: 100%;
+      padding: 1rem;
+      display: flex;
+      gap: 12px;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #161616;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .teams-chat-item:hover {
+      background: #141414;
+    }
+    
+    .teams-chat-item.active {
+      background: #1E1510;
+      border-left: 2px solid #D97706;
+    }
+    
+    .teams-avatar-frame {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #1F1F1F;
+      border: 1px solid #2D2D2D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
       font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      color: #FFFFFF;
       flex-shrink: 0;
     }
     
-    .slack-chat-list {
+    .teams-status-dot {
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #0F0F0F;
+    }
+
+    .teams-status-dot.online { background-color: #10B981; }
+    .teams-status-dot.busy { background-color: #EF4444; }
+    .teams-status-dot.offline { background-color: #525252; }
+    
+    .teams-item-details {
+      min-width: 0;
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
-    
-    .slack-chat-item {
+
+    .teams-item-meta {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: transparent;
-      border: 1px solid transparent;
     }
-    
-    .slack-chat-item:hover {
-      background: rgba(255, 255, 255, 0.02);
+
+    .teams-item-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    
-    .slack-chat-item.active {
-      background: rgba(255, 95, 31, 0.05);
-      border-color: rgba(255, 95, 31, 0.15);
+
+    .teams-item-time {
+      font-size: 0.625rem;
+      color: #525252;
+      font-family: monospace;
     }
-    
-    .slack-chat-avatar {
-      width: 32px;
-      height: 32px;
+
+    .teams-item-role {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #A3A3A3;
+    }
+
+    .teams-item-preview {
+      font-size: 0.68rem;
+      color: #525252;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-style: italic;
+    }
+
+    .teams-badge-unread {
+      align-self: center;
+      background: #D97706;
+      color: #000000;
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      background: rgba(255, 95, 31, 0.08);
-      border: 1px solid rgba(255, 95, 31, 0.15);
-      color: var(--color-accent-vibrant);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      font-size: 0.8rem;
+      flex-shrink: 0;
     }
-    
-    .slack-chat-item.active .slack-chat-avatar {
-      background: rgba(255, 95, 31, 0.15);
-      border-color: #FF5F1F;
+
+    .teams-widget-container {
+      padding: 1rem;
+      background: #141414;
+      border-top: 1px solid #1F1F1F;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    
-    .slack-chat-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.8);
+
+    .teams-widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    
-    .slack-chat-item.active .slack-chat-name {
-      color: #FFFFFF;
-      font-weight: 600;
+
+    .teams-widget-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #737373;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    
-    /* Right Conversation Area */
-    .slack-chat-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    .teams-widget-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      color: #10B981;
+      background: #064E3B;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .teams-widget-box {
+      padding: 10px 12px;
+      background: #0D0D0D;
+      border: 1px solid #1F1F1F;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
+    }
+
+    .teams-widget-points {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .teams-widget-label {
+      font-size: 10px;
+      color: #A3A3A3;
+      font-weight: 500;
+    }
+
+    .teams-widget-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .teams-widget-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #D97706;
+      background: #261C14;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #F59E0B;
       flex-shrink: 0;
     }
     
-    .slack-header-name {
-      font-size: 1rem;
+    .teams-chat-header {
+      padding: 0 1.5rem;
+      height: 64px;
+      border-bottom: 1px solid #1F1F1F;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0D0D0D;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+    
+    .teams-chat-header-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .teams-chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #261C14;
+      border: 1px solid #D97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: #F59E0B;
+    }
+
+    .teams-chat-header-name {
+      font-size: 0.875rem;
       font-weight: 600;
       color: #FFFFFF;
     }
+
+    .teams-chat-header-role {
+      font-size: 11px;
+      color: #737373;
+      margin-top: 2px;
+    }
+
+    .teams-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .teams-action-btn {
+      padding: 8px;
+      background: #141414;
+      border: 1px solid #262626;
+      color: #A3A3A3;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .teams-action-btn:hover {
+      background: #1C1C1C;
+      color: #FFFFFF;
+    }
     
-    .slack-chat-history {
+    .teams-chat-history {
       flex: 1;
       padding: 1.5rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
       gap: 1rem;
       min-height: 0;
+      box-sizing: border-box;
+    }
+
+    .teams-chat-history::-webkit-scrollbar {
+      width: 6px;
+    }
+    .teams-chat-history::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .teams-chat-history::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+    .teams-chat-history::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-high);
     }
     
-    /* Message Bubble */
-    .slack-message-row {
+    .teams-message-row {
       display: flex;
       width: 100%;
     }
     
-    .slack-message-row.sent {
+    .teams-message-row.sent {
       justify-content: flex-end;
     }
     
-    .slack-message-bubble {
-      max-width: 60%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      line-height: 1.4;
+    .teams-message-container {
+      max-width: 70%;
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
+
+    .teams-message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+    }
+
+    .teams-message-sender {
+      font-size: 10px;
+      font-weight: 700;
+      color: #737373;
+    }
+
+    .teams-message-time {
+      font-size: 9px;
+      color: #525252;
+      font-family: monospace;
+    }
+
+    .teams-message-bubble {
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      box-sizing: border-box;
+      border: 1px solid transparent;
+    }
     
-    .slack-message-row.sent .slack-message-bubble {
-      background: rgba(255, 95, 31, 0.1);
-      border: 1px solid rgba(255, 95, 31, 0.2);
+    .teams-message-row.sent .teams-message-bubble {
+      background: #1F140E;
+      border-color: #451A03;
       color: #FFFFFF;
       border-bottom-right-radius: 2px;
     }
-    
-    .slack-message-time {
-      font-size: 0.68rem;
-      color: var(--color-text-muted);
-      align-self: flex-end;
+
+    .teams-message-row.received .teams-message-bubble {
+      background: #141414;
+      border-color: #1F1F1F;
+      color: #E5E5E5;
+      border-bottom-left-radius: 2px;
+    }
+
+    .teams-activity-sync-card {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+      width: 100%;
+    }
+
+    .teams-activity-sync-bubble {
+      background: #1C1917;
+      border: 1px solid #D97706;
+      border-radius: 12px;
+      padding: 12px 16px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .teams-activity-sync-header {
+      font-size: 11px;
+      font-weight: 600;
+      color: #F59E0B;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .teams-activity-sync-text {
+      font-size: 11px;
+      color: #D4D4D4;
+      line-height: 1.5;
+      margin: 0;
     }
     
-    /* Input Area */
-    .slack-input-container {
-      padding: 1.25rem 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    .teams-input-container {
+      padding: 1rem;
+      background: #0D0D0D;
+      border-top: 1px solid #1F1F1F;
       box-sizing: border-box;
       flex-shrink: 0;
     }
     
-    .slack-input-wrapper {
-      position: relative;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      padding: 12px 16px;
-      box-sizing: border-box;
+    .teams-input-form {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      background: #070707;
+      border: 1px solid #1F1F1F;
+      border-radius: 8px;
+      padding: 8px;
+      gap: 8px;
+      box-sizing: border-box;
     }
-    
-    .slack-input-field {
+
+    .teams-input-field {
       width: 100%;
       background: transparent;
       border: none;
       color: #FFFFFF;
-      font-size: 0.88rem;
+      font-size: 0.75rem;
       outline: none;
-      padding-right: 48px;
+      padding: 8px;
+      box-sizing: border-box;
+      resize: none;
+      font-family: inherit;
     }
     
-    .slack-input-field::placeholder {
-      color: var(--color-text-muted);
+    .teams-input-field::placeholder {
+      color: #525252;
     }
     
-    .slack-input-actions {
-      position: absolute;
-      right: 16px;
+    .teams-input-actions-row {
       display: flex;
-      gap: 8px;
+      justify-content: space-between;
       align-items: center;
-      color: var(--color-text-muted);
-      font-size: 0.95rem;
+      padding-top: 8px;
+      border-top: 1px solid #161616;
+    }
+
+    .teams-input-attach-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #737373;
+    }
+
+    .teams-input-attach-btn {
+      padding: 6px;
+      background: transparent;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .teams-input-attach-btn:hover {
+      background: #141414;
+      color: #FFFFFF;
+    }
+
+    .teams-send-btn {
+      background: #D97706;
+      color: #000000;
+      font-weight: 600;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.2s ease;
+    }
+
+    .teams-send-btn:hover {
+      background-color: #F59E0B;
     }
     
     /* Infrastructure Dashboard Layout & Custom Grid overrides */
@@ -1074,12 +1398,15 @@
               <span class="sidebar-text">Calendar</span>
             </a>
           </li>
-          <li class="sidebar-nav-item" id="nav-item-slack">
-            <a href="#" class="sidebar-nav-link">
-              <span class="sidebar-icon">
-                <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              </span>
-              <span class="sidebar-text">Slack</span>
+          <li class="sidebar-nav-item" id="nav-item-teams">
+            <a href="#" class="sidebar-nav-link" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="sidebar-icon">
+                  <svg class="sidebar-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </span>
+                <span class="sidebar-text">MS Teams</span>
+              </div>
+              <span class="sidebar-badge" style="background: #D97706; color: black; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px;">4</span>
             </a>
           </li>
           <li class="sidebar-nav-item">
@@ -1272,8 +1599,8 @@
           </div>
         </div>
 
-        <!-- Slack View -->
-        <div id="slack-view" style="display: none; color: #FFFFFF;">
+        <!-- MS Teams View -->
+        <div id="teams-view" style="display: none; color: #FFFFFF;">
           <!-- Dynamically populated -->
         </div>
 
@@ -1528,9 +1855,9 @@
                         <span class="sync-platform-icon">⚙</span>
                         <span class="sync-platform-name">JIRA</span>
                       </div>
-                      <div class="sync-platform-card active" data-platform="slack" id="sync-slack">
+                      <div class="sync-platform-card active" data-platform="teams" id="sync-teams">
                         <span class="sync-platform-icon">💬</span>
-                        <span class="sync-platform-name">SLACK</span>
+                        <span class="sync-platform-name">MS TEAMS</span>
                       </div>
                       <div class="sync-platform-card" data-platform="asana" id="sync-asana">
                         <span class="sync-platform-icon">📋</span>

@@ -13,7 +13,116 @@ const state = {
   firebaseConfigured: false,
   activeTab: "Home", // default active tab
   activeSystemTab: "Home", // default active system tab
-  activeSlackContact: "Donaldy Salvant", // active slack conversation contact
+  activeTeamsContactId: "claryce", // active Teams chat conversation contact
+  chatBonusPoints: 0,
+  teamsContacts: [
+    {
+      id: "claryce",
+      name: "Claryce M.",
+      avatar: "CM",
+      role: "Backend Architect",
+      status: "online",
+      time: "10:02 PM",
+      unreadCount: 1,
+      lastMessage: "The Firebase replication logic is holding up. Are we ready to scale?",
+      convo: [
+        { id: "c_m1", sender: "them", senderName: "Claryce M.", time: "9:50 PM", text: "Hey, I just finalized the schema migrations for the user reward tables. The backend structure is optimized for high-volume reads." },
+        { id: "c_m2", sender: "me", senderName: "DS", time: "9:55 PM", text: "Excellent work. Did you implement the indexing on the transaction IDs to prevent bottleneck issues?" },
+        { id: "c_m3", sender: "them", senderName: "Claryce M.", time: "10:02 PM", text: "Yes, added composite indexes. The Firebase replication logic is holding up. Are we ready to scale?" }
+      ]
+    },
+    {
+      id: "wilner",
+      name: "Wilner S.",
+      avatar: "WS",
+      role: "Security Engineer",
+      status: "online",
+      time: "9:55 PM",
+      unreadCount: 3,
+      lastMessage: "Make sure the API token encryption keys are rotated in the secret manager.",
+      convo: [
+        { id: "w1", sender: "them", senderName: "Wilner S.", time: "9:40 PM", text: "Looking at our application integration endpoints. We need to lock down OAuth security scopes." },
+        { id: "w2", sender: "me", senderName: "DS", time: "9:48 PM", text: "Absolutely, I configured strict read-only scopes for the public API sync agents." },
+        { id: "w3", sender: "them", senderName: "Wilner S.", time: "9:55 PM", text: "Good call. Make sure the API token encryption keys are rotated in the secret manager." }
+      ]
+    },
+    {
+      id: "charles",
+      name: "Charles M.",
+      avatar: "CM",
+      role: "DevOps Lead",
+      status: "busy",
+      time: "9:48 PM",
+      unreadCount: 0,
+      lastMessage: "Scaling the container clusters to handle the high throughput test tomorrow.",
+      convo: [
+        { id: "ch1", sender: "them", senderName: "Charles M.", time: "9:30 PM", text: "Our server health metrics peaked at 88% CPU during the stress-test run on the staging environment." },
+        { id: "ch2", sender: "me", senderName: "DS", time: "9:40 PM", text: "Let's increase our auto-scaling group limits. We want to auto-scale once we cross a 70% baseline load." },
+        { id: "ch3", sender: "them", senderName: "Charles M.", time: "9:48 PM", text: "Agreed. Scaling the container clusters to handle the high throughput test tomorrow." }
+      ]
+    },
+    {
+      id: "standly",
+      name: "Standly L.",
+      avatar: "SL",
+      role: "Platform Engineer",
+      status: "online",
+      time: "9:42 PM",
+      unreadCount: 0,
+      lastMessage: "Did you push the updated API gateway specifications yet?",
+      convo: [
+        { id: "s1", sender: "them", senderName: "Standly L.", time: "9:30 PM", text: "Hey! Looking at the new multi-agent pipeline setup. We need to lock down the exact specifications for the integration engine." },
+        { id: "s2", sender: "me", senderName: "DS", time: "9:35 PM", text: "Just pushed the specs to the repo. It handles the secure token handshake with the target endpoints seamlessly." },
+        { id: "s3", sender: "them", senderName: "Standly L.", time: "9:40 PM", text: "Awesome, pulling it now. If this is verified, our core performance matrix is going to look solid." },
+        { id: "s4", sender: "them", senderName: "Standly L.", time: "9:42 PM", text: "Did you push the updated API gateway specifications yet?" }
+      ]
+    },
+    {
+      id: "lawrence",
+      name: "Lawrence J.",
+      avatar: "LJ",
+      role: "Strategic Business Advisor",
+      status: "busy",
+      time: "8:15 PM",
+      unreadCount: 0,
+      lastMessage: "Let's align the M365 migration plan with the pipeline strategy.",
+      convo: [
+        { id: "l1", sender: "them", senderName: "Lawrence J.", time: "7:45 PM", text: "We need to construct a robust pitch for enterprise security. Think Accenture, Nike, MacDonalds, and Amazon. They won't look at us without bulletproof security architecture." },
+        { id: "l2", sender: "me", senderName: "DS", time: "8:00 PM", text: "Agreed. I am mapping our compliance framework to show a 98.4% Secure Score. That should clear any high-priority security questionnaires." },
+        { id: "l3", sender: "them", senderName: "Lawrence J.", time: "8:15 PM", text: "Perfect. Let's align the M365 migration plan with the pipeline strategy before we present to the Amazon engineering contacts." }
+      ]
+    },
+    {
+      id: "chris",
+      name: "Chris L.",
+      avatar: "CL",
+      role: "Global Tech Evangelist",
+      status: "online",
+      time: "6:30 PM",
+      unreadCount: 0,
+      lastMessage: "We're setting up the Silicon Valley roundtable deck.",
+      convo: [
+        { id: "c1", sender: "them", senderName: "Chris L.", time: "6:10 PM", text: "The AI for Humanity summit panel schedule is getting finalized. We need to show how localized rewards actually mitigate real-world engineer burnout." },
+        { id: "c2", sender: "me", senderName: "DS", time: "6:20 PM", text: "Exactly, it's not just another tracker. We're bridging actual enterprise server logs directly to curated local incentives." },
+        { id: "c3", sender: "them", senderName: "Chris L.", time: "6:30 PM", text: "Exactly. It's human-centric engineering. We're setting up the Silicon Valley roundtable deck tonight—send me over those latest performance metrics!" }
+      ]
+    },
+    {
+      id: "ricky",
+      name: "Ricky S.",
+      avatar: "RS",
+      role: "FinTech Lead Architect",
+      status: "offline",
+      time: "Yesterday",
+      unreadCount: 0,
+      lastMessage: "The transaction handler API looks clean.",
+      convo: [
+        { id: "r1", sender: "them", senderName: "Ricky S.", time: "Yesterday", text: "I was reading up on how ancient architectural principles match modern database sharding. It's wild how systemic order repeats across history, religion, and finance." },
+        { id: "r2", sender: "me", senderName: "DS", time: "Yesterday", text: "Total pattern matching. Systematic structure is everything, whether it's managing ledger trust or optimizing transactional endpoints." },
+        { id: "r3", sender: "them", senderName: "Ricky S.", time: "Yesterday", text: "Exactly! By the way, the transaction handler API looks clean. Zero lag on the sandbox terminal." }
+      ]
+    }
+  ],
   activeEmailId: null, // default active email
   rewardProgress: 68,
   isSyncingAll: false,
@@ -361,11 +470,11 @@ function setupTabNavigation() {
     });
   }
 
-  const navSlack = document.getElementById("nav-item-slack");
-  if (navSlack) {
-    navSlack.addEventListener("click", (e) => {
+  const navTeams = document.getElementById("nav-item-teams");
+  if (navTeams) {
+    navTeams.addEventListener("click", (e) => {
       e.preventDefault();
-      setActiveTab("Slack");
+      setActiveTab("Teams");
     });
   }
 
@@ -403,14 +512,14 @@ function setActiveTab(tabName) {
   const navRec = Array.from(document.querySelectorAll(".sidebar-nav-item")).find(el => el.querySelector(".sidebar-text")?.textContent.trim() === "Recognition");
   const navRewards = document.getElementById("nav-item-rewards");
   const navAwards = document.getElementById("nav-item-awards");
-  const navSlack = document.getElementById("nav-item-slack");
+  const navTeams = document.getElementById("nav-item-teams");
 
   const homeView = document.getElementById("home-view");
   const recView = document.getElementById("recognition-view");
   const calendarView = document.getElementById("calendar-view");
   const rewardsView = document.getElementById("rewards-view");
   const awardsView = document.getElementById("awards-view");
-  const slackView = document.getElementById("slack-view");
+  const teamsView = document.getElementById("teams-view");
   const appMain = document.querySelector(".app-main-scrollable");
   const greetingEl = document.querySelector(".recognition-portal-greeting");
 
@@ -439,9 +548,9 @@ function setActiveTab(tabName) {
     if (state.activeTab === "Awards") navAwards.classList.add("active");
     else navAwards.classList.remove("active");
   }
-  if (navSlack) {
-    if (state.activeTab === "Slack") navSlack.classList.add("active");
-    else navSlack.classList.remove("active");
+  if (navTeams) {
+    if (state.activeTab === "Teams") navTeams.classList.add("active");
+    else navTeams.classList.remove("active");
   }
 
   // Hide all views first
@@ -457,9 +566,9 @@ function setActiveTab(tabName) {
   if (calendarView) calendarView.style.display = "none";
   if (rewardsView) rewardsView.style.display = "none";
   if (awardsView) awardsView.style.display = "none";
-  if (slackView) {
-    slackView.classList.remove("active-view");
-    slackView.style.display = "none";
+  if (teamsView) {
+    teamsView.classList.remove("active-view");
+    teamsView.style.display = "none";
   }
 
   // Control greeting element display condition strictly tied to activeTab === 'Recognition'
@@ -645,11 +754,11 @@ function setActiveTab(tabName) {
       calendarView.style.display = "block";
     }
     if (appMain) appMain.classList.remove("home-active");
-  } else if (state.activeTab === "Slack") {
-    if (slackView) {
-      slackView.classList.add("active-view");
+  } else if (state.activeTab === "Teams") {
+    if (teamsView) {
+      teamsView.classList.add("active-view");
     }
-    renderSlackView();
+    renderTeamsView();
     if (appMain) appMain.classList.add("home-active");
   } else if (state.activeTab === "Recognition") {
     if (recView) recView.style.display = "block";
@@ -1777,102 +1886,259 @@ function setupAssistantFabScrollDetector() {
   window.checkAssistantFabState = checkAssistantFab;
 }
 
-// Slack Chat Module Helpers
-window.selectSlackChat = function(contactName) {
-  state.activeSlackContact = contactName;
-  renderSlackView();
+// MS Teams Chat Module Helpers
+window.selectTeamsChat = function(contactId) {
+  state.activeTeamsContactId = contactId;
+  const contact = state.teamsContacts.find(c => c.id === contactId);
+  if (contact) {
+    contact.unreadCount = 0;
+  }
+  renderTeamsView();
 };
 
-function renderSlackView() {
-  const slackView = document.getElementById("slack-view");
-  if (!slackView) return;
-  
-  const contact = state.activeSlackContact || "Donaldy Salvant";
-  
-  let messageContent = "";
-  if (contact === "Donaldy Salvant") {
-    messageContent = `
-      <div class="slack-message-row sent">
-        <div class="slack-message-bubble">
-          <div>call me when u get a chance</div>
-          <span class="slack-message-time">4:06 PM</span>
-        </div>
-      </div>
-    `;
-  } else if (contact === "Claryce Medard") {
-    messageContent = `
-      <div class="slack-message-row sent">
-        <div class="slack-message-bubble">
-          <div>Hi Claryce, I've updated the AD permissions as requested.</div>
-          <span class="slack-message-time">4:15 PM</span>
-        </div>
-      </div>
-    `;
-  } else {
-    messageContent = `
-      <div class="slack-message-row sent">
-        <div class="slack-message-bubble">
-          <div>hey Wilner, let's sync on the audit tasks later today.</div>
-          <span class="slack-message-time">4:10 PM</span>
-        </div>
-      </div>
-    `;
-  }
+function renderTeamsView() {
+  const teamsView = document.getElementById("teams-view");
+  if (!teamsView) return;
 
-  slackView.innerHTML = `
-    <div class="slack-wrapper">
-      <!-- Left Sidebar Panel (24%) -->
-      <div class="slack-sidebar">
-        <div class="slack-filters">
-          <span class="slack-filter-pill">Unread</span>
-          <span class="slack-filter-pill">Channels</span>
-          <span class="slack-filter-pill active">Chats</span>
+  const activeContact = state.teamsContacts.find(c => c.id === state.activeTeamsContactId) || state.teamsContacts[0];
+  
+  // Point calculations (matching home dashboard logic)
+  const completedTasks = state.tasks.filter(t => t.completed).length;
+  const currentPoints = 1100 + completedTasks * 90 + (state.chatBonusPoints || 0);
+
+  // Render contacts list
+  let contactsHtml = "";
+  state.teamsContacts.forEach(c => {
+    const isActive = c.id === activeContact.id;
+    contactsHtml += `
+      <button class="teams-chat-item ${isActive ? "active" : ""}" onclick="selectTeamsChat('${c.id}')">
+        <div class="teams-avatar-frame">
+          ${c.avatar}
+          <span class="teams-status-dot ${c.status}"></span>
         </div>
-        
-        <div>
-          <div class="slack-section-header">Direct Messages</div>
-          <div class="slack-chat-list">
-            <div class="slack-chat-item ${contact === "Donaldy Salvant" ? "active" : ""}" onclick="selectSlackChat('Donaldy Salvant')">
-              <div class="slack-chat-avatar">DS</div>
-              <div class="slack-chat-name">Donaldy Salvant</div>
+        <div class="teams-item-details">
+          <div class="teams-item-meta">
+            <span class="teams-item-name">${c.name}</span>
+            <span class="teams-item-time">${c.time}</span>
+          </div>
+          <div class="teams-item-role">${c.role}</div>
+          <div class="teams-item-preview">${c.lastMessage}</div>
+        </div>
+        ${c.unreadCount ? `<span class="teams-badge-unread">${c.unreadCount}</span>` : ""}
+      </button>
+    `;
+  });
+
+  // Render messages
+  let messagesHtml = "";
+  activeContact.convo.forEach(msg => {
+    if (msg.isTechLog) {
+      messagesHtml += `
+        <div class="teams-activity-sync-card">
+          <div class="teams-activity-sync-bubble">
+            <div class="teams-activity-sync-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              KreyōList Activity Sync
             </div>
-            <div class="slack-chat-item ${contact === "Wilner Sainlot" ? "active" : ""}" onclick="selectSlackChat('Wilner Sainlot')">
-              <div class="slack-chat-avatar">WS</div>
-              <div class="slack-chat-name">Wilner Sainlot</div>
+            <p class="teams-activity-sync-text">${msg.text}</p>
+          </div>
+        </div>
+      `;
+    } else {
+      const isMe = msg.sender === 'me';
+      messagesHtml += `
+        <div class="teams-message-row ${isMe ? 'sent' : 'received'}">
+          <div class="teams-message-container">
+            <div class="teams-message-meta">
+              <span class="teams-message-sender">${msg.senderName}</span>
+              <span class="teams-message-time">${msg.time}</span>
             </div>
-            <div class="slack-chat-item ${contact === "Claryce Medard" ? "active" : ""}" onclick="selectSlackChat('Claryce Medard')">
-              <div class="slack-chat-avatar">CM</div>
-              <div class="slack-chat-name">Claryce Medard</div>
+            <div class="teams-message-bubble">
+              ${msg.text}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  teamsView.innerHTML = `
+    <div class="teams-wrapper">
+      <!-- Left Sidebar Column -->
+      <div class="teams-sidebar">
+        <!-- Search and Header -->
+        <div class="teams-search-container">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.05em;">Teams Workspace</span>
+            <span style="font-size: 10px; background: #1A1A1A; text-shadow: none; color: #737373; padding: 2px 6px; border-radius: 4px; border: 1px solid #262626; font-family: monospace;">
+              M365 Linked
+            </span>
+          </div>
+          <div class="teams-search-wrapper">
+            <input type="text" placeholder="Search engineer, client, or topic..." class="teams-search-input" />
+            <span class="teams-search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Chat List -->
+        <div class="teams-chat-list">
+          ${contactsHtml}
+        </div>
+
+        <!-- Bottom Widget -->
+        <div class="teams-widget-container">
+          <div class="teams-widget-header">
+            <span class="teams-widget-title">KreyōList Engine</span>
+            <span class="teams-widget-status">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981; margin-right: 4px;" class="animate-pulse"></span>
+              Active
+            </span>
+          </div>
+          <div class="teams-widget-box">
+            <div class="teams-widget-points">
+              <span class="teams-widget-label">Earned Today</span>
+              <span class="teams-widget-value">${currentPoints.toLocaleString()} / 2,000 pts</span>
+            </div>
+            <div class="teams-widget-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Right Conversation Panel (76%) -->
-      <div class="slack-chat-area">
-        <div class="slack-chat-header">
-          <div class="slack-header-name">${contact}</div>
-        </div>
-        
-        <div class="slack-chat-history">
-          ${messageContent}
-        </div>
-        
-        <!-- Input Field -->
-        <div class="slack-input-container">
-          <div class="slack-input-wrapper">
-            <input type="text" class="slack-input-field" placeholder="Type a message" />
-            <div class="slack-input-actions">
-              <span class="action-icon" style="cursor: pointer; margin-right: 8px;">☺</span>
-              <span class="action-icon" style="cursor: pointer;">📎</span>
+
+      <!-- Right Area: Chat Conversation Frame -->
+      <div class="teams-chat-area">
+        <!-- Active Chat Header -->
+        <header class="teams-chat-header">
+          <div class="teams-chat-header-profile">
+            <div class="teams-chat-header-avatar">${activeContact.avatar}</div>
+            <div>
+              <div class="teams-chat-header-name">${activeContact.name}</div>
+              <div class="teams-chat-header-role">${activeContact.role}</div>
             </div>
           </div>
+
+          <!-- Quick Actions -->
+          <div class="teams-header-actions">
+            <button class="teams-action-btn" title="Call">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </button>
+            <button class="teams-action-btn" title="Video Call">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7z"/><polygon points="14 10.68 1 5.32 1 18.68 14 13.32 14 10.68"/></svg>
+            </button>
+            <button class="teams-action-btn" title="More Options">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Conversation History -->
+        <div class="teams-chat-history" id="teams-chat-history-scroll">
+          ${messagesHtml}
+        </div>
+
+        <!-- Chat Input Form -->
+        <div class="teams-input-container">
+          <form class="teams-input-form" id="teams-message-form">
+            <input 
+              type="text" 
+              id="teams-msg-input"
+              placeholder="Type a message... (Use tech jargon like 'API', 'server', or 'M365' to log active milestones)" 
+              class="teams-input-field"
+              autocomplete="off"
+            />
+            <div class="teams-input-actions-row">
+              <div class="teams-input-attach-group">
+                <button type="button" class="teams-input-attach-btn" title="Attach file">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </button>
+                <button type="button" class="teams-input-attach-btn" title="Insert emoji">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </button>
+                <button type="button" class="teams-input-attach-btn" title="Add image">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                </button>
+                <button type="button" class="teams-input-attach-btn" title="Add voice message">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                </button>
+              </div>
+              <button type="submit" class="teams-send-btn">
+                Send 
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   `;
-  slackView.classList.add("active-view");
-  slackView.style.display = "flex";
+
+  // Apply visual flags to the tab
+  teamsView.classList.add("active-view");
+  teamsView.style.display = "flex";
+
+  // Scroll to bottom of chat history
+  const historyScroll = document.getElementById("teams-chat-history-scroll");
+  if (historyScroll) {
+    historyScroll.scrollTop = historyScroll.scrollHeight;
+  }
+
+  // Hook submit listener
+  const form = document.getElementById("teams-message-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("teams-msg-input");
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      const newMsg = {
+        id: Date.now().toString(),
+        sender: "me",
+        senderName: "DS",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: text
+      };
+
+      activeContact.convo.push(newMsg);
+      activeContact.lastMessage = text;
+      activeContact.time = "Just now";
+
+      // Clear input
+      input.value = "";
+
+      // Re-render
+      renderTeamsView();
+
+      // Check for technical jargon
+      const containsTechJargon = /(api|server|m365|migration|deploy|sync|endpoint|database|docker|firebase|encryption)/i.test(text);
+      if (containsTechJargon) {
+        setTimeout(() => {
+          const kreyoLog = {
+            id: (Date.now() + 1).toString(),
+            sender: "them",
+            senderName: "KreyōList Bot",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            text: "🤖 [KreyōList Engine]: Technical contribution logged. +50 Gamification points recorded towards your Weekly Reward Goal! ☕️",
+            isTechLog: true
+          };
+          activeContact.convo.push(kreyoLog);
+          activeContact.lastMessage = "Contribution logged successfully!";
+          state.chatBonusPoints = (state.chatBonusPoints || 0) + 50;
+
+          // Re-render Teams view
+          renderTeamsView();
+          
+          // Force refresh other points widgets if active
+          renderHomeView();
+          renderInfraDashboard();
+        }, 1200);
+      }
+    });
+  }
 }
 
 function renderInfraDashboard() {
@@ -1883,7 +2149,7 @@ function renderInfraDashboard() {
   const uncompletedHighPriorityCount = state.tasks.filter(t => t.priority === "high" && !t.completed).length;
   
   // Calculate points and progress dynamically
-  const points = 1100 + completedCount * 90;
+  const points = 1100 + completedCount * 90 + (state.chatBonusPoints || 0);
   const rewardProgress = Math.min(100, Math.round((points / 2000) * 100));
   
   // Enterprise sync states
@@ -1891,8 +2157,8 @@ function renderInfraDashboard() {
   const outlookTime = state.isSyncingAll ? "Syncing..." : "Synced 1m ago";
   const jiraStatus = state.isSyncingAll ? "syncing" : "connected";
   const jiraTime = state.isSyncingAll ? "Syncing..." : "Synced 4m ago";
-  const slackStatus = "syncing";
-  const slackTime = "Syncing...";
+  const teamsStatus = state.isSyncingAll ? "syncing" : "connected";
+  const teamsTime = state.isSyncingAll ? "Syncing..." : "Synced 2m ago";
   const asanaStatus = state.isSyncingAll ? "syncing" : "error";
   const asanaTime = state.isSyncingAll ? "Syncing..." : "Auth Error (401)";
 
@@ -2173,10 +2439,10 @@ function renderInfraDashboard() {
 
             <div class="status-badge-row">
               <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-                <span class="status-dot ${slackStatus}"></span>
-                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Slack Webhook Pipeline</span>
+                <span class="status-dot ${teamsStatus}"></span>
+                <span style="color: #FFFFFF; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">MS Teams Synchronization</span>
               </div>
-              <span style="color: #737373; font-family: monospace; font-size: 10px;">${slackTime}</span>
+              <span style="color: #737373; font-family: monospace; font-size: 10px;">${teamsTime}</span>
             </div>
 
             <div class="status-badge-row">
