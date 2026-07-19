@@ -3707,3 +3707,71 @@ body.light-mode .delegation-textarea {
   line-height: 1.5;
   opacity: 0.7;
 }
+
+/* Toast Notification System */
+#kreyolist-toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.kreyolist-toast {
+  pointer-events: auto;
+  min-width: 320px;
+  max-width: 450px;
+  background: rgba(21, 21, 21, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(204, 119, 34, 0.35); /* --color-accent-ochre with opacity */
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: translateY(1.5rem);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kreyolist-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.kreyolist-toast.fade-out {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.kreyolist-toast-icon {
+  color: var(--color-accent-ochre);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kreyolist-toast-content {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+/* Active tab style for Recognition under Culture */
+#recognition-tab.active {
+  background-color: rgba(197, 160, 89, 0.12) !important;
+  border-color: rgba(197, 160, 89, 0.6) !important;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.15) !important;
+}
+
+#recognition-tab.active span {
+  color: #C5A059 !important;
+}

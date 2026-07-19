@@ -510,7 +510,7 @@ function setupTabNavigation() {
   const navOutlook = document.getElementById("nav-item-outlook");
   const navCalendar = document.getElementById("nav-item-calendar");
   const navTeams = document.getElementById("nav-item-teams");
-  const navRec = document.getElementById("nav-item-recognition");
+  const navRec = document.getElementById("recognition-tab");
 
   if (navHome) {
     navHome.addEventListener("click", (e) => {
@@ -539,7 +539,26 @@ function setupTabNavigation() {
   if (navRec) {
     navRec.addEventListener("click", (e) => {
       e.preventDefault();
-      setActiveTab("Recognition");
+      
+      // Calculate progress percent
+      const total = state.tasks.length;
+      const completedCount = state.tasks.filter(t => t.completed).length;
+      const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+      
+      if (percent < 100) {
+        triggerToast("Keep pushing! Complete all tasks to unlock Recognition.");
+      } else {
+        const homeView = document.getElementById("home-view");
+        const curatedView = document.getElementById("curated-experience-view");
+        if (homeView) {
+          homeView.style.setProperty("display", "none", "important");
+          homeView.classList.remove("active-view");
+        }
+        if (curatedView) {
+          curatedView.style.setProperty("display", "block", "important");
+        }
+        setActiveTab("Recognition");
+      }
     });
   }
 }
@@ -560,10 +579,10 @@ function setActiveTab(tabName, force = false) {
   const navOutlook = document.getElementById("nav-item-outlook");
   const navCalendar = document.getElementById("nav-item-calendar");
   const navTeams = document.getElementById("nav-item-teams");
-  const navRec = document.getElementById("nav-item-recognition");
+  const navRec = document.getElementById("recognition-tab");
 
   const homeView = document.getElementById("home-view");
-  const recView = document.getElementById("recognition-view");
+  const recView = document.getElementById("curated-experience-view");
   const calendarView = document.getElementById("calendar-view");
   const teamsView = document.getElementById("teams-view");
   const appMain = document.querySelector(".app-main-scrollable");
@@ -588,65 +607,71 @@ function setActiveTab(tabName, force = false) {
   // Hide all views first
   if (homeView) {
     homeView.classList.remove("active-view");
-    homeView.style.display = "none";
+    homeView.style.setProperty("display", "none", "important");
     const infraMount = document.getElementById("infra-dashboard-mount");
     const outlookContainer = document.getElementById("outlook-view-container");
-    if (infraMount) infraMount.style.display = "none";
-    if (outlookContainer) outlookContainer.style.display = "none";
+    if (infraMount) infraMount.style.setProperty("display", "none", "important");
+    if (outlookContainer) outlookContainer.style.setProperty("display", "none", "important");
   }
-  if (recView) recView.style.display = "none";
+  if (recView) recView.style.setProperty("display", "none", "important");
   if (calendarView) {
     calendarView.classList.remove("active-view");
-    calendarView.style.display = "none";
+    calendarView.style.setProperty("display", "none", "important");
   }
   if (teamsView) {
     teamsView.classList.remove("active-view");
-    teamsView.style.display = "none";
+    teamsView.style.setProperty("display", "none", "important");
   }
 
   if (greetingEl) {
-    greetingEl.style.display = state.activeTab === "Recognition" ? "block" : "none";
+    greetingEl.style.setProperty("display", state.activeTab === "Recognition" ? "block" : "none", "important");
   }
 
   // Lock target view display conditions
   if (state.activeTab === "Home") {
     const infraMount = document.getElementById("infra-dashboard-mount");
     if (infraMount) {
-      infraMount.style.display = "grid";
+      infraMount.style.setProperty("display", "grid", "important");
       renderInfraDashboard();
     }
     if (homeView) {
       homeView.classList.add("active-view");
-      homeView.style.display = "flex";
+      homeView.style.setProperty("display", "flex", "important");
     }
     if (appMain) appMain.classList.add("home-active");
   } else if (state.activeTab === "Outlook") {
     const infraMount = document.getElementById("infra-dashboard-mount");
     const outlookContainer = document.getElementById("outlook-view-container");
     if (infraMount) {
-      infraMount.style.display = "none";
+      infraMount.style.setProperty("display", "none", "important");
     }
     if (outlookContainer) {
-      outlookContainer.style.display = "flex";
+      outlookContainer.style.setProperty("display", "flex", "important");
     }
     if (homeView) {
       homeView.classList.add("active-view");
-      homeView.style.display = "flex";
+      homeView.style.setProperty("display", "flex", "important");
     }
     if (appMain) appMain.classList.add("home-active");
     renderHomeView();
   } else if (state.activeTab === "Calendar") {
+    if (calendarView) {
+      calendarView.classList.add("active-view");
+      calendarView.style.setProperty("display", "block", "important");
+    }
     renderCalendarView();
     if (appMain) appMain.classList.remove("home-active");
   } else if (state.activeTab === "Teams") {
     if (teamsView) {
       teamsView.classList.add("active-view");
-      teamsView.style.display = "flex";
+      teamsView.style.setProperty("display", "flex", "important");
     }
     renderTeamsView();
     if (appMain) appMain.classList.add("home-active");
   } else if (state.activeTab === "Recognition") {
-    if (recView) recView.style.display = "block";
+    if (recView) {
+      recView.style.setProperty("display", "block", "important");
+    }
     if (appMain) appMain.classList.remove("home-active");
     renderGrid();
   }
@@ -685,6 +710,50 @@ function renderHomeView() {
   const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
   if (progressPercent) progressPercent.textContent = `${percent}%`;
   if (activeFill) activeFill.style.width = `${percent}%`;
+
+  // Safe, Loop-Free Recognition Unlock
+  setTimeout(() => {
+      const recTab = document.getElementById('recognition-tab');
+      if (!recTab) return;
+
+      if (percent === 100) {
+          recTab.style.opacity = "1";
+          recTab.style.cursor = "pointer";
+          recTab.style.pointerEvents = "auto";
+          recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
+          recTab.style.borderColor = "rgba(197, 160, 89, 0.4)";
+
+          const lockBadge = recTab.querySelector('div:last-child');
+          if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 9.9-1"')) {
+              lockBadge.style.borderColor = "rgba(197, 160, 89, 0.5)";
+              lockBadge.style.backgroundColor = "rgba(197, 160, 89, 0.1)";
+              lockBadge.innerHTML = `
+                  <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+                  </svg>
+              `;
+          }
+      } else {
+          recTab.style.opacity = "0.35";
+          recTab.style.cursor = "not-allowed";
+          recTab.style.pointerEvents = "auto";
+          recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
+          recTab.style.borderColor = "rgba(255, 255, 255, 0.12)";
+
+          const lockBadge = recTab.querySelector('div:last-child');
+          if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 10 0v4"')) {
+              lockBadge.style.borderColor = "rgba(255, 255, 255, 0.15)";
+              lockBadge.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+              lockBadge.innerHTML = `
+                  <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+              `;
+          }
+      }
+  }, 0);
 
   // 2. Expected target baseline details
   const expectedRate = 60; // 3 of 5 baseline target
@@ -2606,6 +2675,48 @@ function renderCalendarView() {
   // Ensure view display classes are active
   calendarView.classList.add("active-view");
   calendarView.style.display = "flex";
+}
+
+/**
+ * Triggers a premium glassmorphic toast notification.
+ * @param {string} message - The message to display.
+ */
+function triggerToast(message) {
+  let container = document.getElementById("kreyolist-toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "kreyolist-toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "kreyolist-toast";
+  toast.innerHTML = `
+    <div class="kreyolist-toast-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <div class="kreyolist-toast-content">${message}</div>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation next frame
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  // Automatically dismiss after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    toast.classList.add("fade-out");
+    toast.addEventListener("transitionend", () => {
+      toast.remove();
+    });
+  }, 4000);
 }
 
 // Bootstrap when DOM is ready
