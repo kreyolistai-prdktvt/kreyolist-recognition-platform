@@ -713,46 +713,7 @@ function renderHomeView() {
 
   // Safe, Loop-Free Recognition Unlock
   setTimeout(() => {
-      const recTab = document.getElementById('recognition-tab');
-      if (!recTab) return;
-
-      if (percent === 100) {
-          recTab.style.opacity = "1";
-          recTab.style.cursor = "pointer";
-          recTab.style.pointerEvents = "auto";
-          recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
-          recTab.style.borderColor = "rgba(197, 160, 89, 0.4)";
-
-          const lockBadge = recTab.querySelector('div:last-child');
-          if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 9.9-1"')) {
-              lockBadge.style.borderColor = "rgba(197, 160, 89, 0.5)";
-              lockBadge.style.backgroundColor = "rgba(197, 160, 89, 0.1)";
-              lockBadge.innerHTML = `
-                  <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-                  </svg>
-              `;
-          }
-      } else {
-          recTab.style.opacity = "0.35";
-          recTab.style.cursor = "not-allowed";
-          recTab.style.pointerEvents = "auto";
-          recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
-          recTab.style.borderColor = "rgba(255, 255, 255, 0.12)";
-
-          const lockBadge = recTab.querySelector('div:last-child');
-          if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 10 0v4"')) {
-              lockBadge.style.borderColor = "rgba(255, 255, 255, 0.15)";
-              lockBadge.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-              lockBadge.innerHTML = `
-                  <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                  </svg>
-              `;
-          }
-      }
+      updateRecognitionTabUnlockState(percent);
   }, 0);
 
   // 2. Expected target baseline details
@@ -812,6 +773,13 @@ function renderHomeView() {
     li.querySelector(".task-radio-target").addEventListener("click", (e) => {
       e.stopPropagation(); // Prevent opening dossier panel
       task.completed = !task.completed;
+
+      // Recalculate progression and immediately toggle unlocked-glow
+      const total = state.tasks.length;
+      const completedCount = state.tasks.filter(t => t.completed).length;
+      const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+      updateRecognitionTabUnlockState(percent);
+
       renderHomeView();
       // If active task is checked completed, close dossier
       if (activeDossierTaskId === task.id) {
@@ -1560,6 +1528,13 @@ function setupDossierHandlers() {
         const task = state.tasks.find(t => t.id === activeDossierTaskId);
         if (task) {
           task.completed = true;
+
+          // Recalculate progression and immediately toggle unlocked-glow
+          const total = state.tasks.length;
+          const completedCount = state.tasks.filter(t => t.completed).length;
+          const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+          updateRecognitionTabUnlockState(percent);
+
           renderHomeView();
           closeActionDossier();
           alert(`Task "${task.title}" has been completed!`);
@@ -1684,6 +1659,13 @@ Expected due date is ${context.dueDate}. Please coordinate status updates via th
       // Complete task
       if (task) {
         task.completed = true;
+
+        // Recalculate progression and immediately toggle unlocked-glow
+        const total = state.tasks.length;
+        const completedCount = state.tasks.filter(t => t.completed).length;
+        const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+        updateRecognitionTabUnlockState(percent);
+
         renderHomeView();
       }
 
@@ -2675,6 +2657,55 @@ function renderCalendarView() {
   // Ensure view display classes are active
   calendarView.classList.add("active-view");
   calendarView.style.display = "flex";
+}
+
+/**
+ * Updates the Recognition tab unlock styling and glow animation based on task percent completion.
+ * @param {number} percent - The percentage of completed tasks.
+ */
+function updateRecognitionTabUnlockState(percent) {
+  const recTab = document.getElementById('recognition-tab');
+  if (!recTab) return;
+
+  if (percent === 100) {
+      recTab.classList.add("unlocked-glow");
+      recTab.style.opacity = "1";
+      recTab.style.cursor = "pointer";
+      recTab.style.pointerEvents = "auto";
+      recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
+      recTab.style.borderColor = "rgba(197, 160, 89, 0.4)";
+
+      const lockBadge = recTab.querySelector('div:last-child');
+      if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 9.9-1"')) {
+          lockBadge.style.borderColor = "rgba(197, 160, 89, 0.5)";
+          lockBadge.style.backgroundColor = "rgba(197, 160, 89, 0.1)";
+          lockBadge.innerHTML = `
+              <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+              </svg>
+          `;
+      }
+  } else {
+      recTab.classList.remove("unlocked-glow");
+      recTab.style.opacity = "0.35";
+      recTab.style.cursor = "not-allowed";
+      recTab.style.pointerEvents = "auto";
+      recTab.style.backgroundColor = "rgba(255, 255, 255, 0.07)";
+      recTab.style.borderColor = "rgba(255, 255, 255, 0.12)";
+
+      const lockBadge = recTab.querySelector('div:last-child');
+      if (lockBadge && !lockBadge.innerHTML.includes('path d="M7 11V7a5 5 0 0 1 10 0v4"')) {
+          lockBadge.style.borderColor = "rgba(255, 255, 255, 0.15)";
+          lockBadge.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+          lockBadge.innerHTML = `
+              <svg class="kreyolist-lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+          `;
+      }
+  }
 }
 
 /**
