@@ -639,6 +639,7 @@ function setActiveTab(tabName, force = false) {
       homeView.style.setProperty("display", "flex", "important");
     }
     if (appMain) appMain.classList.add("home-active");
+    renderHomeView();
   } else if (state.activeTab === "Outlook") {
     const infraMount = document.getElementById("infra-dashboard-mount");
     const outlookContainer = document.getElementById("outlook-view-container");
@@ -2660,10 +2661,47 @@ function renderCalendarView() {
 }
 
 /**
+ * Updates the Information Center widget content based on percentage completion.
+ * @param {number} percent - The percentage of completed tasks.
+ */
+function updateInfoCenterWidget(percent) {
+  const infoCard = document.getElementById("info-center-card");
+  if (!infoCard) return;
+
+  const total = state.tasks ? state.tasks.length : 0;
+  const completedCount = state.tasks ? state.tasks.filter(t => t.completed).length : 0;
+
+  if (percent === 100) {
+    infoCard.classList.add("completed");
+    infoCard.innerHTML = `
+      <div class="info-center-header">
+        <span class="info-center-dot"></span>
+        <span class="info-center-title">Goal Achieved!</span>
+        <span class="info-center-badge">100% Complete</span>
+      </div>
+      <p class="info-center-text">Systems cleared! The Recognition portal is now unlocked. Feel free to explore and celebrate your team's hard work.</p>
+    `;
+  } else {
+    infoCard.classList.remove("completed");
+    infoCard.innerHTML = `
+      <div class="info-center-header">
+        <span class="info-center-dot"></span>
+        <span class="info-center-title">Daily Focus</span>
+        <span class="info-center-badge">${percent}% Complete</span>
+      </div>
+      <p class="info-center-text">Complete all tasks in your queue (${completedCount}/${total} done) to unlock the Recognition portal and access community accolades.</p>
+    `;
+  }
+}
+
+/**
  * Updates the Recognition tab unlock styling and glow animation based on task percent completion.
  * @param {number} percent - The percentage of completed tasks.
  */
 function updateRecognitionTabUnlockState(percent) {
+  // Update Information Center Widget dynamically
+  updateInfoCenterWidget(percent);
+
   const recTab = document.getElementById('recognition-tab');
   if (!recTab) return;
 

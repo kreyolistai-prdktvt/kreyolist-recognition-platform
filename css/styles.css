@@ -3808,3 +3808,106 @@ body.light-mode .delegation-textarea {
   border-color: rgba(197, 160, 89, 0.5) !important;
   animation: warmGlow 3s ease-in-out infinite, shimmerEffect 3s infinite linear !important;
 }
+
+/* Information Center Widget */
+#sidebar-info-center-section {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-center-widget-card {
+  background: rgba(14, 14, 14, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.info-center-widget-card:hover {
+  border-color: rgba(255, 95, 31, 0.25);
+  box-shadow: 0 6px 24px rgba(255, 95, 31, 0.03);
+}
+
+.info-center-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-center-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-vibrant);
+  box-shadow: 0 0 8px var(--color-accent-vibrant);
+}
+
+.info-center-widget-card.completed .info-center-dot {
+  background-color: #C5A059;
+  box-shadow: 0 0 10px #C5A059;
+}
+
+.info-center-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.info-center-widget-card.completed .info-center-title {
+  color: #C5A059;
+}
+
+.info-center-text {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.info-center-widget-card.completed .info-center-text {
+  color: var(--color-text-primary);
+}
+
+.info-center-badge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: rgba(255, 95, 31, 0.12);
+  color: var(--color-accent-vibrant);
+  border: 1px solid rgba(255, 95, 31, 0.25);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.info-center-widget-card.completed .info-center-badge {
+  background: rgba(197, 160, 89, 0.18);
+  color: #C5A059;
+  border-color: rgba(197, 160, 89, 0.35);
+}
+
+/* Light Mode Overrides */
+body.light-mode .info-center-widget-card {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .info-center-widget-card:hover {
+  border-color: rgba(255, 95, 31, 0.2);
+  box-shadow: 0 6px 20px rgba(255, 95, 31, 0.05);
+}
+
+/* Collapsed Sidebar State */
+#workspace-sidebar.collapsed #sidebar-info-center-section {
+  display: none !important;
+}
+
